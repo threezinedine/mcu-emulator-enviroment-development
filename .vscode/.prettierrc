@@ -1,0 +1,23 @@
+{
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "tabWidth": 4,
+    "[c]": {
+        "editor.defaultFormatter": "ms-vscode.cpptools"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "singleQuote": true,
+        "trailingComma": "all"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "singleQuote": true,
+        "trailingComma": "all"
+    },
+    "[json]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "singleQuote": true,
+        "trailingComma": "all"
+    }
+}

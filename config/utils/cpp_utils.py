@@ -1,0 +1,123 @@
+import os
+import json
+from typing import Any
+from ..log import logger
+from .utils import RunCommand
+from ..system_info import SYSTEM
+from dataclasses import dataclass
+
+
+@dataclass
+class Depedency:
+    name: str
+    url: str
+
+
+def InstallCDependencies(
+    **kwargs: Any,
+) -> None:
+    """
+    Installs necessary dependencies for the C++ project which is loaded from the `dependecies.json` file. The
+        code will be placed at `external/` folder.
+    """
+    dependencies: list[Depedency] = []
+
+    with open("dependencies.json", "r") as depFile:
+        dependenciesData = json.load(depFile)
+
+        for depData in dependenciesData:
+            dependency = Depedency(**depData)
+            dependencies.append(dependency)
+
+    externalDir = os.path.join(os.getcwd(), "externals")
+    if not os.path.exists(externalDir):
+        logger.debug(f'Creating external directory at "{externalDir}"')
+        os.makedirs(externalDir)
+
+    for dependency in dependencies:
+        dependencyDir = os.path.join(externalDir, dependency.name)
+        if os.path.exists(dependencyDir):
+            logger.debug(
+                f"Dependency {dependency.name} already exists at {dependencyDir}, skipping..."
+            )
+            continue
+
+        logger.info(
+            f'Cloning dependency "{dependency.name}" from "{dependency.url}"...'
+        )
+        RunCommand(f"git clone {dependency.url} {dependencyDir}")
+
+
+def Build(
+    project: str,
+    type: str = "debug",
+    **kwargs: Any,
+) -> None:
+    """
+    Builds a C++ project using CMake. Supports different build types and platforms.
+
+    Arguments:
+        project (str): The path to the C++ project.
+        type (str): The build type, either 'debug' or 'release'. Defaults to 'debug'.
+
+    """
+    additionalOptions = ""
+
+    if SYSTEM.IsWindowsPlatform:
+        additionalOptions = "-G Visual Studio 17 2022"
+
+    logger.info(f'Building project "{project}" with build type "{type}"...')
+    RunCommand(f"cmake -S . -B build/{type} {additionalOptions}", cwd=project)
+    RunCommand(f"cmake --build build/{type} --config {type.capitalize()}", cwd=project)
+
+
+def RunExample(
+    examples: list[str],
+    type: str = "debug",
+    **kwargs: Any,
+) -> None:
+    """
+    Runs example projects.
+
+    Arguments:
+        examples (list[str]): List of example project names to run.
+    """
+    if SYSTEM.IsWindowsPlatform:
+        exampleDir = os.path.join(
+            SYSTEM.BaseDir,
+            "engine",
+            "build",
+            type,
+            type.capitalize(),
+            "examples",
+        )
+    elif SYSTEM.IsLinuxPlatform:
+        exampleDir = os.path.join(
+            SYSTEM.BaseDir,
+            "engine",
+            "build",
+            type,
+            "examples",
+        )
+    else:
+        raise NotImplementedError(
+            "Current platform is not supported for running examples."
+        )
+
+    Build("engine", type=type, **kwargs)
+
+    logger.debug(f"Example directory resolved to: {exampleDir}")
+
+    for example in examples:
+        if not os.path.exists(os.path.join(exampleDir, example)):
+            logger.error(
+                f'Example project "{example}" does not exist at path "{os.path.join(exampleDir, example)}".'
+            )
+            continue
+
+        logger.info(f'Running example project "{example}"...')
+
+        if SYSTEM.IsWindowsPlatform:
+            RunCommand(f"{example}.exe", cwd=exampleDir)
+        elif SYSTEM.IsLinuxPlatform:
+            RunCommand(f"./{example}", cwd=exampleDir)

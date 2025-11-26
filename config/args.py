@@ -1,0 +1,144 @@
+import argparse
+from typing import Dict, Any
+from .system_info import SYSTEM
+
+
+class Args:
+    def __init__(self):
+        parser = argparse.ArgumentParser(
+            description="ntt-voxel-game-engine configuration"
+        )
+
+        parser.add_argument(
+            "--verbose",
+            "-v",
+            action="store_true",
+            help="Enable verbose logging",
+        )
+
+        parser.add_argument(
+            "--force",
+            "-f",
+            action="store_true",
+            help="Force to re-create environments or rebuild projects",
+        )
+
+        subparser = parser.add_subparsers(dest="command", required=True)
+
+        buildParser = subparser.add_parser("build", help="Build the project")
+        buildParser.add_argument(
+            "--project",
+            "-p",
+            choices=["engine", "editor"],
+            default="editor",
+        )
+
+        packageSubParser = subparser.add_parser(
+            "package",
+            help="Install the dependencies required for building the project",
+        )
+
+        packageSubParser.add_argument(
+            "--dependencies",
+            "-d",
+            nargs="+",
+            type=str,
+            default=[],
+            help="Additional dependencies to install",
+        )
+
+        packageSubParser.add_argument(
+            "--save-dev",
+            "-s",
+            action="store_true",
+            help="Save the installed dependencies to dev-requirements.txt (Node projects only)",
+        )
+
+        packageSubParser.add_argument(
+            "--project",
+            "-p",
+            type=str,
+            choices=["editor", "autogen"],
+            default="editor",
+            help="Project to install dependencies for (editor or autogen)",
+        )
+
+        runSubParser = subparser.add_parser("run")
+
+        runSubParser.add_argument(
+            "--type",
+            "-t",
+            choices=["debug", "release"],
+            default="debug",
+            help="Type of run (debug or release)",
+        )
+
+        exampleSubParser = subparser.add_parser(
+            "example",
+            help="Run an example project",
+        )
+
+        exampleSubParser.add_argument(
+            "--type",
+            "-t",
+            choices=["debug", "release"],
+            default="debug",
+            help="Type of run (debug or release)",
+        )
+
+        exampleSubParser.add_argument(
+            "--examples",
+            "-e",
+            type=str,
+            nargs="+",
+            help="Name of the example project to run",
+        )
+
+        self.args = parser.parse_args()
+
+    @property
+    def Args(self) -> Dict[str, Any]:
+        """
+        Always be passed to the python util methods as a dictionary.
+
+        Example
+        -------
+        >>> from config.args import Args
+        >>> args = Args()
+        >>> runProject(**args.Args) # equivalent to runProject(type=args.asrgs.type, command=args.asrgs.command)
+        """
+        return vars(self.args)
+
+    @property
+    def IsBuild(self) -> str:
+        return self.args.command == "build"
+
+    @property
+    def IsPackage(self) -> str:
+        return self.args.command == "package"
+
+    @property
+    def IsRun(self) -> str:
+        return self.args.command == "run"
+
+    @property
+    def IsRunExample(self) -> str:
+        return self.args.command == "example"
+
+    @property
+    def IsPythonProject(self) -> bool:
+        assert self.args is not None, "Args is not initialized."
+        assert self.args.project is not None, "Project name is not specified."
+        return self.args.project in SYSTEM.PythonProjects
+
+    @property
+    def IsCProject(self) -> bool:
+        assert self.args is not None, "Args is not initialized."
+        assert self.args.project is not None, "Project name is not specified."
+        return self.args.project in SYSTEM.CProjects
+
+    @property
+    def IsJSProject(self) -> bool:
+        assert self.args is not None, "Args is not initialized."
+        assert self.args.project is not None, "Project name is not specified."
+        return self.args.project in SYSTEM.JSProjects

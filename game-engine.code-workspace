@@ -1,0 +1,31 @@
+{
+	"folders": [
+		{
+			"name": "cmake",
+			"path": "cmake"
+		},
+		{
+			"name": "autogen",
+			"path": "autogen"
+		},
+		{
+			"name": "engine",
+			"path": "engine"
+		},
+		{
+			"name": "editor",
+			"path": "editor"
+		},
+		{
+			"name": "config",
+			"path": "config"
+		},
+		{
+			"name": "ntt-voxel-game-engine",
+			"path": "."
+		}
+	],
+	"settings": {
+		"prettier.configPath": "/home/threezinedine/Projects/ntt-voxel-game-engine/.vscode/.prettierrc"
+	}
+}
