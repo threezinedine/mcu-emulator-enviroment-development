@@ -32,12 +32,14 @@ def main():
         if template.output is not None:
             outputFile = template.output
 
+        fullOutputPath = os.path.join(SYSTEM.BASE_DIR, outputFile)
+
         with open(templatePath, "r") as f:
             templateContent = f.read()
             jinjaTemplate = JinjaTemplate(templateContent)
             renderedContent = jinjaTemplate.render(**TEMPLATE_DATA)
 
-        with open(outputFile, "w") as f:
+        with open(fullOutputPath, "w") as f:
             f.write(renderedContent)
 
         logger.info(

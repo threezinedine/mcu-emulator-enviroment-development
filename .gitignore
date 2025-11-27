@@ -419,3 +419,4 @@ vite.config.ts.timestamp-*
 externals/
 
 *-dist/
+game-engine.code-workspace
