@@ -1,11 +1,19 @@
 {
-    "bindings": [],
+    "bindings": [
+        {
+            "file": "engine/include/NTTEngine/NTTEngine.h",
+            "template": "autogen/templates/pyi.j2",
+            "output": "engine/tmp/__init__.pyi",
+            "dependencies": ["engine/include/NTTEngine"],
+            "extensions": [".h"]
+        }
+    ],
     "templates": [
         {
-            "filePath": "game-engine.code-workspace.in"
+            "file": "game-engine.code-workspace.in"
         },
         {
-            "filePath": "engine/.vscode/c_cpp_properties.json.in"
+            "file": "engine/.vscode/c_cpp_properties.json.in"
         }
     ]
 }

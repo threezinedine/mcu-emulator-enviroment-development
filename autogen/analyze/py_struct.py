@@ -9,6 +9,5 @@ class PyStruct(PyObject):
         self.fields: list[PyField] = []
 
         for child in cursor.get_children():
-            print(child.kind)
             if child.kind == cindex.CursorKind.FIELD_DECL:
                 self.fields.append(PyField(child))

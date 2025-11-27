@@ -1,0 +1,20 @@
+{% for enum in enums %}
+class {{ enum.name }}(Enum):
+    {% if enum.comment-%}
+    """
+    {{ enum.comment }}
+    """
+    {% endif-%}
+    {% if enum.constants|length > 0-%}
+    {% for constant in enum.constants-%}
+    {{ constant.name }} = {{ constant.value }}
+    {% if constant.comment-%}
+    """
+    {{ constant.comment }}
+    """
+    {% endif-%}
+    {% endfor %}
+    {% else-%}
+    pass
+    {% endif %}
+{% endfor %}

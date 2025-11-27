@@ -223,6 +223,7 @@ def InstallPythonDependencies(
 
 def RunAutogen(
     reload: bool = False,
+    verbose: bool = False,
     **kwargs: Any,
 ) -> None:
     """
@@ -230,7 +231,7 @@ def RunAutogen(
     """
     logger.info("Generating needed files...")
     RunCommand(
-        f'"{GetPythonExecutable("autogen")}" main.py {"--reload" if reload else ""}',
+        f'"{GetPythonExecutable("autogen")}" main.py {"--reload" if reload else ""} {"--verbose" if verbose else ""}',
         cwd="autogen",
     )
 

@@ -73,3 +73,27 @@ int __attribute__((annotate("exported")))  annotatedFunction(int x __attribute__
     assert function.arguments[0].name == "x"
     assert function.arguments[0].type == "int"
     assert function.arguments[0].annotations == ["input"]
+
+
+def test_parse_function_with_comment():
+    code = """
+/**
+ * @brief This is a sample function.
+ * @param x An integer parameter.
+ * @return An integer result.
+ */
+int documentedFunction(int x);
+"""
+
+    parser = Parser(code)
+    parser.Parse()
+
+    assert len(parser.Functions) == 1
+    function = parser.Functions[0]
+    assert function.name == "documentedFunction"
+    assert function.returnType == "int"
+    assert function.comment == "This is a sample function."
+
+    assert len(function.arguments) == 1
+    assert function.arguments[0].name == "x"
+    assert function.arguments[0].type == "int"

@@ -73,3 +73,37 @@ enum Numbers {
     assert enum.constants[1].value == 2
     assert enum.constants[2].name == "TEN"
     assert enum.constants[2].value == 10
+
+
+def test_parse_enum_with_comments():
+    code = """
+/**
+ * @brief Status enumeration
+ */
+enum Status {
+    SUCCESS, ///< Success status
+    WARNING,
+    /** Error status */
+    ERROR,
+};
+"""
+
+    parser = Parser(code)
+    parser.Parse()
+    assert len(parser.Enums) == 1
+    enum = parser.Enums[0]
+    assert enum.name == "Status"
+    assert enum.comment == "Status enumeration"
+    assert len(enum.constants) == 3
+
+    assert enum.constants[0].name == "SUCCESS"
+    assert enum.constants[0].value == 0
+    assert enum.constants[0].comment == "Success status"
+
+    assert enum.constants[1].name == "WARNING"
+    assert enum.constants[1].value == 1
+    assert enum.constants[1].comment == None
+
+    assert enum.constants[2].name == "ERROR"
+    assert enum.constants[2].value == 2
+    assert enum.constants[2].comment == "Error status"

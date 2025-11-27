@@ -1,18 +1,11 @@
-import os
 import json
 import logging
 import argparse
-from jinja2 import Template as JinjaTemplate
 from models import Settings
 from dacite import from_dict
-from utils import (
-    SYSTEM,
-    TEMPLATE_DATA,
-    logger,
-    IsFileModified,
-    UpdateFileStamp,
-    ClearCache,
-)
+from binding import GenerateBindings
+from utils import logger, ClearCache
+from template_gen import GenerateTemplate
 
 
 def main():
@@ -47,40 +40,10 @@ def main():
         settings = from_dict(data_class=Settings, data=json.loads(f.read()))
 
     for template in settings.templates:
-        if not IsFileModified(template.filePath):
-            logger.debug(
-                f'Template file "{template.filePath}" has not been modified, skipping...'
-            )
-            continue
+        GenerateTemplate(template)
 
-        templatePath = os.path.join(SYSTEM.BASE_DIR, template.filePath)
-
-        if not os.path.exists(templatePath):
-            logger.warning(
-                f'Template file "{template.filePath}" does not exist, skipping...'
-            )
-            continue
-
-        outputFile = template.filePath[:-3]  # remove .in extension
-
-        if template.output is not None:
-            outputFile = template.output
-
-        fullOutputPath = os.path.join(SYSTEM.BASE_DIR, outputFile)
-
-        with open(templatePath, "r") as f:
-            templateContent = f.read()
-            jinjaTemplate = JinjaTemplate(templateContent)
-            renderedContent = jinjaTemplate.render(**TEMPLATE_DATA)
-
-        with open(fullOutputPath, "w") as f:
-            f.write(renderedContent)
-
-        logger.info(
-            f'Generated file "{outputFile}" from template "{template.filePath}".'
-        )
-
-        UpdateFileStamp(template.filePath)
+    for binding in settings.bindings:
+        GenerateBindings(binding)
 
 
 if __name__ == "__main__":

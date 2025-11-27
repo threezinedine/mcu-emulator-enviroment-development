@@ -11,18 +11,38 @@ class Parser:
 
     Arguments
     ---------
-    content : str
+    content : str | None
         The content of the C header file.
+    filePath : str | None
+        The path to the C header file.
+
+    Notes
+    -----
+    If both content and filePath are provided, content will be used.
+    If neither is provided, raise an exception.
     """
 
-    def __init__(self, content: str) -> None:
+    def __init__(
+        self,
+        content: str | None = None,
+        filePath: str | None = None,
+    ) -> None:
         index = cindex.Index.create()
-        translationUnit: cindex.TranslationUnit = index.parse(  # type: ignore
-            "tmp.h",
-            args=["-x", "c", "-std=c17"],
-            unsaved_files=[("tmp.h", content)],
-            options=0,
-        )
+
+        if content is not None:
+            translationUnit: cindex.TranslationUnit = index.parse(  # type: ignore
+                "tmp.h",
+                args=["-x", "c", "-std=c17"],
+                unsaved_files=[("tmp.h", content)],
+                options=0,
+            )
+        elif filePath is not None:
+            translationUnit = index.parse(
+                filePath,
+                args=["-x", "c", "-std=c17"],
+            )
+        else:
+            raise ValueError("Either content or filePath must be provided.")
         self._cursor: cindex.Cursor = translationUnit.cursor
 
         self._pyStructs: list[PyStruct] = []
@@ -35,7 +55,6 @@ class Parser:
         The main method of of the parser whereas it extracts the structures from the C header file content.
         """
         for child in self._cursor.get_children():
-            print(child.kind)
             if child.kind == cindex.CursorKind.STRUCT_DECL:
                 pyStruct = PyStruct(child)
                 self._pyStructs.append(pyStruct)

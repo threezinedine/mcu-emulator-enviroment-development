@@ -3,5 +3,5 @@ from dataclasses import dataclass
 
 @dataclass
 class Template:
-    filePath: str
+    file: str
     output: str | None = None
