@@ -1,4 +1,8 @@
 {
-    "binding": [],
-    "template": []
+    "bindings": [],
+    "templates": [
+        {
+            "filePath": "game-engine.code-workspace.in"
+        }
+    ]
 }
