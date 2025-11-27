@@ -1,5 +1,6 @@
 import os
 import json
+import logging
 import argparse
 from jinja2 import Template as JinjaTemplate
 from models import Settings
@@ -22,8 +23,19 @@ def main():
         action="store_true",
         help="Force to re-generate files even if they are not modified",
     )
+    parser.add_argument(
+        "--verbose",
+        "-v",
+        action="store_true",
+        help="Enable verbose logging",
+    )
 
     args = parser.parse_args()
+
+    if args.verbose:
+        logger.setLevel(logging.DEBUG)
+    else:
+        logger.setLevel(logging.INFO)
 
     if args.reload:
         logger.info("Force flag detected, re-generating all files...")

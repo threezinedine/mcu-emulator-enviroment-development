@@ -101,6 +101,37 @@ def GetPytestExecutable(
             "pytest",
         )
 
+def GetDesignerExecutable(
+    project: str,
+) -> str:
+    """
+    Get the path to the Qt Designer executable for a given project.
+    Arguments
+    ---------
+    project : str
+        The project to get the Qt Designer executable for.
+    Returns
+    -------
+    str
+        The path to the Qt Designer executable.
+    """
+    if SYSTEM.IsWindowsPlatform:
+        return os.path.join(
+            SYSTEM.BaseDir,
+            project,
+            "venv",
+            "Scripts",
+            "pyside6-designer.exe",
+        )
+    else:
+        return os.path.join(
+            SYSTEM.BaseDir,
+            project,
+            "venv",
+            "bin",
+            "pyside6-designer",
+        )
+
 
 def CreateEnvironment(
     dir: str,
@@ -138,6 +169,21 @@ def CreateEnvironment(
         cwd=os.path.join(SYSTEM.BaseDir, dir),
     )
 
+def RunEditorConvertUI(
+    reload: bool = False,
+    **kwargs: Any,
+) -> None:
+    """
+    Run the UI conversion process for the editor project.
+    """
+    if reload:
+        shutil.rmtree(os.path.join(SYSTEM.BaseDir, "editor", "pyui"), ignore_errors=True)
+
+    logger.info("Converting .ui files to .py files...")
+    RunCommand(
+        f'"{GetPythonExecutable("editor")}" convert.py',
+        cwd=os.path.join(SYSTEM.BaseDir, "editor"),
+    )
 
 def InstallPythonDependencies(
     project: str,
@@ -194,3 +240,15 @@ def RunEditor(
         f'"{GetPythonExecutable("editor")}" main.py',
         cwd="editor",
     )
+
+def OpenDesigner(
+    **kwargs: Any,
+) -> None:
+    """
+    Launch the GUI designer tool.
+    """
+    logger.info("Launching GUI designer...")
+    RunCommand(
+        f'"{GetDesignerExecutable("editor")}"',
+        cwd="editor",
+)

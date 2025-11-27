@@ -36,6 +36,15 @@ class SystemInfo:
     def IntelliSenseMode(self) -> str:
         return self._intelliSenseMode
 
+    @property
+    def PythonInterpreter(self) -> str:
+        if self.IsWindowsPlatform:
+            return "venv/Scripts/python.exe"
+        elif self.IsLinuxPlatform:
+            return "venv/bin/python3"
+        else:
+            raise NotImplementedError("Unsupported platform")
+
 
 SYSTEM = SystemInfo()
 TEMPLATE_DATA = dict(
@@ -45,4 +54,5 @@ TEMPLATE_DATA = dict(
     ),
     COMPILER_PATH=SYSTEM.CCompiler,
     INTELLISENSE_MODE=SYSTEM.IntelliSenseMode,
+    PYTHON_INTERPRETER=SYSTEM.PythonInterpreter,
 )

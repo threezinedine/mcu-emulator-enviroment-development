@@ -6,7 +6,8 @@
         },
         {
             "name": "autogen",
-            "path": "autogen"
+            "path": "autogen",
+            "python.defaultInterpreterPath": "{{ BASE_DIR }}/autogen/{{ PYTHON_INTERPRETER }}"
         },
         {
             "name": "engine",
@@ -14,7 +15,8 @@
         },
         {
             "name": "editor",
-            "path": "editor"
+            "path": "editor",
+            "python.defaultInterpreterPath": "{{ BASE_DIR }}/editor/{{ PYTHON_INTERPRETER }}"
         },
         {
             "name": "config",

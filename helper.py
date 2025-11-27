@@ -7,10 +7,12 @@ from config import (
     RunAutogen,
     RunExample,
     SetupLogging,
+    OpenDesigner,
     CreateEnvironment,
-    InstallPythonDependencies,
+    RunEditorConvertUI,
     ValidateCommandExist,
     InstallCDependencies,
+    InstallPythonDependencies,
 )
 
 
@@ -30,6 +32,7 @@ def main():
     CreateEnvironment(dir="editor", **args.Args)
     InstallCDependencies()
     RunAutogen(**args.Args)
+    RunEditorConvertUI(**args.Args)
 
     if args.IsBuild:
         if args.IsCProject:
@@ -44,6 +47,8 @@ def main():
             raise NotImplementedError(
                 f'Packaging for project "{args.args.project}" is not implemented.'
             )
+    elif args.IsRunDesigner:
+        OpenDesigner(**args.Args)
     elif args.IsRun:
         Build("engine", **args.Args)
         RunEditor(**args.Args)

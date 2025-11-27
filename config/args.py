@@ -103,6 +103,11 @@ class Args:
             help="Name of the example project to run",
         )
 
+        subparser.add_parser(
+            "designer",
+            help="Run the GUI designer tool",
+        )
+
         self.args = parser.parse_args()
 
     @property
@@ -137,6 +142,10 @@ class Args:
     @property
     def IsRunAutogen(self) -> str:
         return self.args.command == "autogen"
+
+    @property
+    def IsRunDesigner(self) -> str:
+        return self.args.command == "designer"
 
     @property
     def IsPythonProject(self) -> bool:
