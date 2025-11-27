@@ -2,7 +2,7 @@
 #include "common.h"
 
 /**
- * All possible color which the console can display, using `nttPlatformSetColor`
+ * All possible color which the console can display, using `meedPlatformSetColor`
  * for modifying the color.
  */
 enum NTT_BINDING NTTConsoleColor : u8
@@ -19,14 +19,14 @@ enum NTT_BINDING NTTConsoleColor : u8
 };
 
 /**
- * Modify the following content's color which is used by `nttPlatformPrint`.
+ * Modify the following content's color which is used by `meedPlatformPrint`.
  * @param color The color to set the console to.
  */
-void nttPlatformSetColor(enum NTTConsoleColor color) NTT_BINDING;
+void meedPlatformSetColor(enum NTTConsoleColor color) NTT_BINDING;
 
 /**
  * Print formatted content to the console.
  * @param format The format string.
  * @param ... The format arguments.
  */
-void nttPlatformPrint(const char *format, ...) NTT_BINDING;
+void meedPlatformPrint(const char *format, ...) NTT_BINDING;

@@ -30,15 +30,11 @@ class SystemInfo:
 
     @property
     def PythonProjects(self) -> list[str]:
-        return ["autogen"]
+        return ["autogen", "editor"]
 
     @property
     def CProjects(self) -> list[str]:
         return ["engine"]
-
-    @property
-    def JSProjects(self) -> list[str]:
-        return ["editor"]
 
 
 SYSTEM = SystemInfo()  # Global constant instance

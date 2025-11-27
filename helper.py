@@ -6,13 +6,11 @@ from config import (
     RunEditor,
     RunAutogen,
     RunExample,
-    SetupEditor,
     SetupLogging,
     CreateEnvironment,
     InstallPythonDependencies,
     ValidateCommandExist,
     InstallCDependencies,
-    InstallEditorDependencies,
 )
 
 
@@ -29,8 +27,8 @@ def main():
     logger.info("System health check passed.")
 
     CreateEnvironment(dir="autogen", **args.Args)
+    CreateEnvironment(dir="editor", **args.Args)
     InstallCDependencies()
-    SetupEditor()
     RunAutogen(**args.Args)
 
     if args.IsBuild:
@@ -40,9 +38,8 @@ def main():
         if args.IsPythonProject:
             InstallPythonDependencies(**args.Args)
         elif args.IsCProject:
-            InstallEditorDependencies(**args.Args)
-        elif args.IsJSProject:
-            InstallEditorDependencies(**args.Args)
+            # InstallCDependencies(**args.Args)
+            pass
         else:
             raise NotImplementedError(
                 f'Packaging for project "{args.args.project}" is not implemented.'

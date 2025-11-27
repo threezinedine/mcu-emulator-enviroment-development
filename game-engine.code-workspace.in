@@ -21,7 +21,7 @@
             "path": "config"
         },
         {
-            "name": "ntt-voxel-game-engine",
+            "name": "meed-voxel-game-engine",
             "path": "."
         }
     ],

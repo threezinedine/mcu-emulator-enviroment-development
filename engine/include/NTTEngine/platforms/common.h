@@ -68,10 +68,10 @@ static_assert(sizeof(b32) == 4, "b32 size is not 4 bytes");
 	{                                                                          \
 		if (!(expr))                                                           \
 		{                                                                      \
-			nttPlatformSetColor(NTT_PLATFORM_COLOR_RED);                       \
+			meedPlatformSetColor(NTT_PLATFORM_COLOR_RED);                       \
 			printf(                                                            \
 				"Assertion failed: %s at %s:%d\n", msg, __FILE__, __LINE__);   \
-			nttPlatformSetColor(NTT_PLATFORM_COLOR_RESET);                     \
+			meedPlatformSetColor(NTT_PLATFORM_COLOR_RESET);                     \
 			debugBreak();                                                      \
 		}                                                                      \
 	} while (0)

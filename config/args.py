@@ -6,7 +6,7 @@ from .system_info import SYSTEM
 class Args:
     def __init__(self):
         parser = argparse.ArgumentParser(
-            description="ntt-voxel-game-engine configuration"
+            description="meed-voxel-game-engine configuration"
         )
 
         parser.add_argument(
@@ -149,9 +149,3 @@ class Args:
         assert self.args is not None, "Args is not initialized."
         assert self.args.project is not None, "Project name is not specified."
         return self.args.project in SYSTEM.CProjects
-
-    @property
-    def IsJSProject(self) -> bool:
-        assert self.args is not None, "Args is not initialized."
-        assert self.args.project is not None, "Project name is not specified."
-        return self.args.project in SYSTEM.JSProjects

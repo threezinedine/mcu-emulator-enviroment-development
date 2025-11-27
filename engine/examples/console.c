@@ -2,13 +2,13 @@
 
 int main(void)
 {
-	nttPlatformSetColor(NTT_CONSOLE_COLOR_GREEN);
-	nttPlatformPrint("Hello, NTT Engine Console Green!\n");
+	meedPlatformSetColor(NTT_CONSOLE_COLOR_GREEN);
+	meedPlatformPrint("Hello, NTT Engine Console Green!\n");
 
-	nttPlatformSetColor(NTT_CONSOLE_COLOR_RED);
-	nttPlatformPrint("Hello, NTT Engine Console Red!\n");
+	meedPlatformSetColor(NTT_CONSOLE_COLOR_RED);
+	meedPlatformPrint("Hello, NTT Engine Console Red!\n");
 
-	nttPlatformSetColor(NTT_CONSOLE_COLOR_RESET);
-	nttPlatformPrint("Hello, NTT Engine Console Reset!\n");
+	meedPlatformSetColor(NTT_CONSOLE_COLOR_RESET);
+	meedPlatformPrint("Hello, NTT Engine Console Reset!\n");
 	return 0;
 }

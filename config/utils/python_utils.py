@@ -182,3 +182,15 @@ def RunAutogen(
         f'"{GetPythonExecutable("autogen")}" main.py {"--reload" if reload else ""}',
         cwd="autogen",
     )
+
+def RunEditor(
+    **kwargs: Any,
+) -> None:
+    """
+    Launch the code editor.
+    """
+    logger.info("Launching code editor...")
+    RunCommand(
+        f'"{GetPythonExecutable("editor")}" main.py',
+        cwd="editor",
+    )

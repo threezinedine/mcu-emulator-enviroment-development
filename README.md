@@ -1,4 +1,4 @@
-# ntt-voxel-game-engine
+# meed-voxel-game-engine
 
 ## Requirements
 

@@ -16,12 +16,12 @@ static const char *ansi[] = {
 	[NTT_CONSOLE_COLOR_BOLD]	= "\033[1m",
 };
 
-void nttPlatformSetColor(enum NTTConsoleColor color)
+void meedPlatformSetColor(enum NTTConsoleColor color)
 {
 	printf("%s", ansi[color]);
 }
 
-void nttPlatformPrint(const char *format, ...)
+void meedPlatformPrint(const char *format, ...)
 {
 	va_list args;
 	va_start(args, format);

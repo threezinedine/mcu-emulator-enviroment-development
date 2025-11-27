@@ -1,9 +1,0 @@
-{
-    "appId": "com.threezinedine.nttvoxelgameengineeditor",
-    "productName": "NTT Voxel Game Engine Editor",
-    "directories": {
-        "output": "dist",
-        "buildResources": "assets"
-    },
-    "files": ["app-dist/**/*", "node_modules/**/*", "app-dist/index.js"]
-}
