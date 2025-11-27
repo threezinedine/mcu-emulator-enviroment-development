@@ -17,6 +17,6 @@ foreach (EXAMPLE_SOURCE ${EXAMPLE_SOURCES})
     target_link_libraries(
         ${EXAMPLE_FILE_NAME}
         PUBLIC
-        NTTEngine
+        MEEDEngine
     )
 endforeach()

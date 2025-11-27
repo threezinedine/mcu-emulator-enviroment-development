@@ -7,7 +7,7 @@
             ],
             "defines": [
                 "{{ PLATFORM_DEFINE }}",
-                "NTT_DEBUG"
+                "MEED_DEBUG"
             ],
             "compilerPath": "{{ COMPILER_PATH }}",
             "cStandard": "c17",

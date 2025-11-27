@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.20)
-project(NTTEngine)
+project(MEEDEngine)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/../cmake)
-include(NTTConfigure)
+include(MEEDConfigure)
 
-NTTDetectPlatform()
+MEEDDetectPlatform()
 
 file(
     GLOB 
@@ -16,8 +16,8 @@ file(
 file(
     GLOB 
     HEADER_FILES 
-    ${CMAKE_SOURCE_DIR}/include/NTTEngine/*.h
-    ${CMAKE_SOURCE_DIR}/include/NTTEngine/**/*.h
+    ${CMAKE_SOURCE_DIR}/include/MEEDEngine/*.h
+    ${CMAKE_SOURCE_DIR}/include/MEEDEngine/**/*.h
 )
 
 add_library(
@@ -42,7 +42,7 @@ target_compile_definitions(
 target_precompile_headers(
     ${PROJECT_NAME}
     PUBLIC
-    ${CMAKE_SOURCE_DIR}/include/NTTEngine/platforms/common.h
+    ${CMAKE_SOURCE_DIR}/include/MEEDEngine/platforms/common.h
 )
 
 add_subdirectory("examples")

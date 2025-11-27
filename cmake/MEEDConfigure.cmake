@@ -1,4 +1,4 @@
-macro(NTTDetectPlatform)
+macro(MEEDDetectPlatform)
     if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
         set(PLATFORM_DEFINITION PLATFORM_IS_LINUX)
     elseif (CMAKE_SYSTEM_NAME STREQUAL "Windows")

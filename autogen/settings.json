@@ -1,10 +1,10 @@
 {
     "bindings": [
         {
-            "file": "engine/include/NTTEngine/NTTEngine.h",
+            "file": "engine/include/MEEDEngine/MEEDEngine.h",
             "template": "autogen/templates/pyi.j2",
             "output": "engine/tmp/__init__.pyi",
-            "dependencies": ["engine/include/NTTEngine"],
+            "dependencies": ["engine/include/MEEDEngine"],
             "extensions": [".h"]
         }
     ],

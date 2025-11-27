@@ -3,9 +3,61 @@ from pathlib import Path
 from utils import SYSTEM
 from analyze import Parser
 from models import Binding
-from jinja2 import FileSystemLoader, Template as JinjaTemplate
 from jinja2 import Environment
+from jinja2 import FileSystemLoader
 from utils import IsFileModified, UpdateFileStamp, logger
+
+
+def _CTypeConvert(cType: str) -> str:
+    """
+    Convert a C type to a Python type.
+
+    Arguments
+    ---------
+    cType : str
+        The C type to convert.
+
+    Returns
+    -------
+    str
+        The converted Python type.
+    """
+
+    cType = cType.strip()
+
+    if cType in [
+        "unsigned int",
+        "uint32_t",
+        "uint16_t",
+        "uint8_t",
+        "int",
+        "short",
+        "long",
+        "unsigned short",
+        "unsigned long",
+        "int32_t",
+        "int16_t",
+        "int8_t",
+        "long long",
+        "unsigned long long",
+        "int64_t",
+        "uint64_t",
+        "unsigned char",
+        "char",
+        "signed char",
+    ]:
+        return "int"
+    elif cType in ["float", "double"]:
+        return "float"
+    elif cType in [
+        "const char *",
+        "char *",
+    ]:
+        return "str"
+    elif cType == "void":
+        return "None"
+    else:
+        return cType
 
 
 def _IsFileValid(
@@ -178,17 +230,15 @@ def GenerateBindings(
     with open(templatePath, "r") as f:
         templateContent = f.read()
 
-    if testContent is None:
-        env = Environment(loader=FileSystemLoader(SYSTEM.BASE_DIR))
-        template = env.from_string(templateContent)
-    else:
-        template = JinjaTemplate(templateContent)
+    env = Environment(loader=FileSystemLoader(SYSTEM.BASE_DIR))
+    template = env.from_string(templateContent)
 
     content = template.render(
         structs=parser.Structs,
         enums=parser.Enums,
         typedefs=parser.Typedefs,
         functions=parser.Functions,
+        cTypeConvert=_CTypeConvert,
     )
 
     if testContent is None:

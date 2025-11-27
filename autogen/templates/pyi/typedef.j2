@@ -1,0 +1,5 @@
+{% for typedef in typedefs-%}
+{% if "binding" in typedef.annotations-%}
+{{ typedef.name }}: TypeAlias = {{ cTypeConvert(typedef.underlyingType) }}
+{% endif-%}
+{% endfor-%}
