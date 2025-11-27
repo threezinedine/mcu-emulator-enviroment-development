@@ -48,7 +48,7 @@ def InstallCDependencies(
         RunCommand(f"git clone {dependency.url} {dependencyDir}")
 
 
-def Build(
+def BuildCProject(
     project: str,
     type: str = "debug",
     **kwargs: Any,
@@ -69,6 +69,12 @@ def Build(
     logger.info(f'Building project "{project}" with build type "{type}"...')
     RunCommand(f"cmake -S . -B build/{type} {additionalOptions}", cwd=project)
     RunCommand(f"cmake --build build/{type} --config {type.capitalize()}", cwd=project)
+
+
+def RunTestEngine(
+    **kwargs: Any,
+) -> None:
+    pass
 
 
 def RunExample(
@@ -104,7 +110,7 @@ def RunExample(
             "Current platform is not supported for running examples."
         )
 
-    Build("engine", type=type, **kwargs)
+    BuildCProject("engine", type=type, **kwargs)
 
     logger.debug(f"Example directory resolved to: {exampleDir}")
 

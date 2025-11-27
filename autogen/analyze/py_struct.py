@@ -1,6 +1,14 @@
 import clang.cindex as cindex  # type: ignore
+from .py_field import PyField
+from .py_object import PyObject
 
 
-class PyStruct:
+class PyStruct(PyObject):
     def __init__(self, cursor: cindex.Cursor):
-        pass
+        super().__init__(cursor)
+        self.fields: list[PyField] = []
+
+        for child in cursor.get_children():
+            print(child.kind)
+            if child.kind == cindex.CursorKind.FIELD_DECL:
+                self.fields.append(PyField(child))

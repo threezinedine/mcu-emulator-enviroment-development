@@ -1,19 +1,21 @@
 from config import (
     Args,
     logger,
-    Build,
     SYSTEM,
     RunEditor,
     RunAutogen,
     RunExample,
     SetupLogging,
     OpenDesigner,
+    BuildCProject,
+    RunTestEngine,
     CreateEnvironment,
     RunEditorConvertUI,
     ValidateCommandExist,
     InstallCDependencies,
     InstallPythonDependencies,
 )
+from config.utils.python_utils import RunPythonTest
 
 
 def main():
@@ -36,7 +38,7 @@ def main():
 
     if args.IsBuild:
         if args.IsCProject:
-            Build(**args.Args)
+            BuildCProject(**args.Args)
     elif args.IsPackage:
         if args.IsPythonProject:
             InstallPythonDependencies(**args.Args)
@@ -47,10 +49,20 @@ def main():
             raise NotImplementedError(
                 f'Packaging for project "{args.args.project}" is not implemented.'
             )
+    elif args.IsRunTest:
+        if args.IsPythonProject:
+            RunPythonTest(**args.Args)
+        elif args.IsCProject:
+            BuildCProject(**args.Args)
+            RunTestEngine(**args.Args)
+        else:
+            raise NotImplementedError(
+                f'Testing for project "{args.args.project}" is not implemented.'
+            )
     elif args.IsRunDesigner:
         OpenDesigner(**args.Args)
     elif args.IsRun:
-        Build("engine", **args.Args)
+        BuildCProject(project="engine", **args.Args)
         RunEditor(**args.Args)
     elif args.IsRunExample:
         RunExample(**args.Args)

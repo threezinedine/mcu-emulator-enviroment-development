@@ -64,11 +64,9 @@ class Args:
         )
 
         packageSubParser.add_argument(
-            "--project",
-            "-p",
+            "project",
             type=str,
             choices=["editor", "autogen"],
-            default="editor",
             help="Project to install dependencies for (editor or autogen)",
         )
 
@@ -106,6 +104,26 @@ class Args:
         subparser.add_parser(
             "designer",
             help="Run the GUI designer tool",
+        )
+
+        testSubParser = subparser.add_parser(
+            "test",
+            help="Run the test suite",
+        )
+
+        testSubParser.add_argument(
+            "project",
+            type=str,
+            choices=["autogen", "editor", "engine"],
+            help="Project to test",
+        )
+
+        testSubParser.add_argument(
+            "--filter",
+            "-f",
+            type=str,
+            default=None,
+            help="Filter tests to run by name",
         )
 
         self.args = parser.parse_args()
@@ -146,6 +164,10 @@ class Args:
     @property
     def IsRunDesigner(self) -> str:
         return self.args.command == "designer"
+
+    @property
+    def IsRunTest(self) -> str:
+        return self.args.command == "test"
 
     @property
     def IsPythonProject(self) -> bool:

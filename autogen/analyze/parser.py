@@ -1,0 +1,98 @@
+import clang.cindex as cindex  # type: ignore
+from .py_struct import PyStruct
+from .py_enum import PyEnum
+from .py_typedef import PyTypedef
+from .py_function import PyFunction
+
+
+class Parser:
+    """
+    Extracts the C header files' contents and convert them into self-defined python structures.
+
+    Arguments
+    ---------
+    content : str
+        The content of the C header file.
+    """
+
+    def __init__(self, content: str) -> None:
+        index = cindex.Index.create()
+        translationUnit: cindex.TranslationUnit = index.parse(  # type: ignore
+            "tmp.h",
+            args=["-x", "c", "-std=c17"],
+            unsaved_files=[("tmp.h", content)],
+            options=0,
+        )
+        self._cursor: cindex.Cursor = translationUnit.cursor
+
+        self._pyStructs: list[PyStruct] = []
+        self._pyEnums: list[PyEnum] = []
+        self._pyTypedefs: list[PyTypedef] = []
+        self._pyFunctions: list[PyFunction] = []
+
+    def Parse(self) -> None:
+        """
+        The main method of of the parser whereas it extracts the structures from the C header file content.
+        """
+        for child in self._cursor.get_children():
+            print(child.kind)
+            if child.kind == cindex.CursorKind.STRUCT_DECL:
+                pyStruct = PyStruct(child)
+                self._pyStructs.append(pyStruct)
+            elif child.kind == cindex.CursorKind.ENUM_DECL:
+                pyEnum = PyEnum(child)
+                self._pyEnums.append(pyEnum)
+            elif child.kind == cindex.CursorKind.TYPEDEF_DECL:
+                pyTypedef = PyTypedef(child)
+                self._pyTypedefs.append(pyTypedef)
+            elif child.kind == cindex.CursorKind.FUNCTION_DECL:
+                pyFunction = PyFunction(child)
+                self._pyFunctions.append(pyFunction)
+
+    @property
+    def Structs(self) -> list[PyStruct]:
+        """
+        Returns the parsed structures.
+
+        Returns
+        -------
+        list[PyStruct]
+            The list of parsed structures.
+        """
+        return self._pyStructs
+
+    @property
+    def Enums(self) -> list[PyEnum]:
+        """
+        Returns the parsed enumerations.
+
+        Returns
+        -------
+        list
+            The list of parsed enumerations.
+        """
+        return self._pyEnums
+
+    @property
+    def Typedefs(self) -> list[PyTypedef]:
+        """
+        Returns the parsed typedefs.
+
+        Returns
+        -------
+        list
+            The list of parsed typedefs.
+        """
+        return self._pyTypedefs
+
+    @property
+    def Functions(self) -> list[PyFunction]:
+        """
+        Returns the parsed functions.
+
+        Returns
+        -------
+        list
+            The list of parsed functions.
+        """
+        return self._pyFunctions

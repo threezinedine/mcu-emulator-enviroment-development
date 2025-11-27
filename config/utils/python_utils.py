@@ -101,6 +101,7 @@ def GetPytestExecutable(
             "pytest",
         )
 
+
 def GetDesignerExecutable(
     project: str,
 ) -> str:
@@ -169,6 +170,7 @@ def CreateEnvironment(
         cwd=os.path.join(SYSTEM.BaseDir, dir),
     )
 
+
 def RunEditorConvertUI(
     reload: bool = False,
     **kwargs: Any,
@@ -177,13 +179,16 @@ def RunEditorConvertUI(
     Run the UI conversion process for the editor project.
     """
     if reload:
-        shutil.rmtree(os.path.join(SYSTEM.BaseDir, "editor", "pyui"), ignore_errors=True)
+        shutil.rmtree(
+            os.path.join(SYSTEM.BaseDir, "editor", "pyui"), ignore_errors=True
+        )
 
     logger.info("Converting .ui files to .py files...")
     RunCommand(
         f'"{GetPythonExecutable("editor")}" convert.py',
         cwd=os.path.join(SYSTEM.BaseDir, "editor"),
     )
+
 
 def InstallPythonDependencies(
     project: str,
@@ -229,6 +234,7 @@ def RunAutogen(
         cwd="autogen",
     )
 
+
 def RunEditor(
     **kwargs: Any,
 ) -> None:
@@ -241,6 +247,7 @@ def RunEditor(
         cwd="editor",
     )
 
+
 def OpenDesigner(
     **kwargs: Any,
 ) -> None:
@@ -251,4 +258,23 @@ def OpenDesigner(
     RunCommand(
         f'"{GetDesignerExecutable("editor")}"',
         cwd="editor",
-)
+    )
+
+
+def RunPythonTest(
+    project: str,
+    filter: str | None = None,
+    **kwargs: Any,
+) -> None:
+    """
+    Run the test suite for the specified project.
+
+    Arguments:
+        project (str): The project to run tests for.
+    """
+    logger.info("Running test suite...")
+
+    RunCommand(
+        f'"{GetPytestExecutable(project)}" {"-k " + filter if filter else ""}',
+        cwd=os.path.join(SYSTEM.BaseDir, project),
+    )
