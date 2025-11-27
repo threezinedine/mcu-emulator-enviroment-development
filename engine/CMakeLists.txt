@@ -39,4 +39,10 @@ target_compile_definitions(
     ${PLATFORM_DEFINITION}
 )
 
+target_precompile_headers(
+    ${PROJECT_NAME}
+    PUBLIC
+    ${CMAKE_SOURCE_DIR}/include/NTTEngine/platforms/common.h
+)
+
 add_subdirectory("examples")

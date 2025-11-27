@@ -6,7 +6,8 @@
                 "${workspaceFolder}/**"
             ],
             "defines": [
-                "{{ PLATFORM_DEFINE }}"
+                "{{ PLATFORM_DEFINE }}",
+                "NTT_DEBUG"
             ],
             "compilerPath": "{{ COMPILER_PATH }}",
             "cStandard": "c17",
