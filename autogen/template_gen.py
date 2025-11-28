@@ -13,12 +13,6 @@ def GenerateTemplate(template: Template) -> str:
     template : Template
         The template configuration.
     """
-    if not IsFileModified(template.file):
-        logger.debug(
-            f'Template file "{template.file}" has not been modified, skipping...'
-        )
-        return ""
-
     templatePath = os.path.join(SYSTEM.BASE_DIR, template.file)
 
     if not os.path.exists(templatePath):
@@ -31,6 +25,12 @@ def GenerateTemplate(template: Template) -> str:
         outputFile = template.output
 
     fullOutputPath = os.path.join(SYSTEM.BASE_DIR, outputFile)
+
+    if not IsFileModified(template.file) and os.path.exists(fullOutputPath):
+        logger.debug(
+            f'Template file "{template.file}" has not been modified, skipping...'
+        )
+        return ""
 
     with open(templatePath, "r") as f:
         templateContent = f.read()
