@@ -1,6 +1,16 @@
 {
     "recommendations": [
         "ms-vscode.cpptools",
-        "esbenp.prettier-vscode"
+        "esbenp.prettier-vscode",
+        "xaver.clang-format",
+        "eamodio.gitlens",
+        "ms-python.black-formatter",
+        "wholroyd.jinja",
+        "yzhang.markdown-all-in-one",
+        "ms-python.vscode-pylance",
+        "ms-python.debugpy",
+        "ms-python.vscode-python-envs",
+        "Gruntfuggly.todo-tree",
+        "github.vscode-github-actions"
     ]
 }
