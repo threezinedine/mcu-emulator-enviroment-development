@@ -126,6 +126,7 @@ def _ConvertRawCCommentToPythonDocstring(pyObject: PyObject) -> str:
             " ",
             "/",
             "*",
+            "<",
         ]:
             index += 1
 
@@ -173,6 +174,7 @@ def _ConvertRawCCommentToPythonComment(pyObject: PyObject) -> str:
             " ",
             "/",
             "*",
+            "<",
         ]:
             index += 1
 

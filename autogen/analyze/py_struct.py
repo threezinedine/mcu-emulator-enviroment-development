@@ -11,3 +11,6 @@ class PyStruct(PyObject):
         for child in cursor.get_children():
             if child.kind == cindex.CursorKind.FIELD_DECL:
                 self.fields.append(PyField(child))
+
+    def __repr__(self) -> str:
+        return f'<PyStruct name="{self.name}" />'
