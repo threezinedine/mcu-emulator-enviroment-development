@@ -43,7 +43,9 @@ def main():
         settings = from_dict(data_class=Settings, data=json.loads(f.read()))
 
     for template in settings.templates:
-        GenerateTemplate(template)
+        _, deps = GenerateTemplate(template)
+        for dep in deps:
+            dependencies.add(dep)
 
     for binding in settings.bindings:
         _, deps = GenerateBindings(binding)
@@ -52,6 +54,7 @@ def main():
 
     for dependency in dependencies:
         UpdateFileStamp(dependency)
+
 
 if __name__ == "__main__":
     main()

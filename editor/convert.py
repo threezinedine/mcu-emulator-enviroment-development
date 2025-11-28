@@ -7,6 +7,8 @@ from utils import convertLogger, IsFileModified, UpdateFileCache
 PYUI_DIR = "pyui"
 ASSETS_DIR = os.path.join("assets")
 UIS_DIR = os.path.join(ASSETS_DIR, "uis")
+ICONS_DIR = os.path.join(ASSETS_DIR, "icons")
+IMAGES_DIR = os.path.join(ASSETS_DIR, "images")
 
 if os.name == "nt":
     PYUIC_PATH = os.path.join(
@@ -66,6 +68,8 @@ def main():
         "# This file is auto-generated to mark the pyui directory as a package.\n"
     )
 
+    isAnyUIFileChanged = False
+
     for fileName in allUIFiles:
         if fileName.endswith(".ui"):
             uiFilePath = os.path.join(UIS_DIR, fileName)
@@ -80,13 +84,15 @@ def main():
                 )
                 continue
 
+            isAnyUIFileChanged = True
             convertLogger.info(f'Converting "{uiFilePath}" to "{outputPath}"...')
             os.system(f'{PYUIC_PATH} "{uiFilePath}" -o "{outputPath}"')
 
             UpdateFileCache(uiFilePath)
 
-    with open(os.path.join(PYUI_DIR, "__init__.py"), "w") as initFile:
-        initFile.write(initFileContent)
+    if not isAnyUIFileChanged:
+        with open(os.path.join(PYUI_DIR, "__init__.py"), "w") as initFile:
+            initFile.write(initFileContent)
 
 
 if __name__ == "__main__":

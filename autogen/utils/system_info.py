@@ -17,7 +17,6 @@ class SystemInfo:
 
         self._pythonIncludeDir = sysconfig.get_path("include")
 
-
     @property
     def BASE_DIR(self) -> str:
         return os.path.dirname(
@@ -53,6 +52,15 @@ class SystemInfo:
     def PythonIncludeDir(self) -> str:
         return self._pythonIncludeDir
 
+    def GetAllEditorResources(self) -> list[str]:
+        iconDir = os.path.join(self.BASE_DIR, "editor", "assets", "icons")
+        imagesDir = os.path.join(self.BASE_DIR, "editor", "assets", "images")
+        resources = [os.path.join("assets/icons", file) for file in os.listdir(iconDir)]
+        resources += [
+            os.path.join("assets/images", file) for file in os.listdir(imagesDir)
+        ]
+        return resources
+
 
 SYSTEM = SystemInfo()
 TEMPLATE_DATA = dict(
@@ -64,4 +72,5 @@ TEMPLATE_DATA = dict(
     INTELLISENSE_MODE=SYSTEM.IntelliSenseMode,
     PYTHON_INTERPRETER=SYSTEM.PythonInterpreter,
     PYTHON_INCLUDE_DIR=SYSTEM.PythonIncludeDir,
+    RESOURCE_FILES=SYSTEM.GetAllEditorResources(),
 )

@@ -30,6 +30,11 @@
         },
         {
             "file": "cmake/MEEDConfigure.cmake.in"
+        },
+        {
+            "file": "editor/resources.qrc.in",
+            "dependencies": ["editor/assets/icons", "editor/assets/images"],
+            "extensions": [".ico", ".png"]
         }
     ]
 }

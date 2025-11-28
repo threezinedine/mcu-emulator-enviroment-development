@@ -1,7 +1,9 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass
 class Template:
     file: str
-    output: str | None = None
+    output: str | None = field(default=None)
+    dependencies: list[str] | None = field(default=None)
+    extensions: list[str] | None = field(default=None)

@@ -1,0 +1,8 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/">
+    {% for resourceFile in RESOURCE_FILES-%}
+        {{ "    " }}<file>{{ resourceFile }}</file>
+    {% endfor-%}
+    </qresource>
+</RCC>

@@ -1,10 +1,17 @@
 import os
 from models import Template
 from jinja2 import Template as JinjaTemplate
-from utils import SYSTEM, TEMPLATE_DATA, IsFileModified, UpdateFileStamp, logger
+from utils import (
+    SYSTEM,
+    logger,
+    TEMPLATE_DATA,
+    IsFileModified,
+    UpdateFileStamp,
+    AllDependenciesFiles,
+)
 
 
-def GenerateTemplate(template: Template) -> str:
+def GenerateTemplate(template: Template) -> tuple[str, list[str]]:
     """
     The tools creating the template files.
 
@@ -15,9 +22,25 @@ def GenerateTemplate(template: Template) -> str:
     """
     templatePath = os.path.join(SYSTEM.BASE_DIR, template.file)
 
+    allDependencies = []
+
+    if template.dependencies is not None:
+        assert (
+            template.extensions is not None
+        ), f'Template "{template.file}" has dependencies but no extensions specified.'
+
+        allDependencies = AllDependenciesFiles(
+            template.dependencies,
+            template.extensions,
+        )
+
+        logger.debug(
+            f'All dependency files for template "{template.file}": \n{str(allDependencies).replace(", ", ",\n\t").replace("[", "[\n\t").replace("]", "\n]")}'
+        )
+
     if not os.path.exists(templatePath):
         logger.warning(f'Template file "{template.file}" does not exist, skipping...')
-        return ""
+        return "", []
 
     outputFile = template.file[:-3]  # remove .in extension
 
@@ -26,11 +49,21 @@ def GenerateTemplate(template: Template) -> str:
 
     fullOutputPath = os.path.join(SYSTEM.BASE_DIR, outputFile)
 
-    if not IsFileModified(template.file) and os.path.exists(fullOutputPath):
+    isAnyDependencyModified = False
+    for depFile in allDependencies:
+        if IsFileModified(depFile):
+            isAnyDependencyModified = True
+            break
+
+    if (
+        not isAnyDependencyModified
+        and not IsFileModified(template.file)
+        and os.path.exists(fullOutputPath)
+    ):
         logger.debug(
             f'Template file "{template.file}" has not been modified, skipping...'
         )
-        return ""
+        return "", []
 
     with open(templatePath, "r") as f:
         templateContent = f.read()
@@ -44,4 +77,4 @@ def GenerateTemplate(template: Template) -> str:
 
     UpdateFileStamp(template.file)
 
-    return renderedContent
+    return renderedContent, allDependencies
