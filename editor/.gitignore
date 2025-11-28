@@ -2,3 +2,4 @@ pyui/
 Engine/__init__.pyi
 temp/
 resources.qrc
+resources_rc.py

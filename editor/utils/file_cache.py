@@ -23,7 +23,7 @@ def GetFileCachePath(filename: str) -> str:
     if not os.path.exists(cacheDir):
         os.makedirs(cacheDir)
 
-    return os.path.join(cacheDir, filename)
+    return os.path.join(cacheDir, f"{filename}.stamp")
 
 
 def ClearCache() -> None:

@@ -16,11 +16,23 @@ if os.name == "nt":
         "Scripts",
         "pyside6-uic.exe",
     )
+
+    PYRCC_PATH = os.path.join(
+        "venv",
+        "Scripts",
+        "pyside6-rcc.exe",
+    )
 else:
     PYUIC_PATH = os.path.join(
         "venv",
         "bin",
         "pyside6-uic",
+    )
+
+    PYRCC_PATH = os.path.join(
+        "venv",
+        "bin",
+        "pyside6-rcc",
     )
 
 
@@ -93,6 +105,15 @@ def main():
     if not isAnyUIFileChanged:
         with open(os.path.join(PYUI_DIR, "__init__.py"), "w") as initFile:
             initFile.write(initFileContent)
+
+    qrcFile = "resources.qrc"
+    if os.path.exists(qrcFile):
+        outputPath = os.path.join("resources_rc.py")
+        if not os.path.exists(outputPath) or IsFileModified(qrcFile):
+            convertLogger.info(f'Converting "{qrcFile}" to "{outputPath}"...')
+            os.system(f'{PYRCC_PATH} "{qrcFile}" -o "{outputPath}"')
+
+            UpdateFileCache(qrcFile)
 
 
 if __name__ == "__main__":
