@@ -65,18 +65,38 @@ target_link_libraries(
 add_subdirectory("examples")
 
 # ================ Engine Binding Lib ================
-set(BINDIND_PROJECT "${PROJECT_NAME}Binding")
+set(BINDING_PROJECT "${PROJECT_NAME}Binding")
 set(BINDING_SOURCE_FILES ${CMAKE_SOURCE_DIR}/tmp/binding.cpp)
 
-add_library(
-    ${BINDIND_PROJECT}
-    STATIC
+pybind11_add_module(
+    ${BINDING_PROJECT}
     ${BINDING_SOURCE_FILES} 
 )
 
 target_link_libraries(
-    ${BINDIND_PROJECT}
+    ${BINDING_PROJECT}
     PUBLIC
     ${PROJECT_NAME}
+    PRIVATE
     MEEDpybind11
+)
+
+set_target_properties(
+    ${BINDING_PROJECT}
+    PROPERTIES
+    OUTPUT_NAME ${PROJECT_NAME}
+    SUFFIX ".so"
+)
+
+# ================ Copy Resources ================
+set(LIB_FILE ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.so)
+set(OUTPUT_FILE ${PROJECT_BASE_DIR}/editor/Engine/${PROJECT_NAME}.so)
+
+add_custom_command(
+    TARGET ${BINDING_PROJECT} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    ${LIB_FILE}
+    ${OUTPUT_FILE}
+    DEPENDS ${LIB_FILE}
+    COMMENT "Copying MEED Engine binding to Editor directory"
 )
