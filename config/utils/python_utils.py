@@ -289,8 +289,11 @@ def BuildEditor(
     """
     logger.info("Building editor project...")
 
+    assetDir = os.path.join(SYSTEM.BaseDir, "editor", "assets")
+    iconPath = os.path.join(assetDir, "icons", "meed-log.ico")
+
     RunCommand(
-        f'"{GetPyinstallerExecutable("editor")}" --onefile main.py --name Meed',
+        f'"{GetPyinstallerExecutable("editor")}" --onefile main.py --name Meed --icon {iconPath}',
         cwd="editor",
     )
 
