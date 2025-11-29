@@ -166,6 +166,58 @@ TEST_F(DynamicArrayTest, InsertOutOfBounds)
 		"");
 }
 
+TEST_F(DynamicArrayTest, EraseAtBeginning)
+{
+	meedDynamicArrayPush(s_pArray, &a); // Array: [10]
+	meedDynamicArrayPush(s_pArray, &b); // Array: [10, 20]
+	meedDynamicArrayPush(s_pArray, &c); // Array: [10, 20, 30]
+
+	meedDynamicArrayErase(s_pArray, 0); // Array: [20, 30]
+
+	EXPECT_EQ(s_pArray->count, 2u);
+	EXPECT_EQ(*(int*)meedDynamicArrayAt(s_pArray, 0), 20);
+	EXPECT_EQ(*(int*)meedDynamicArrayAt(s_pArray, 1), 30);
+}
+
+TEST_F(DynamicArrayTest, EraseAtMiddle)
+{
+	meedDynamicArrayPush(s_pArray, &a); // Array: [10]
+	meedDynamicArrayPush(s_pArray, &b); // Array: [10, 20]
+	meedDynamicArrayPush(s_pArray, &c); // Array: [10, 20, 30]
+
+	meedDynamicArrayErase(s_pArray, 1); // Array: [10, 30]
+
+	EXPECT_EQ(s_pArray->count, 2u);
+	EXPECT_EQ(*(int*)meedDynamicArrayAt(s_pArray, 0), 10);
+	EXPECT_EQ(*(int*)meedDynamicArrayAt(s_pArray, 1), 30);
+}
+
+TEST_F(DynamicArrayTest, EraseAtEnd)
+{
+	meedDynamicArrayPush(s_pArray, &a); // Array: [10]
+	meedDynamicArrayPush(s_pArray, &b); // Array: [10, 20]
+	meedDynamicArrayPush(s_pArray, &c); // Array: [10, 20, 30]
+
+	meedDynamicArrayErase(s_pArray, 2); // Array: [10, 20]
+
+	EXPECT_EQ(s_pArray->count, 2u);
+	EXPECT_EQ(*(int*)meedDynamicArrayAt(s_pArray, 0), 10);
+	EXPECT_EQ(*(int*)meedDynamicArrayAt(s_pArray, 1), 20);
+}
+
+TEST_F(DynamicArrayTest, EraseOutOfBounds)
+{
+	meedDynamicArrayPush(s_pArray, &a); // Array: [10]
+
+	EXPECT_EXIT(
+		{
+			meedDynamicArrayErase(s_pArray, 1);
+			std::exit(MEED_EXCEPTION_TYPE_OUT_OF_INDEX);
+		},
+		testing::ExitedWithCode(MEED_EXCEPTION_TYPE_OUT_OF_INDEX),
+		"");
+}
+
 TEST_F(DynamicArrayTest, WithDeleteCallback)
 {
 	struct MEEDDynamicArray* pArrayWithCallback = meedDynamicArrayCreate(0, deleteTestNode);
@@ -205,6 +257,31 @@ TEST_F(DynamicArrayTest, ClearWithDeleteCallback)
 
 	EXPECT_EQ(pArrayWithCallback->count, 0u);
 	EXPECT_EQ(s_deleteCallCount, 2u);
+
+	meedDynamicArrayDestroy(pArrayWithCallback);
+}
+
+TEST_F(DynamicArrayTest, DeleteWithDeleteCallback)
+{
+	struct MEEDDynamicArray* pArrayWithCallback = meedDynamicArrayCreate(0, deleteTestNode);
+
+	TestNode* pNode1 = MEED_MALLOC(TestNode);
+	pNode1->value	 = 100;
+
+	TestNode* pNode2 = MEED_MALLOC(TestNode);
+	pNode2->value	 = 200;
+
+	meedDynamicArrayPush(pArrayWithCallback, pNode1);
+	meedDynamicArrayPush(pArrayWithCallback, pNode2);
+
+	EXPECT_EQ(pArrayWithCallback->count, 2u);
+
+	EXPECT_EQ(s_deleteCallCount, 0);
+	meedDynamicArrayErase(pArrayWithCallback, 0);
+	EXPECT_EQ(s_deleteCallCount, 1);
+
+	EXPECT_EQ(pArrayWithCallback->count, 1u);
+	EXPECT_EQ(((TestNode*)meedDynamicArrayAt(pArrayWithCallback, 0))->value, 200);
 
 	meedDynamicArrayDestroy(pArrayWithCallback);
 }

@@ -102,6 +102,31 @@ void meedDynamicArrayInsert(struct MEEDDynamicArray* pArray, u32 index, void* pD
 	pArray->count++;
 }
 
+void meedDynamicArrayErase(struct MEEDDynamicArray* pArray, u32 index)
+{
+	MEED_ASSERT(pArray != MEED_NULL);
+
+	if (index >= pArray->count)
+	{
+		MEED_THROW(MEED_EXCEPTION_TYPE_OUT_OF_INDEX,
+				   "Index out of bounds: Attempted to erase index %u in a dynamic array of size %u.",
+				   index,
+				   pArray->count);
+	}
+
+	if (pArray->pDeleteCallback != MEED_NULL)
+	{
+		pArray->pDeleteCallback(pArray->pData[index]);
+	}
+
+	for (u32 i = index; i < pArray->count - 1; i++)
+	{
+		pArray->pData[i] = pArray->pData[i + 1];
+	}
+
+	pArray->count--;
+}
+
 void meedDynamicArrayDestroy(struct MEEDDynamicArray* pArray)
 {
 	MEED_ASSERT(pArray != MEED_NULL);

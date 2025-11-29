@@ -108,6 +108,20 @@ void meedDynamicArrayClear(struct MEEDDynamicArray* pArray);
 void meedDynamicArrayInsert(struct MEEDDynamicArray* pArray, u32 index, void* pData);
 
 /**
+ * @brief Erases the element at a specific index in the dynamic array.
+ *
+ * This function removes the element at the specified index from the
+ * dynamic array and shifts subsequent elements to fill the gap.
+ * If a delete callback was provided during array creation, it will
+ * be called for the element's data before removal. If the index is
+ * out of bounds, an assertion is raised.
+ *
+ * @param pArray Pointer to the MEEDDynamicArray. If NULL, raises an assertion.
+ * @param index The zero-based index of the element to be erased. If out of bounds, raises an assertion.
+ */
+void meedDynamicArrayErase(struct MEEDDynamicArray* pArray, u32 index);
+
+/**
  * @brief Destroys a dynamic array and frees its memory.
  *
  * This function deallocates the memory used by the dynamic array and
