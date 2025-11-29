@@ -9,13 +9,15 @@ file(
 foreach (EXAMPLE_SOURCE ${EXAMPLE_SOURCES})
     get_filename_component(EXAMPLE_FILE_NAME ${EXAMPLE_SOURCE} NAME_WE)
 
+    set(EXAMPLE_FILE_PROJECT ${EXAMPLE_FILE_NAME})
+
     add_executable(
-        ${EXAMPLE_FILE_NAME}
+        ${EXAMPLE_FILE_PROJECT}
         ${EXAMPLE_SOURCE}
     )
 
     target_link_libraries(
-        ${EXAMPLE_FILE_NAME}
+        ${EXAMPLE_FILE_PROJECT}
         PUBLIC
         MEEDEngine
     )

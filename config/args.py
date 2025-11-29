@@ -125,6 +125,11 @@ class Args:
             help="Filter tests to run by name",
         )
 
+        subparser.add_parser(
+            "webruntime",
+            help="Run the web runtime environment",
+        )
+
         self.args = parser.parse_args()
 
     @property
@@ -167,6 +172,10 @@ class Args:
     @property
     def IsRunTest(self) -> str:
         return self.args.command == "test"
+
+    @property
+    def IsRunWebRuntime(self) -> str:
+        return self.args.command == "webruntime"
 
     @property
     def IsPythonProject(self) -> bool:

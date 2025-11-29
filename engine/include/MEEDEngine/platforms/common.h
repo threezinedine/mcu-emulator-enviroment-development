@@ -12,26 +12,25 @@
 #endif
 
 #if MEED_DEBUG
-#define MEED_ASSERT(expr)                                                      \
-	do                                                                         \
-	{                                                                          \
-		if (!(expr))                                                           \
-		{                                                                      \
-			debugBreak();                                                      \
-		}                                                                      \
+#define MEED_ASSERT(expr)                                                                                                                            \
+	do                                                                                                                                               \
+	{                                                                                                                                                \
+		if (!(expr))                                                                                                                                 \
+		{                                                                                                                                            \
+			debugBreak();                                                                                                                            \
+		}                                                                                                                                            \
 	} while (0)
 
-#define MEED_ASSERT_MSG(expr, msg)                                             \
-	do                                                                         \
-	{                                                                          \
-		if (!(expr))                                                           \
-		{                                                                      \
-			meedPlatformSetColor(MEED_PLATFORM_COLOR_RED);                     \
-			printf(                                                            \
-				"Assertion failed: %s at %s:%d\n", msg, __FILE__, __LINE__);   \
-			meedPlatformSetColor(MEED_PLATFORM_COLOR_RESET);                   \
-			debugBreak();                                                      \
-		}                                                                      \
+#define MEED_ASSERT_MSG(expr, msg)                                                                                                                   \
+	do                                                                                                                                               \
+	{                                                                                                                                                \
+		if (!(expr))                                                                                                                                 \
+		{                                                                                                                                            \
+			meedPlatformSetColor(MEED_PLATFORM_COLOR_RED);                                                                                           \
+			printf("Assertion failed: %s at %s:%d\n", msg, __FILE__, __LINE__);                                                                      \
+			meedPlatformSetColor(MEED_PLATFORM_COLOR_RESET);                                                                                         \
+			debugBreak();                                                                                                                            \
+		}                                                                                                                                            \
 	} while (0)
 #else
 #define MEED_ASSERT(expr)
@@ -42,6 +41,12 @@
 #define MEED_BINDING __attribute__((annotate("binding")))
 #else
 #define MEED_BINDING
+#endif
+
+#if defined(__EMSCRIPTEN__)
+#define PLATFORM_API __attribute__((visibility("default"))) __attribute__((used))
+#else
+#define PLATFORM_API
 #endif
 
 typedef MEED_BINDING unsigned char u8;

@@ -127,3 +127,25 @@ def RunExample(
             RunCommand(f"{example}.exe", cwd=exampleDir)
         elif SYSTEM.IsLinuxPlatform:
             RunCommand(f"./{example}", cwd=exampleDir)
+
+
+def BuildEngineWebLib(
+    **kwargs: Any,
+) -> None:
+    from ..conf import VARIABLES
+
+    assert (
+        VARIABLES.EMCMAKE is not None
+    ), '"EMCMAKE" variable is not set in the configuration.'
+
+    engineDir = os.path.join(SYSTEM.BaseDir, "engine")
+
+    RunCommand(
+        f"{VARIABLES.EMCMAKE} cmake -S . -B build/webruntime -DWEBBUILD=ON -DCMAKE_BUILD_TYPE=Release -DEMCC_FORCE_STDLIBS=ON",
+        cwd=engineDir,
+    )
+
+    RunCommand(
+        f"cmake --build build/webruntime --config Release",
+        cwd=engineDir,
+    )
