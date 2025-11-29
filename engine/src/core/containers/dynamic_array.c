@@ -61,7 +61,7 @@ void meedDynamicArrayResize(struct MEEDDynamicArray* pArray, u32 newCapacity)
 	pArray->capacity = newCapacity;
 }
 
-void meedDynamicArrayDestroy(struct MEEDDynamicArray* pArray)
+void meedDynamicArrayClear(struct MEEDDynamicArray* pArray)
 {
 	MEED_ASSERT(pArray != MEED_NULL);
 
@@ -72,6 +72,15 @@ void meedDynamicArrayDestroy(struct MEEDDynamicArray* pArray)
 			pArray->pDeleteCallback(pArray->pData[i]);
 		}
 	}
+
+	pArray->count = 0;
+}
+
+void meedDynamicArrayDestroy(struct MEEDDynamicArray* pArray)
+{
+	MEED_ASSERT(pArray != MEED_NULL);
+
+	meedDynamicArrayClear(pArray);
 
 	MEED_FREE_ARRAY(pArray->pData, void*, pArray->capacity);
 	MEED_FREE(pArray, struct MEEDDynamicArray);

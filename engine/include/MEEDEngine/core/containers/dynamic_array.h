@@ -77,6 +77,20 @@ void* meedDynamicArrayAt(struct MEEDDynamicArray* pArray, u32 index);
 void meedDynamicArrayResize(struct MEEDDynamicArray* pArray, u32 newCapacity);
 
 /**
+ * @brief Clears all elements from the dynamic array.
+ *
+ * This function removes all elements from the dynamic array and
+ * resets the count to zero. If a delete callback was provided
+ * during array creation, it will be called for each element's
+ * data before clearing the array.
+ *
+ * @param pArray Pointer to the MEEDDynamicArray to be cleared. If NULL, raises an assertion.
+ *
+ * @note The capacity of the dynamic array remains unchanged after this operation.
+ */
+void meedDynamicArrayClear(struct MEEDDynamicArray* pArray);
+
+/**
  * @brief Destroys a dynamic array and frees its memory.
  *
  * This function deallocates the memory used by the dynamic array and

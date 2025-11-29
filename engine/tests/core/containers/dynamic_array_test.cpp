@@ -5,7 +5,8 @@ class DynamicArrayTest : public Test
 protected:
 	void SetUp() override
 	{
-		s_pArray = meedDynamicArrayCreate(0, nullptr);
+		s_pArray		  = meedDynamicArrayCreate(0, nullptr);
+		s_deleteCallCount = 0;
 	}
 
 	void TearDown() override
@@ -95,6 +96,21 @@ TEST_F(DynamicArrayTest, ResizeInvalidOperation)
 		"");
 }
 
+TEST_F(DynamicArrayTest, Clear)
+{
+	meedDynamicArrayPush(s_pArray, &a);
+	meedDynamicArrayPush(s_pArray, &b);
+	meedDynamicArrayPush(s_pArray, &c);
+
+	EXPECT_EQ(s_pArray->count, 3u);
+	u32 oldCapacity = s_pArray->capacity;
+
+	meedDynamicArrayClear(s_pArray);
+
+	EXPECT_EQ(s_pArray->count, 0u);
+	EXPECT_EQ(s_pArray->capacity, oldCapacity);
+}
+
 TEST_F(DynamicArrayTest, WithDeleteCallback)
 {
 	struct MEEDDynamicArray* pArrayWithCallback = meedDynamicArrayCreate(0, deleteTestNode);
@@ -111,6 +127,29 @@ TEST_F(DynamicArrayTest, WithDeleteCallback)
 	EXPECT_EQ(pArrayWithCallback->count, 2u);
 	EXPECT_EQ(((TestNode*)meedDynamicArrayAt(pArrayWithCallback, 0))->value, 100);
 	EXPECT_EQ(((TestNode*)meedDynamicArrayAt(pArrayWithCallback, 1))->value, 200);
+
+	meedDynamicArrayDestroy(pArrayWithCallback);
+}
+
+TEST_F(DynamicArrayTest, ClearWithDeleteCallback)
+{
+	struct MEEDDynamicArray* pArrayWithCallback = meedDynamicArrayCreate(0, deleteTestNode);
+
+	TestNode* pNode1 = MEED_MALLOC(TestNode);
+	pNode1->value	 = 100;
+
+	TestNode* pNode2 = MEED_MALLOC(TestNode);
+	pNode2->value	 = 200;
+
+	meedDynamicArrayPush(pArrayWithCallback, pNode1);
+	meedDynamicArrayPush(pArrayWithCallback, pNode2);
+
+	EXPECT_EQ(pArrayWithCallback->count, 2u);
+
+	meedDynamicArrayClear(pArrayWithCallback);
+
+	EXPECT_EQ(pArrayWithCallback->count, 0u);
+	EXPECT_EQ(s_deleteCallCount, 2u);
 
 	meedDynamicArrayDestroy(pArrayWithCallback);
 }
