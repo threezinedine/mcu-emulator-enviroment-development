@@ -91,6 +91,23 @@ void meedDynamicArrayResize(struct MEEDDynamicArray* pArray, u32 newCapacity);
 void meedDynamicArrayClear(struct MEEDDynamicArray* pArray);
 
 /**
+ * @brief Inserts data at a specific index in the dynamic array.
+ *
+ * This function inserts a new element containing the provided data
+ * at the specified index in the dynamic array. If the index is equal
+ * to the count of the array, the data is appended to the end.
+ * If the index is out of bounds, an assertion is raised.
+ *
+ * @param pArray Pointer to the MEEDDynamicArray. If NULL, raises an assertion.
+ * @param index The zero-based index where the data should be inserted. If out of bounds, raises an assertion.
+ * @param pData Pointer to the data to be inserted into the array.
+ *
+ * @note If the current count exceeds the capacity, the array's capacity
+ * will be doubled to accommodate the new element.
+ */
+void meedDynamicArrayInsert(struct MEEDDynamicArray* pArray, u32 index, void* pData);
+
+/**
  * @brief Destroys a dynamic array and frees its memory.
  *
  * This function deallocates the memory used by the dynamic array and

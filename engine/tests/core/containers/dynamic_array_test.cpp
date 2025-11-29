@@ -111,6 +111,61 @@ TEST_F(DynamicArrayTest, Clear)
 	EXPECT_EQ(s_pArray->capacity, oldCapacity);
 }
 
+TEST_F(DynamicArrayTest, InsertAtBeginning)
+{
+	meedDynamicArrayPush(s_pArray, &b); // Array: [20]
+	meedDynamicArrayPush(s_pArray, &c); // Array: [20, 30]
+
+	meedDynamicArrayInsert(s_pArray, 0, &a); // Array: [10, 20, 30]
+
+	EXPECT_EQ(s_pArray->count, 3u);
+	EXPECT_EQ(*(int*)meedDynamicArrayAt(s_pArray, 0), 10);
+	EXPECT_EQ(*(int*)meedDynamicArrayAt(s_pArray, 1), 20);
+	EXPECT_EQ(*(int*)meedDynamicArrayAt(s_pArray, 2), 30);
+	EXPECT_GE(s_pArray->capacity, s_pArray->count);
+}
+
+TEST_F(DynamicArrayTest, InsertAtMiddle)
+{
+	meedDynamicArrayPush(s_pArray, &a); // Array: [10]
+	meedDynamicArrayPush(s_pArray, &c); // Array: [10, 30]
+
+	meedDynamicArrayInsert(s_pArray, 1, &b); // Array: [10, 20, 30]
+
+	EXPECT_EQ(s_pArray->count, 3u);
+	EXPECT_EQ(*(int*)meedDynamicArrayAt(s_pArray, 0), 10);
+	EXPECT_EQ(*(int*)meedDynamicArrayAt(s_pArray, 1), 20);
+	EXPECT_EQ(*(int*)meedDynamicArrayAt(s_pArray, 2), 30);
+	EXPECT_GE(s_pArray->capacity, s_pArray->count);
+}
+
+TEST_F(DynamicArrayTest, InsertAtEnd)
+{
+	meedDynamicArrayPush(s_pArray, &a); // Array: [10]
+	meedDynamicArrayPush(s_pArray, &b); // Array: [10, 20]
+
+	meedDynamicArrayInsert(s_pArray, 2, &c); // Array: [10, 20, 30]
+
+	EXPECT_EQ(s_pArray->count, 3u);
+	EXPECT_EQ(*(int*)meedDynamicArrayAt(s_pArray, 0), 10);
+	EXPECT_EQ(*(int*)meedDynamicArrayAt(s_pArray, 1), 20);
+	EXPECT_EQ(*(int*)meedDynamicArrayAt(s_pArray, 2), 30);
+	EXPECT_GE(s_pArray->capacity, s_pArray->count);
+}
+
+TEST_F(DynamicArrayTest, InsertOutOfBounds)
+{
+	meedDynamicArrayPush(s_pArray, &a); // Array: [10]
+
+	EXPECT_EXIT(
+		{
+			meedDynamicArrayInsert(s_pArray, 2, &b);
+			std::exit(MEED_EXCEPTION_TYPE_OUT_OF_INDEX);
+		},
+		testing::ExitedWithCode(MEED_EXCEPTION_TYPE_OUT_OF_INDEX),
+		"");
+}
+
 TEST_F(DynamicArrayTest, WithDeleteCallback)
 {
 	struct MEEDDynamicArray* pArrayWithCallback = meedDynamicArrayCreate(0, deleteTestNode);

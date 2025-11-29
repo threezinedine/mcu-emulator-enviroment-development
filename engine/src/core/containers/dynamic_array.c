@@ -76,6 +76,32 @@ void meedDynamicArrayClear(struct MEEDDynamicArray* pArray)
 	pArray->count = 0;
 }
 
+void meedDynamicArrayInsert(struct MEEDDynamicArray* pArray, u32 index, void* pData)
+{
+	MEED_ASSERT(pArray != MEED_NULL);
+
+	if (index > pArray->count)
+	{
+		MEED_THROW(MEED_EXCEPTION_TYPE_OUT_OF_INDEX,
+				   "Index out of bounds: Attempted to insert at index %u in a dynamic array of size %u.",
+				   index,
+				   pArray->count);
+	}
+
+	if (pArray->count >= pArray->capacity)
+	{
+		meedDynamicArrayResize(pArray, pArray->capacity * 2);
+	}
+
+	for (u32 i = pArray->count; i > index; i--)
+	{
+		pArray->pData[i] = pArray->pData[i - 1];
+	}
+
+	pArray->pData[index] = pData;
+	pArray->count++;
+}
+
 void meedDynamicArrayDestroy(struct MEEDDynamicArray* pArray)
 {
 	MEED_ASSERT(pArray != MEED_NULL);
