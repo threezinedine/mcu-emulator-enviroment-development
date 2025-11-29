@@ -22,6 +22,17 @@ macro(MEEDSetup)
     set(CMAKE_MODULE_DIR "{{ BASE_DIR }}/cmake")
 
     MEEDOption(WEBBUILD OFF)
+    MEEDOption(CMAKE_BUILD_TYPE Debug)
+
+    MEEDDetectPlatform()
+
+    set(COMMON_DEFINITIONS "${PLATFORM_DEFINITION}")
+
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        list(APPEND COMMON_DEFINITIONS MEED_DEBUG)
+    else()
+        list(APPEND COMMON_DEFINITIONS MEED_RELEASE)
+    endif()
 endmacro()
 
 macro(MEEDFindPackage PACKAGE_NAME FOLDER)

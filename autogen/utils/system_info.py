@@ -24,6 +24,7 @@ TEMPLATE_DATA = dict(
     COMPILER_PATH=SYSTEM.CCompiler,
     INTELLISENSE_MODE=SYSTEM.IntelliSenseMode,
     PYTHON_INTERPRETER=SYSTEM.PythonInterpreter,
+    PYTHON_COMMAND=SYSTEM.PythonCommand,
     PYTHON_INCLUDE_DIR=SYSTEM.PythonIncludeDir,
     RESOURCE_FILES=SYSTEM.GetAllEditorResources(),
 )

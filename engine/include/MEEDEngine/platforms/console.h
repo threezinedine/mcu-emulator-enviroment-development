@@ -30,17 +30,26 @@ struct MEED_BINDING MEEDPlatformConsoleConfig
  * Modify the following content's color which is used by `meedPlatformPrint`.
  * @param color The color to set the console to.
  */
-PLATFORM_API void meedPlatformSetConsoleConfig(struct MEEDPlatformConsoleConfig config) MEED_BINDING;
+void meedPlatformSetConsoleConfig(struct MEEDPlatformConsoleConfig config) MEED_BINDING;
+
+/**
+ * Print formatted content to a buffer.
+ * @param buffer The buffer to print to.
+ * @param length The length of the buffer.
+ * @param format The format string.
+ * @param ... The format arguments.
+ */
+void meedPlatformBufferedPrint(char* buffer, meedSize length, char* format, ...);
 
 /**
  * Print formatted content to the console.
  * @param format The format string.
  * @param ... The format arguments.
  */
-PLATFORM_API void meedPlatformFPrint(const char *format, ...);
+void meedPlatformFPrint(const char* format, ...);
 
 /**
  * Print a string to the console.
  * @param str The string to print.
  */
-PLATFORM_API void meedPlatformPrint(const char *str) MEED_BINDING;
+void meedPlatformPrint(const char* str) MEED_BINDING;

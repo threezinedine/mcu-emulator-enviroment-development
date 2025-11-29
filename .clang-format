@@ -6,10 +6,22 @@ ColumnLimit: 150
 AllowShortFunctionsOnASingleLine: false
 AllowShortLoopsOnASingleLine: true
 
-AlignConsecutiveAssignments: true
+AlignConsecutiveAssignments:
+    Enabled: true
+    AcrossComments: true
+
+AlignConsecutiveDeclarations: true
 AlignAfterOpenBracket: Align
 
 KeepEmptyLinesAtTheStartOfBlocks: false
+PointerAlignment: Left
+
+AlignArrayOfStructures: Left
+AlignConsecutiveMacros:
+    Enabled: true
+    AcrossComments: true
+
+AlignOperands: true
 
 BreakBeforeBraces: Custom
 BraceWrapping:
@@ -18,6 +30,7 @@ BraceWrapping:
     AfterClass: true
     AfterFunction: true
     AfterControlStatement: true
+    BeforeElse: true
 
 BinPackArguments: false
 BinPackParameters: false

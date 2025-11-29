@@ -4,7 +4,7 @@
 
 #include "MEEDEngine/platforms/console.h"
 
-static const char *ansi[] = {
+static const char* ansi[] = {
 	[MEED_CONSOLE_COLOR_RESET]	 = "\033[0m",
 	[MEED_CONSOLE_COLOR_RED]	 = "\033[91m",
 	[MEED_CONSOLE_COLOR_GREEN]	 = "\033[92m",
@@ -21,7 +21,15 @@ void meedPlatformSetConsoleConfig(struct MEEDPlatformConsoleConfig config)
 	printf("%s", ansi[config.color]);
 }
 
-void meedPlatformFPrint(const char *format, ...)
+void meedPlatformBufferedPrint(char* buffer, meedSize length, char* format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	vsnprintf(buffer, length, format, args);
+	va_end(args);
+}
+
+void meedPlatformFPrint(const char* format, ...)
 {
 	va_list args;
 	va_start(args, format);
@@ -29,9 +37,9 @@ void meedPlatformFPrint(const char *format, ...)
 	va_end(args);
 }
 
-void meedPlatformPrint(const char *str)
+void meedPlatformPrint(const char* str)
 {
 	printf("%s", str);
 }
 
-#endif
+#endif // PLATFORM_IS_LINUX

@@ -66,6 +66,11 @@ def BuildCProject(
     if SYSTEM.IsWindowsPlatform:
         additionalOptions = "-G Visual Studio 17 2022"
 
+    if type.lower() == "release":
+        additionalOptions += " -DCMAKE_BUILD_TYPE=Release"
+    else:
+        additionalOptions += " -DCMAKE_BUILD_TYPE=Debug"
+
     logger.info(f'Building project "{project}" with build type "{type}"...')
     RunCommand(f"cmake -S . -B build/{type} {additionalOptions}", cwd=project)
     RunCommand(f"cmake --build build/{type} --config {type.capitalize()}", cwd=project)

@@ -14,7 +14,10 @@
         },
         {
             "name": "engine",
-            "path": "engine"
+            "path": "engine",
+            "[c]": {
+                "editor.defaultFormatter": "xaver.clang-format"
+            }
         },
         {
             "name": "editor",

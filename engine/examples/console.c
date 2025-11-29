@@ -3,7 +3,7 @@
 int main(void)
 {
 	struct MEEDPlatformConsoleConfig config;
-	config.color = MEED_CONSOLE_COLOR_BLUE;
+	config.color = MEED_CONSOLE_COLOR_GREEN;
 
 	meedPlatformSetConsoleConfig(config);
 	meedPlatformPrint("Hello, MEED Engine Console Green!\n");
