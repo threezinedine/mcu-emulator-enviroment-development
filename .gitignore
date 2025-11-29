@@ -422,3 +422,4 @@ externals/
 meed.code-workspace
 
 bin/
+config/conf.py
