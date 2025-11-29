@@ -41,6 +41,24 @@
             "preLaunchTask": "Build Engine"
         },
         {
+            "name": "Linked List Example",
+            "type": "cppdbg",
+            "request": "launch",
+            {% if PLATFORM_DEFINE == "PLATFORM_IS_LINUX" -%}
+            "program": "${workspaceFolder}/engine/build/debug/examples/linked_list",
+            {% elif PLATFORM_DEFINE == "PLATFORM_IS_WINDOWS"-%}
+            "program": "${workspaceFolder}/engine/build/debug/examples/Debug/linked_list.exe",
+            {% endif -%}
+            "args": [],
+            {% if PLATFORM_DEFINE == "PLATFORM_IS_LINUX" -%}
+            "cwd": "${workspaceFolder}/engine/build/debug/examples",
+            {% elif PLATFORM_DEFINE == "PLATFORM_IS_WINDOWS"-%}
+            "cwd": "${workspaceFolder}/engine/build/debug/examples/Debug",
+            {% endif -%}
+            "stopAtEntry": false,
+            "preLaunchTask": "Build Engine"
+        },
+        {
             "name": "Application",
             "type": "cppdbg",
             "request": "launch",

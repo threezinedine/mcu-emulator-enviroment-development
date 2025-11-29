@@ -14,30 +14,36 @@
 #endif
 
 #if MEED_DEBUG
-#define MEED_ASSERT(expr)                                                                                                                            \
-	do                                                                                                                                               \
-	{                                                                                                                                                \
-		if (!(expr))                                                                                                                                 \
-		{                                                                                                                                            \
-			debugBreak();                                                                                                                            \
-		}                                                                                                                                            \
+#define MEED_ASSERT(expr)                                                                                              \
+	do                                                                                                                 \
+	{                                                                                                                  \
+		if (!(expr))                                                                                                   \
+		{                                                                                                              \
+			struct MEEDPlatformConsoleConfig config;                                                                   \
+			config.color = MEED_CONSOLE_COLOR_RED;                                                                     \
+			meedPlatformSetConsoleConfig(config);                                                                      \
+			meedPlatformFPrint("Assertion failed: %s at %s:%d\n", #expr, __FILE__, __LINE__);                          \
+			config.color = MEED_CONSOLE_COLOR_RESET;                                                                   \
+			meedPlatformSetConsoleConfig(config);                                                                      \
+			debugBreak();                                                                                              \
+		}                                                                                                              \
 	} while (0)
 
-#define MEED_ASSERT_MSG(expr, msg, ...)                                                                                                              \
-	do                                                                                                                                               \
-	{                                                                                                                                                \
-		if (!(expr))                                                                                                                                 \
-		{                                                                                                                                            \
-			struct MEEDPlatformConsoleConfig config;                                                                                                 \
-			config.color = MEED_CONSOLE_COLOR_RED;                                                                                                   \
-			meedPlatformSetConsoleConfig(config);                                                                                                    \
-			char buffer[512];                                                                                                                        \
-			meedPlatformBufferedPrint(buffer, sizeof(buffer), msg, ##__VA_ARGS__);                                                                   \
-			meedPlatformFPrint("Assertion failed: %s at %s:%d\n", buffer, __FILE__, __LINE__);                                                       \
-			config.color = MEED_CONSOLE_COLOR_RESET;                                                                                                 \
-			meedPlatformSetConsoleConfig(config);                                                                                                    \
-			debugBreak();                                                                                                                            \
-		}                                                                                                                                            \
+#define MEED_ASSERT_MSG(expr, msg, ...)                                                                                \
+	do                                                                                                                 \
+	{                                                                                                                  \
+		if (!(expr))                                                                                                   \
+		{                                                                                                              \
+			struct MEEDPlatformConsoleConfig config;                                                                   \
+			config.color = MEED_CONSOLE_COLOR_RED;                                                                     \
+			meedPlatformSetConsoleConfig(config);                                                                      \
+			char buffer[512];                                                                                          \
+			meedPlatformBufferedPrint(buffer, sizeof(buffer), msg, ##__VA_ARGS__);                                     \
+			meedPlatformFPrint("Assertion failed: %s at %s:%d\n", buffer, __FILE__, __LINE__);                         \
+			config.color = MEED_CONSOLE_COLOR_RESET;                                                                   \
+			meedPlatformSetConsoleConfig(config);                                                                      \
+			debugBreak();                                                                                              \
+		}                                                                                                              \
 	} while (0)
 
 // Macro to mark a variable as untouchable for debugging purposes.

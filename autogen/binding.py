@@ -71,6 +71,8 @@ def _CTypeConvert(cType: str) -> str:
         return "None"
     elif cType in parser.AllCustomTypes:
         return cType
+    elif cType == "void *":
+        return "Any"
     else:
         logger.warning(f'Unknown C type "{cType}", mapping to "Any".')
         return "Any"

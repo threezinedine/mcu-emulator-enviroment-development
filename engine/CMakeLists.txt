@@ -11,6 +11,7 @@ file(
     SRC_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/**/**/*.c
 )
 
 file(

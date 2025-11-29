@@ -4,7 +4,10 @@
 
 #if PLATFORM_IS_LINUX
 #include <execinfo.h>
+#include <pthread.h>
+#include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 #else
 #error "Backtrace capturing is not implemented for this platform."
 #endif
@@ -21,6 +24,7 @@ struct MemoryNode
 	meedSize size;								///< Store the size of the allocated memory block for later checking.
 	void*	 frames[MEMORY_MAX_TRACKED_FRAMES]; ///< The backtrace frames when the memory was allocated.
 	meedSize framesCount;						///< The number of frames stored in the `frames` array.
+	pid_t	 threadId;							///< The ID of the thread which allocated this memory block.
 
 	struct MemoryNode* pNext;
 	struct MemoryNode* pPrev;
@@ -85,6 +89,7 @@ void* meedPlatformMalloc(meedSize size)
 #if PLATFORM_IS_LINUX
 	meedPlatformMemorySet(pNode->frames, 0, sizeof(void*) * MEMORY_MAX_TRACKED_FRAMES);
 	pNode->framesCount = backtrace(pNode->frames, MEMORY_MAX_TRACKED_FRAMES);
+	pNode->threadId	   = getpid();
 #endif
 
 	if (s_pMemoryHead == MEED_NULL)
@@ -163,17 +168,23 @@ void meedPlatformMemoryShutdown()
 	if (s_pMemoryHead != MEED_NULL)
 	{
 #if PLATFORM_IS_LINUX
-		char** strings = backtrace_symbols(s_pMemoryHead->frames, s_pMemoryHead->framesCount);
-
 		struct MEEDPlatformConsoleConfig config;
 		config.color = MEED_CONSOLE_COLOR_RED;
 		meedPlatformSetConsoleConfig(config);
 
 		meedPlatformFPrint("=== Memory Leak Stack Trace: ===\n");
+		char cmd[512];
+		snprintf(cmd, sizeof(cmd), "addr2line -e /proc/%d/exe -pif", s_pMemoryHead->threadId);
 		for (meedSize i = 0; i < s_pMemoryHead->framesCount; i++)
 		{
-			meedPlatformFPrint("%s\n", strings[i]);
+			char syscom[1024];
+			snprintf(syscom, sizeof(syscom), "%s %p", cmd, s_pMemoryHead->frames[i]);
+			char** function = backtrace_symbols(&s_pMemoryHead->frames[i], 1);
+			meedPlatformPrint(function[0]);
+			meedPlatformPrint("\n");
+			system(syscom);
 		}
+		exit(139); // 139 is the exit code for segmentation fault.
 		config.color = MEED_CONSOLE_COLOR_RESET;
 		meedPlatformSetConsoleConfig(config);
 #else
