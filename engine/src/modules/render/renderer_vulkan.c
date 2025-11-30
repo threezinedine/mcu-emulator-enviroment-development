@@ -1,5 +1,6 @@
 #if MEED_USE_VULKAN
 
+#include "MEEDEngine/core/core.h"
 #include "MEEDEngine/modules/release_stack/release_stack.h"
 #include "MEEDEngine/modules/render/renderer.h"
 #include "MEEDEngine/platforms/platforms.h"
@@ -47,6 +48,8 @@ struct MEEDVulkan
 	VkPhysicalDevice		  physicalDevice;
 	VkSurfaceKHR			  surface;
 	struct QueueFamilyIndices queueFamilies; ///< The queue family indices for the selected physical device
+
+	VkDevice device;
 };
 
 struct MEEDVulkan* g_vulkan = MEED_NULL; // Global Vulkan instance
@@ -60,6 +63,7 @@ static void createValidationLayers();
 static void choosePhysicalDevice();
 static void createSurface();
 static void getQueueFamilyIndices();
+static void createDevice();
 
 static void deleteGlobalVulkanInstance(void*);
 
@@ -73,6 +77,7 @@ void meedRenderInitialize(struct MEEDWindowData* pWindowData)
 	s_releaseStack = meedReleaseStackCreate();
 
 	g_vulkan = MEED_MALLOC(struct MEEDVulkan);
+	meedPlatformMemorySet(g_vulkan, 0, sizeof(struct MEEDVulkan));
 	meedReleaseStackPush(s_releaseStack, MEED_NULL, deleteGlobalVulkanInstance);
 
 	// Setup initial values for Vulkan context
@@ -90,6 +95,7 @@ void meedRenderInitialize(struct MEEDWindowData* pWindowData)
 	choosePhysicalDevice();
 	createSurface();
 	getQueueFamilyIndices();
+	createDevice();
 
 	s_isInitialized = MEED_TRUE;
 }
@@ -426,6 +432,73 @@ static void getQueueFamilyIndices()
 					"Failed to find a present queue family.");
 
 	MEED_FREE_ARRAY(pQueueFamilies, VkQueueFamilyProperties, queueFamiliesCount);
+}
+
+static void deleteDevice(void*);
+static i32	queueFamilyCompare(const void*, const void*);
+static void createDevice()
+{
+	MEED_ASSERT(g_vulkan != MEED_NULL);
+	MEED_ASSERT(g_vulkan->instance != MEED_NULL);
+	MEED_ASSERT(g_vulkan->physicalDevice != MEED_NULL);
+
+	float queuePriority = 1.0f;
+
+	i32 familyIndices[] = {
+		g_vulkan->queueFamilies.graphicsFamily,
+		g_vulkan->queueFamilies.presentFamily,
+	};
+
+	struct MEEDSet* pSet			   = meedSetCreate(queueFamilyCompare);
+	u32				familyIndicesCount = MEED_ARRAY_SIZE(familyIndices);
+	for (u32 i = 0u; i < familyIndicesCount; ++i)
+	{
+		meedSetPush(pSet, &familyIndices[i]);
+	}
+
+	u32 uniqueQueueFamiliesCount = meedSetCount(pSet);
+
+	VkDeviceQueueCreateInfo* pQueueCreateInfos = MEED_MALLOC_ARRAY(VkDeviceQueueCreateInfo, uniqueQueueFamiliesCount);
+
+	for (u32 i = 0u; i < uniqueQueueFamiliesCount; ++i)
+	{
+		u32*					pFamilyIndex	= (u32*)meedSetAt(pSet, i);
+		VkDeviceQueueCreateInfo queueCreateInfo = {};
+		queueCreateInfo.sType					= VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		queueCreateInfo.queueFamilyIndex		= *pFamilyIndex;
+		queueCreateInfo.pQueuePriorities		= &queuePriority;
+		queueCreateInfo.queueCount				= 1;
+
+		pQueueCreateInfos[i] = queueCreateInfo;
+	}
+
+	VkDeviceCreateInfo deviceCreateInfo		 = {};
+	deviceCreateInfo.sType					 = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+	deviceCreateInfo.enabledExtensionCount	 = MEED_ARRAY_SIZE(deviceExtensions);
+	deviceCreateInfo.ppEnabledExtensionNames = deviceExtensions;
+	deviceCreateInfo.queueCreateInfoCount	 = uniqueQueueFamiliesCount;
+	deviceCreateInfo.pQueueCreateInfos		 = pQueueCreateInfos;
+
+	VK_ASSERT(vkCreateDevice(g_vulkan->physicalDevice, &deviceCreateInfo, MEED_NULL, &g_vulkan->device));
+	meedReleaseStackPush(s_releaseStack, MEED_NULL, deleteDevice);
+
+	MEED_FREE_ARRAY(pQueueCreateInfos, VkDeviceQueueCreateInfo, uniqueQueueFamiliesCount);
+	meedSetDestroy(pSet);
+}
+
+static void deleteDevice(void* pData)
+{
+	MEED_UNUSED(pData);
+
+	MEED_ASSERT(g_vulkan != MEED_NULL);
+	MEED_ASSERT(g_vulkan->device != MEED_NULL);
+
+	vkDestroyDevice(g_vulkan->device, MEED_NULL);
+}
+
+static i32 queueFamilyCompare(const void* pA, const void* pB)
+{
+	return *(u32*)(pA) - *(u32*)(pB);
 }
 
 #endif // MEED_USE_VULKAN
