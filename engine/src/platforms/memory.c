@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#if MEED_DEBUG
 #if PLATFORM_IS_LINUX
 #include <execinfo.h>
 #include <pthread.h>
@@ -245,3 +246,51 @@ static struct MemoryNode* _findNodeByPtr(void* ptr)
 
 	return MEED_NULL;
 }
+
+#else // MEED_RELEASE
+
+void meedPlatformMemoryInitialize()
+{
+	// No-op in release mode.
+}
+
+void* meedPlatformMalloc(meedSize size)
+{
+	return malloc(size);
+}
+
+void meedPlatformFree(void* ptr, meedSize size)
+{
+	(void)size; // Unused parameter in release mode.
+	free(ptr);
+}
+
+void* meedPlatformMemoryCopy(void* pDest, const void* pSrc, meedSize size)
+{
+	return memcpy(pDest, pSrc, size);
+}
+
+void* meedPlatformMemorySet(void* pDest, u8 value, meedSize size)
+{
+	return memset(pDest, value, size);
+}
+
+u32 meedPlatformGetStringLength(const char* str)
+{
+	MEED_ASSERT(str != MEED_NULL);
+
+	u32 length = 0;
+	while (str[length] != '\0')
+	{
+		length++;
+	}
+
+	return length;
+}
+
+void meedPlatformMemoryShutdown()
+{
+	// No-op in release mode.
+}
+
+#endif // MEED_DEBUG
