@@ -49,7 +49,7 @@ void meedRenderPresent();
  * @brief Waits until the device is idle.
  * This function blocks until all submitted commands to the GPU have finished executing.
  */
-void meedWaitIdle();
+void meedRenderWaitIdle();
 
 /**
  * @brief Shuts down the rendering module.

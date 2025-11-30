@@ -73,7 +73,7 @@ void meedRenderPresent()
 	GL_ASSERT(glfwSwapBuffers(s_pWindow));
 }
 
-void meedWaitIdle()
+void meedRenderWaitIdle()
 {
 }
 

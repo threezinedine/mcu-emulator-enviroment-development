@@ -39,7 +39,7 @@ int main(void)
 		meedRenderPresent();
 	}
 
-	meedWaitIdle();
+	meedRenderWaitIdle();
 
 	meedPipelineDestroy(pPipeline);
 	meedWindowDestroy(pWindow);

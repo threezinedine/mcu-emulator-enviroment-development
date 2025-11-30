@@ -1188,7 +1188,7 @@ static void transitionImageLayout(VkImage			   image,
 	vkCmdPipelineBarrier(commandBuffer, srcStage, dstStage, 0, 0, MEED_NULL, 0, MEED_NULL, 1, &barrier);
 }
 
-void meedWaitIdle()
+void meedRenderWaitIdle()
 {
 	MEED_ASSERT(g_vulkan != MEED_NULL);
 	MEED_ASSERT(g_vulkan->device != MEED_NULL);
