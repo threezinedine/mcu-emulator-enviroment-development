@@ -63,6 +63,8 @@ struct MEEDVulkan
 
 	VkImage*	 pSwapchainImages;
 	VkImageView* pSwapchainImageViews;
+
+	VkRenderPass renderPass;
 };
 
 struct MEEDVulkan* g_vulkan = MEED_NULL; // Global Vulkan instance
@@ -82,6 +84,7 @@ static void chooseSwapchainSettings();
 static void createSwapchain();
 static void getSwapchainImages();
 static void createSwapchainImageViews();
+static void createRenderPass();
 
 static void deleteGlobalVulkanInstance(void*);
 
@@ -119,6 +122,7 @@ void meedRenderInitialize(struct MEEDWindowData* pWindowData)
 	createSwapchain();
 	getSwapchainImages();
 	createSwapchainImageViews();
+	createRenderPass();
 
 	s_isInitialized = MEED_TRUE;
 }
@@ -807,6 +811,83 @@ static void deleteSwapchainImageViews(void* pData)
 	{
 		vkDestroyImageView(g_vulkan->device, g_vulkan->pSwapchainImageViews[imageIndex], MEED_NULL);
 	}
+}
+
+static void deleteRenderPass(void*);
+static void createRenderPass()
+{
+	MEED_ASSERT(g_vulkan != MEED_NULL);
+	MEED_ASSERT(g_vulkan->device != MEED_NULL);
+	MEED_ASSERT(g_vulkan->renderPass == MEED_NULL);
+
+	VkAttachmentDescription colorAttachment = {};
+	colorAttachment.format					= g_vulkan->surfaceFormat.format;
+	colorAttachment.samples					= VK_SAMPLE_COUNT_1_BIT;
+	colorAttachment.loadOp					= VK_ATTACHMENT_LOAD_OP_CLEAR;
+	colorAttachment.storeOp					= VK_ATTACHMENT_STORE_OP_STORE;
+	colorAttachment.stencilLoadOp			= VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+	colorAttachment.stencilStoreOp			= VK_ATTACHMENT_STORE_OP_DONT_CARE;
+	colorAttachment.initialLayout			= VK_IMAGE_LAYOUT_UNDEFINED;
+	colorAttachment.finalLayout				= VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+	VkAttachmentDescription depthAttachment = {};
+	depthAttachment.format					= VK_FORMAT_D32_SFLOAT;
+	depthAttachment.samples					= VK_SAMPLE_COUNT_1_BIT;
+	depthAttachment.loadOp					= VK_ATTACHMENT_LOAD_OP_CLEAR;
+	depthAttachment.storeOp					= VK_ATTACHMENT_STORE_OP_DONT_CARE;
+	depthAttachment.stencilLoadOp			= VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+	depthAttachment.stencilStoreOp			= VK_ATTACHMENT_STORE_OP_DONT_CARE;
+	depthAttachment.initialLayout			= VK_IMAGE_LAYOUT_UNDEFINED;
+	depthAttachment.finalLayout				= VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+	VkAttachmentReference colorAttachmentRef = {};
+	colorAttachmentRef.attachment			 = 0;
+	colorAttachmentRef.layout				 = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+	VkAttachmentReference depthAttachmentRef = {};
+	depthAttachmentRef.attachment			 = 1;
+	depthAttachmentRef.layout				 = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+	VkSubpassDescription subpass	= {};
+	subpass.pipelineBindPoint		= VK_PIPELINE_BIND_POINT_GRAPHICS;
+	subpass.colorAttachmentCount	= 1;
+	subpass.pColorAttachments		= &colorAttachmentRef;
+	subpass.pDepthStencilAttachment = &depthAttachmentRef;
+
+	VkSubpassDependency dependency = {};
+	dependency.srcSubpass		   = VK_SUBPASS_EXTERNAL;
+	dependency.dstSubpass		   = 0;
+	dependency.srcStageMask =
+		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+	dependency.srcAccessMask = 0;
+	dependency.dstStageMask =
+		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+	dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+
+	VkAttachmentDescription attachments[] = {colorAttachment, depthAttachment};
+
+	VkRenderPassCreateInfo renderPassCreateInfo = {};
+	renderPassCreateInfo.sType					= VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+	renderPassCreateInfo.attachmentCount		= MEED_ARRAY_SIZE(attachments);
+	renderPassCreateInfo.pAttachments			= attachments;
+	renderPassCreateInfo.subpassCount			= 1;
+	renderPassCreateInfo.pSubpasses				= &subpass;
+	renderPassCreateInfo.dependencyCount		= 1;
+	renderPassCreateInfo.pDependencies			= &dependency;
+
+	VK_ASSERT(vkCreateRenderPass(g_vulkan->device, &renderPassCreateInfo, MEED_NULL, &g_vulkan->renderPass));
+	meedReleaseStackPush(s_releaseStack, MEED_NULL, deleteRenderPass);
+}
+
+static void deleteRenderPass(void* pData)
+{
+	MEED_UNUSED(pData);
+
+	MEED_ASSERT(g_vulkan != MEED_NULL);
+	MEED_ASSERT(g_vulkan->device != MEED_NULL);
+	MEED_ASSERT(g_vulkan->renderPass != MEED_NULL);
+
+	vkDestroyRenderPass(g_vulkan->device, g_vulkan->renderPass, MEED_NULL);
 }
 
 #endif // MEED_USE_VULKAN
