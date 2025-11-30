@@ -27,4 +27,5 @@ TEMPLATE_DATA = dict(
     PYTHON_COMMAND=SYSTEM.PythonCommand,
     PYTHON_INCLUDE_DIR=SYSTEM.PythonIncludeDir,
     RESOURCE_FILES=SYSTEM.GetAllEditorResources(),
+    ENGINE_EXAMPLES=SYSTEM.AllEngineExamples(),
 )

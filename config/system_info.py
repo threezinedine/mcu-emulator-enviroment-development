@@ -78,5 +78,9 @@ class SystemInfo:
         ]
         return resources
 
+    def AllEngineExamples(self) -> list[str]:
+        examplesDir = os.path.join(self.BaseDir, "engine", "examples")
+        return [file[:-2] for file in os.listdir(examplesDir) if file.endswith(".c")]
+
 
 SYSTEM = SystemInfo()  # Global constant instance
