@@ -46,9 +46,12 @@ struct MEEDWindowData* meedWindowCreate(u32 width, u32 height, const char* title
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE); // already default but force it anyway
 
 	pOpenGLData->pWindow = glfwCreateWindow((i32)width, (i32)height, title, NULL, NULL);
 	MEED_ASSERT(pOpenGLData->pWindow != MEED_NULL);
+
+	glfwSetWindowAttrib(pOpenGLData->pWindow, GLFW_AUTO_ICONIFY, GLFW_FALSE);
 
 	glfwMakeContextCurrent(pOpenGLData->pWindow);
 
@@ -59,6 +62,7 @@ struct MEEDWindowData* meedWindowCreate(u32 width, u32 height, const char* title
 	config.color							= MEED_CONSOLE_COLOR_GREEN;
 	meedPlatformSetConsoleConfig(config);
 	meedPlatformFPrint("OpenGL Version: %s\n", glGetString(GL_VERSION));
+	meedPlatformFPrint("Renderer: %s\n", glGetString(GL_RENDERER));
 	config.color = MEED_CONSOLE_COLOR_RESET;
 	meedPlatformSetConsoleConfig(config);
 

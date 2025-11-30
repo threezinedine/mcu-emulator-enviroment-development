@@ -5,7 +5,8 @@
 
 struct OpenGLRenderData* s_pRenderData = MEED_NULL;
 
-static u32 vbo, vao;
+static u32		   vbo, vao;
+static GLFWwindow* s_pWindow = MEED_NULL;
 
 void meedRenderInitialize(struct MEEDWindowData* pWindowData)
 {
@@ -31,6 +32,8 @@ void meedRenderInitialize(struct MEEDWindowData* pWindowData)
 
 	GL_ASSERT(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0));
 	GL_ASSERT(glEnableVertexAttribArray(0));
+
+	s_pWindow = (GLFWwindow*)glfwGetCurrentContext();
 }
 
 void meedRenderClearScreen(struct MEEDColor color)
@@ -65,9 +68,9 @@ void meedRenderDraw(u32 vertexCount, u32 instanceCount, u32 firstVertex, u32 fir
 void meedRenderPresent()
 {
 	MEED_ASSERT(s_pRenderData != MEED_NULL);
+	MEED_ASSERT(s_pWindow != MEED_NULL);
 
-	GLFWwindow* pWindow = (GLFWwindow*)s_pRenderData->pWindowData->pInternal;
-	GL_ASSERT(glfwSwapBuffers(pWindow));
+	GL_ASSERT(glfwSwapBuffers(s_pWindow));
 }
 
 void meedWaitIdle()

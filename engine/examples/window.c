@@ -10,7 +10,6 @@ int main(void)
 	while (pWindowData->shouldClose == MEED_FALSE)
 	{
 		struct MEEDWindowEvent windowEvent = meedWindowPollEvents(pWindowData);
-
 		if (windowEvent.type == MEED_WINDOW_EVENT_TYPE_CLOSE)
 		{
 			pWindowData->shouldClose = MEED_TRUE;
