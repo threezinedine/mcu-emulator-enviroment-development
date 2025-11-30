@@ -60,6 +60,14 @@ void* meedPlatformMemorySet(void* pDest, u8 value, meedSize size);
 u32 meedPlatformGetStringLength(const char* str);
 
 /**
+ * Compares two null-terminated strings for equality.
+ * @param str1 The first null-terminated string.
+ * @param str2 The second null-terminated string.
+ * @return < 0 if str1 < str2, 0 if str1 == str2, > 0 if str1 > str2.
+ */
+i32 meedPlatformStringCompare(const char* str1, const char* str2);
+
+/**
  * Cleans up the memory management system.
  * This function should be called when memory operations are no longer needed.
  * In `DEBUG` mode, it may also check for memory leaks.

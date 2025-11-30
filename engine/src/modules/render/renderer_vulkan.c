@@ -12,6 +12,10 @@ static const char* instanceExtensions[] = {
 	"VK_EXT_debug_utils",
 };
 
+static const char* deviceExtensions[] = {
+	"VK_KHR_swapchain",
+};
+
 static const char* layers[] = {
 #if MEED_DEBUG
 	"VK_LAYER_KHRONOS_validation",
@@ -25,6 +29,7 @@ struct MEEDVulkan
 #if MEED_DEBUG
 	VkDebugUtilsMessengerEXT debugMessenger;
 #endif
+	VkPhysicalDevice physicalDevice;
 };
 
 struct MEEDVulkan* g_vulkan = MEED_NULL; // Global Vulkan instance
@@ -35,6 +40,7 @@ static void createVulkanInstance();
 #if MEED_DEBUG
 static void createValidationLayers();
 #endif
+static void choosePhysicalDevice();
 
 static void deleteGlobalVulkanInstance(void*);
 
@@ -54,6 +60,7 @@ void meedRenderInitialize()
 #if MEED_DEBUG
 	createValidationLayers();
 #endif
+	choosePhysicalDevice();
 
 	s_isInitialized = MEED_TRUE;
 }
@@ -122,26 +129,32 @@ VKAPI_ATTR VkBool32 VKAPI_CALL vulkanDebugCallback(VkDebugUtilsMessageSeverityFl
 												   void*									   pUserData)
 {
 	struct MEEDPlatformConsoleConfig config;
+	char							 severityString[10];
 
 	switch (messageSeverity)
 	{
 	case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
 		config.color = MEED_CONSOLE_COLOR_WHITE;
+		meedPlatformBufferedPrint(severityString, sizeof(severityString), "%7s", "VERBOSE");
 		break;
 	case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
 		config.color = MEED_CONSOLE_COLOR_GREEN;
+		meedPlatformBufferedPrint(severityString, sizeof(severityString), "%7s", "INFO");
+		break;
 	case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
 		config.color = MEED_CONSOLE_COLOR_YELLOW;
+		meedPlatformBufferedPrint(severityString, sizeof(severityString), "%7s", "WARNING");
 		break;
 	case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
 		config.color = MEED_CONSOLE_COLOR_RED;
+		meedPlatformBufferedPrint(severityString, sizeof(severityString), "%7s", "ERROR");
 		break;
 	default:
 		config.color = MEED_CONSOLE_COLOR_RESET;
 	}
 
 	meedPlatformSetConsoleConfig(config);
-	meedPlatformFPrint("VULKAN VALIDATION LAYER: %s", pCallbackData->pMessage);
+	meedPlatformFPrint("[%7s] - [%s] - %s\n", "VULKAN", severityString, pCallbackData->pMessage);
 
 	return VK_FALSE;
 }
@@ -191,3 +204,111 @@ static void deleteDebugMessenger(void* pData)
 	destroyDebugUtilsMessengerEXT(g_vulkan->instance, g_vulkan->debugMessenger, MEED_NULL);
 }
 #endif
+
+static u32 isDeviceSuitable(VkPhysicalDevice device);
+
+static void choosePhysicalDevice()
+{
+	MEED_ASSERT(g_vulkan != MEED_NULL);
+	MEED_ASSERT(g_vulkan->instance != MEED_NULL);
+	MEED_ASSERT(s_releaseStack != MEED_NULL);
+
+	u32 devicesCount = 0;
+	VK_ASSERT(vkEnumeratePhysicalDevices(g_vulkan->instance, &devicesCount, MEED_NULL));
+	MEED_ASSERT_MSG(devicesCount > 0, "Failed to find GPUs with Vulkan support.");
+
+	VkPhysicalDevice* pDevices = MEED_MALLOC_ARRAY(VkPhysicalDevice, devicesCount);
+	VK_ASSERT(vkEnumeratePhysicalDevices(g_vulkan->instance, &devicesCount, pDevices));
+
+	u32 highestScore	= 0;
+	i32 bestDeviceIndex = -1;
+
+	for (u32 deviceIndex = 0u; deviceIndex < devicesCount; ++deviceIndex)
+	{
+		u32 score = isDeviceSuitable(pDevices[deviceIndex]);
+		if (score > highestScore)
+		{
+			highestScore	= score;
+			bestDeviceIndex = deviceIndex;
+		}
+	}
+
+	MEED_ASSERT_MSG(bestDeviceIndex != -1, "Failed to find a suitable GPU.");
+	g_vulkan->physicalDevice = pDevices[bestDeviceIndex];
+	MEED_FREE_ARRAY(pDevices, VkPhysicalDevice, devicesCount);
+}
+
+static b8  checkDeviceExtensionsSupport(VkPhysicalDevice device);
+static u32 rateDevice(VkPhysicalDevice device);
+
+static u32 isDeviceSuitable(VkPhysicalDevice device)
+{
+	if (!checkDeviceExtensionsSupport(device))
+	{
+		return 0;
+	}
+
+	return rateDevice(device);
+}
+
+static b8 checkDeviceExtensionsSupport(VkPhysicalDevice device)
+{
+	u32 deviceExtensionsCount = 0;
+	vkEnumerateDeviceExtensionProperties(device, MEED_NULL, &deviceExtensionsCount, MEED_NULL);
+	MEED_ASSERT_MSG(deviceExtensionsCount > 0, "Failed to get device extension properties.");
+
+	VkExtensionProperties* pAvailableExtensions = MEED_MALLOC_ARRAY(VkExtensionProperties, deviceExtensionsCount);
+	vkEnumerateDeviceExtensionProperties(device, MEED_NULL, &deviceExtensionsCount, pAvailableExtensions);
+
+	for (u32 requiredEXTIndex = 0u; requiredEXTIndex < MEED_ARRAY_SIZE(deviceExtensions); ++requiredEXTIndex)
+	{
+		b8 extensionFound = MEED_FALSE;
+		for (u32 availableEXTIndex = 0u; availableEXTIndex < deviceExtensionsCount; ++availableEXTIndex)
+		{
+			if (meedPlatformStringCompare(deviceExtensions[requiredEXTIndex],
+										  pAvailableExtensions[availableEXTIndex].extensionName) == 0)
+			{
+				extensionFound = MEED_TRUE;
+				break;
+			}
+		}
+
+		if (!extensionFound)
+		{
+			MEED_FREE_ARRAY(pAvailableExtensions, VkExtensionProperties, deviceExtensionsCount);
+			return MEED_FALSE;
+		}
+	}
+
+	MEED_FREE_ARRAY(pAvailableExtensions, VkExtensionProperties, deviceExtensionsCount);
+	return MEED_TRUE;
+}
+
+static u32 rateDevice(VkPhysicalDevice device)
+{
+	VkPhysicalDeviceProperties properties;
+	vkGetPhysicalDeviceProperties(device, &properties);
+
+	VkPhysicalDeviceFeatures features;
+	vkGetPhysicalDeviceFeatures(device, &features);
+
+	u32 score = 0;
+
+	if (properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
+	{
+		score += 1000;
+	}
+	else if (properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU)
+	{
+		score += 500;
+	}
+
+	if (features.geometryShader)
+	{
+		score += 100;
+	}
+
+	score += properties.limits.maxImageDimension2D;
+
+	return score;
+}
