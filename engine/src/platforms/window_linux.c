@@ -1,4 +1,4 @@
-#if PLATFORM_IS_LINUX
+#if PLATFORM_IS_LINUX && !MEED_USE_OPENGL
 #include "MEEDEngine/platforms/window.h"
 
 #include <X11/Xlib.h>
@@ -165,4 +165,4 @@ void meedWindowShutdown()
 	s_isInitialized = MEED_FALSE;
 }
 
-#endif // PLATFORM_IS_LINUX
+#endif // PLATFORM_IS_LINUX && !MEED_USE_OPENGL

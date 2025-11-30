@@ -66,7 +66,7 @@ target_link_libraries(
     ${PROJECT_LIBRARIES}
 )
 
-if (NOT WEB_BUILD)
+if (MEED_USE_VULKAN)
     MEEDFindPackage(MEEDVulkan "Dependencies")
     target_link_libraries(
         ${PROJECT_NAME}
@@ -94,6 +94,15 @@ if (NOT WEB_BUILD)
         )
     endforeach()
     CompileAllVulkanShaders(${PROJECT_NAME})
+endif()
+
+if (MEED_USE_OPENGL)
+    MEEDFindPackage(MEEDGLFW "Dependencies")
+    target_link_libraries(
+        ${PROJECT_NAME}
+        PUBLIC
+        MEEDGLFW
+    )
 endif()
 
 if (NOT WEB_BUILD)

@@ -30,34 +30,59 @@ macro(MEEDOption OPTION DEFAULT_VALUE)
     endif()
 endmacro()
 
+macro(MEEDSetupRenderAPI)
+    MEEDOption(MEED_USE_VULKAN OFF)
+    MEEDOption(MEED_USE_OPENGL ON)
+
+    if (MEED_USE_VULKAN AND MEED_USE_OPENGL)
+        message(WARNING "Cannot enable both Vulkan and OpenGL support simultaneously. Disabling OpenGL support.")
+        set(MEED_USE_OPENGL OFF CACHE BOOL "Disable OpenGL support" FORCE)
+        list(REMOVE_ITEM COMMON_DEFINITIONS "MEED_USE_OPENGL=1")
+    endif()
+
+    if (NOT MEED_USE_VULKAN AND NOT MEED_USE_OPENGL)
+        message(WARNING "At least one graphics API must be enabled. Enabling Vulkan support by default.")
+        set(MEED_USE_VULKAN ON CACHE BOOL "Enable Vulkan support" FORCE)
+        list(APPEND COMMON_DEFINITIONS "MEED_USE_VULKAN=1")
+    endif()
+    
+    if (WEB_BUILD)
+        if (MEED_USE_VULKAN STREQUAL "ON")
+            message(WARNING "Vulkan is not supported on Web platform. Disabling MEED_USE_VULKAN. Use OpenGL instead.")
+            set(MEED_USE_VULKAN OFF CACHE BOOL "Disable Vulkan on Web platform" FORCE)
+            set(MEED_USE_OPENGL ON CACHE BOOL "Enable OpenGL on Web platform" FORCE)
+            list(REMOVE_ITEM COMMON_DEFINITIONS "MEED_USE_VULKAN=1")
+            list(APPEND COMMON_DEFINITIONS "MEED_USE_OPENGL=1")
+        endif()
+    endif()
+
+    if (MEED_USE_VULKAN)
+        message(STATUS "Render API: Vulkan")
+    elseif (MEED_USE_OPENGL)
+        message(STATUS "Render API: OpenGL")
+    else()
+        message(FATAL "No valid Render API selected.")
+    endif()
+endmacro()
+
 macro(MEEDSetup)
     set(PROJECT_BASE_DIR "{{ BASE_DIR }}")
     set(EXTERNALS_DIR "{{ BASE_DIR }}/externals")
     set(CMAKE_MODULE_DIR "{{ BASE_DIR }}/cmake")
 
     MEEDOption(CMAKE_BUILD_TYPE Debug)
-    MEEDOption(MEED_USE_VULKAN ON)
-
     MEEDDetectPlatform()
 
     list(APPEND COMMON_DEFINITIONS "${PLATFORM_DEFINITION}")
     list(APPEND COMMON_DEFINITIONS "PROJECT_BASE_DIR=${PROJECT_BASE_DIR}")
+
+    MEEDSetupRenderAPI()
 
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")
         list(APPEND COMMON_DEFINITIONS MEED_DEBUG)
     else()
         list(APPEND COMMON_DEFINITIONS MEED_RELEASE)
     endif()
-
-    if (WEB_BUILD)
-        if (MEED_USE_VULKAN STREQUAL "ON")
-            message(WARNING "Vulkan is not supported on Web platform. Disabling MEED_USE_VULKAN.")
-            set(MEED_USE_VULKAN OFF CACHE BOOL "Disable Vulkan on Web platform" FORCE)
-            list(REMOVE_ITEM COMMON_DEFINITIONS "MEED_USE_VULKAN=1")
-        endif()
-    endif()
-
-    message(STATUS "Platform Definitions: ${COMMON_DEFINITIONS}")
 endmacro()
 
 macro(MEEDFindPackage PACKAGE_NAME FOLDER)
