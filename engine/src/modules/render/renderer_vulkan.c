@@ -50,6 +50,16 @@ struct MEEDVulkan
 	struct QueueFamilyIndices queueFamilies; ///< The queue family indices for the selected physical device
 
 	VkDevice device;
+
+	VkQueue graphicsQueue;
+	VkQueue presentQueue;
+
+	VkSurfaceFormatKHR			  surfaceFormat;
+	VkPresentModeKHR			  presentMode;
+	VkExtent2D					  extent;
+	VkSurfaceTransformFlagBitsKHR preTransform;
+	u32							  imagesCount;
+	VkSwapchainKHR				  swapchain;
 };
 
 struct MEEDVulkan* g_vulkan = MEED_NULL; // Global Vulkan instance
@@ -64,6 +74,9 @@ static void choosePhysicalDevice();
 static void createSurface();
 static void getQueueFamilyIndices();
 static void createDevice();
+static void getQueues();
+static void chooseSwapchainSettings();
+static void createSwapchain();
 
 static void deleteGlobalVulkanInstance(void*);
 
@@ -96,6 +109,9 @@ void meedRenderInitialize(struct MEEDWindowData* pWindowData)
 	createSurface();
 	getQueueFamilyIndices();
 	createDevice();
+	getQueues();
+	chooseSwapchainSettings();
+	createSwapchain();
 
 	s_isInitialized = MEED_TRUE;
 }
@@ -499,6 +515,208 @@ static void deleteDevice(void* pData)
 static i32 queueFamilyCompare(const void* pA, const void* pB)
 {
 	return *(u32*)(pA) - *(u32*)(pB);
+}
+
+static void getQueues()
+{
+	MEED_ASSERT(g_vulkan != MEED_NULL);
+	MEED_ASSERT(g_vulkan->device != MEED_NULL);
+	MEED_ASSERT(g_vulkan->queueFamilies.graphicsFamily != NULL_GRAPHICS_FAMILY);
+	MEED_ASSERT(g_vulkan->queueFamilies.presentFamily != NULL_GRAPHICS_FAMILY);
+
+	vkGetDeviceQueue(g_vulkan->device, g_vulkan->queueFamilies.graphicsFamily, 0, &g_vulkan->graphicsQueue);
+	vkGetDeviceQueue(g_vulkan->device, g_vulkan->queueFamilies.presentFamily, 0, &g_vulkan->presentQueue);
+}
+
+static void chooseExtent();
+static void choosePresentMode();
+static void chooseFormat();
+static void chooseImagesCount();
+
+static void chooseSwapchainSettings()
+{
+	MEED_ASSERT(g_vulkan != MEED_NULL);
+	MEED_ASSERT(g_vulkan->physicalDevice != MEED_NULL);
+	MEED_ASSERT(g_vulkan->device != MEED_NULL);
+	MEED_ASSERT(g_vulkan->surface != MEED_NULL);
+
+	chooseExtent();
+	choosePresentMode();
+	chooseFormat();
+	chooseImagesCount();
+}
+
+static void clamp(u32* value, u32 min, u32 max);
+
+static void chooseExtent()
+{
+	MEED_ASSERT(g_vulkan != MEED_NULL);
+	MEED_ASSERT(g_vulkan->physicalDevice != MEED_NULL);
+	MEED_ASSERT(g_vulkan->device != MEED_NULL);
+	MEED_ASSERT(g_vulkan->surface != MEED_NULL);
+
+	VkSurfaceCapabilitiesKHR capabilities;
+	VK_ASSERT(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(g_vulkan->physicalDevice, g_vulkan->surface, &capabilities));
+
+	if (capabilities.currentExtent.width != UINT32_MAX)
+	{
+		g_vulkan->extent = capabilities.currentExtent;
+	}
+	else
+	{
+		u32 width  = g_vulkan->pWindowData->width;
+		u32 height = g_vulkan->pWindowData->height;
+
+		clamp(&width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
+		clamp(&height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
+
+		meedPlatformMemorySet(&g_vulkan->extent, 0, sizeof(VkExtent2D));
+		g_vulkan->extent.width	= width;
+		g_vulkan->extent.height = height;
+	}
+}
+
+static void clamp(u32* value, u32 min, u32 max)
+{
+	if (*value < min)
+	{
+		*value = min;
+	}
+	else if (*value > max)
+	{
+		*value = max;
+	}
+}
+
+static void choosePresentMode()
+{
+	MEED_ASSERT(g_vulkan != MEED_NULL);
+	MEED_ASSERT(g_vulkan->physicalDevice != MEED_NULL);
+
+	u32 presentModesCount = 0;
+	VK_ASSERT(vkGetPhysicalDeviceSurfacePresentModesKHR(
+		g_vulkan->physicalDevice, g_vulkan->surface, &presentModesCount, MEED_NULL));
+	MEED_ASSERT_MSG(presentModesCount > 0, "Failed to get present modes.");
+
+	VkPresentModeKHR* pPresentModes = MEED_MALLOC_ARRAY(VkPresentModeKHR, presentModesCount);
+	VK_ASSERT(vkGetPhysicalDeviceSurfacePresentModesKHR(
+		g_vulkan->physicalDevice, g_vulkan->surface, &presentModesCount, pPresentModes));
+
+	for (u32 i = 0u; i < presentModesCount; ++i)
+	{
+		if (pPresentModes[i] == VK_PRESENT_MODE_MAILBOX_KHR)
+		{
+			g_vulkan->presentMode = VK_PRESENT_MODE_MAILBOX_KHR;
+			MEED_FREE_ARRAY(pPresentModes, VkPresentModeKHR, presentModesCount);
+			return;
+		}
+	}
+
+	g_vulkan->presentMode = VK_PRESENT_MODE_FIFO_KHR;
+	MEED_FREE_ARRAY(pPresentModes, VkPresentModeKHR, presentModesCount);
+	return;
+}
+
+static void chooseFormat()
+{
+	MEED_ASSERT(g_vulkan != MEED_NULL);
+	MEED_ASSERT(g_vulkan->physicalDevice != MEED_NULL);
+
+	u32 formatsCount = 0;
+	VK_ASSERT(
+		vkGetPhysicalDeviceSurfaceFormatsKHR(g_vulkan->physicalDevice, g_vulkan->surface, &formatsCount, MEED_NULL));
+	MEED_ASSERT_MSG(formatsCount > 0, "Failed to get surface formats.");
+
+	VkSurfaceFormatKHR* pFormats = MEED_MALLOC_ARRAY(VkSurfaceFormatKHR, formatsCount);
+
+	VK_ASSERT(
+		vkGetPhysicalDeviceSurfaceFormatsKHR(g_vulkan->physicalDevice, g_vulkan->surface, &formatsCount, pFormats));
+
+	for (u32 i = 0u; i < formatsCount; ++i)
+	{
+		if (pFormats[i].format == VK_FORMAT_B8G8R8A8_SRGB &&
+			pFormats[i].colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
+		{
+			g_vulkan->surfaceFormat = pFormats[i];
+			MEED_FREE_ARRAY(pFormats, VkSurfaceFormatKHR, formatsCount);
+			return;
+		}
+	}
+
+	g_vulkan->surfaceFormat = pFormats[0]; // Fallback to the first format
+	MEED_FREE_ARRAY(pFormats, VkSurfaceFormatKHR, formatsCount);
+}
+
+static void chooseImagesCount()
+{
+	MEED_ASSERT(g_vulkan != MEED_NULL);
+	MEED_ASSERT(g_vulkan->physicalDevice != MEED_NULL);
+
+	VkSurfaceCapabilitiesKHR capabilities;
+	VK_ASSERT(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(g_vulkan->physicalDevice, g_vulkan->surface, &capabilities));
+
+	g_vulkan->imagesCount = capabilities.minImageCount + 1;
+	if (capabilities.maxImageCount > 0 && g_vulkan->imagesCount > capabilities.maxImageCount)
+	{
+		g_vulkan->imagesCount = capabilities.maxImageCount;
+	}
+
+	g_vulkan->preTransform = capabilities.currentTransform;
+}
+
+static void deleteSwapchain(void*);
+static void createSwapchain()
+{
+	MEED_ASSERT(g_vulkan != MEED_NULL);
+	MEED_ASSERT(g_vulkan->device != MEED_NULL);
+	MEED_ASSERT(g_vulkan->surface != MEED_NULL);
+
+	VkSwapchainCreateInfoKHR swapchainCreateInfo = {};
+	swapchainCreateInfo.sType					 = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+	swapchainCreateInfo.surface					 = g_vulkan->surface;
+	swapchainCreateInfo.minImageCount			 = g_vulkan->imagesCount;
+	swapchainCreateInfo.imageFormat				 = g_vulkan->surfaceFormat.format;
+	swapchainCreateInfo.imageColorSpace			 = g_vulkan->surfaceFormat.colorSpace;
+	swapchainCreateInfo.imageExtent				 = g_vulkan->extent;
+	swapchainCreateInfo.presentMode				 = g_vulkan->presentMode;
+	swapchainCreateInfo.imageArrayLayers		 = 1;
+	swapchainCreateInfo.imageUsage				 = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+	swapchainCreateInfo.preTransform			 = g_vulkan->preTransform;
+	swapchainCreateInfo.compositeAlpha			 = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+	swapchainCreateInfo.clipped					 = VK_TRUE;
+	swapchainCreateInfo.oldSwapchain			 = VK_NULL_HANDLE;
+
+	if (g_vulkan->queueFamilies.graphicsFamily != g_vulkan->queueFamilies.presentFamily)
+	{
+		u32 queueFamilyIndices[] = {
+			(u32)g_vulkan->queueFamilies.graphicsFamily,
+			(u32)g_vulkan->queueFamilies.presentFamily,
+		};
+
+		swapchainCreateInfo.imageSharingMode	  = VK_SHARING_MODE_CONCURRENT;
+		swapchainCreateInfo.queueFamilyIndexCount = 2;
+		swapchainCreateInfo.pQueueFamilyIndices	  = queueFamilyIndices;
+	}
+	else
+	{
+		swapchainCreateInfo.imageSharingMode	  = VK_SHARING_MODE_EXCLUSIVE;
+		swapchainCreateInfo.queueFamilyIndexCount = 0;
+		swapchainCreateInfo.pQueueFamilyIndices	  = MEED_NULL;
+	}
+
+	VK_ASSERT(vkCreateSwapchainKHR(g_vulkan->device, &swapchainCreateInfo, MEED_NULL, &g_vulkan->swapchain));
+	meedReleaseStackPush(s_releaseStack, MEED_NULL, deleteSwapchain);
+}
+
+static void deleteSwapchain(void* pData)
+{
+	MEED_UNUSED(pData);
+
+	MEED_ASSERT(g_vulkan != MEED_NULL);
+	MEED_ASSERT(g_vulkan->device != MEED_NULL);
+	MEED_ASSERT(g_vulkan->swapchain != MEED_NULL);
+
+	vkDestroySwapchainKHR(g_vulkan->device, g_vulkan->swapchain, MEED_NULL);
 }
 
 #endif // MEED_USE_VULKAN
