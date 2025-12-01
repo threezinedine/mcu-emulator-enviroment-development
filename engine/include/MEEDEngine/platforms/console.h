@@ -5,6 +5,8 @@
 extern "C" {
 #endif
 
+#define MD_MAX_TRACE_FRAMES 16
+
 /**
  * All possible color which the console can display, using
  * `mdPlatformSetColor` for modifying the color.
@@ -51,6 +53,22 @@ void mdFormatString(char* buffer, mdSize length, const char* format, ...);
  * @param ... The format arguments.
  */
 void mdFormatPrint(const char* format, ...);
+
+/**
+ * Structure used for storing trace information.
+ */
+struct MdTraceInfo
+{
+	void*  frames[MD_MAX_TRACE_FRAMES];
+	mdSize framesCount;
+	mdPid  threadId;
+};
+
+/**
+ * Used for printing the trace of the current call stack to the console.
+ * @param pTraceInfo The trace information to print. if null, will capture the current trace.
+ */
+void mdPrintTrace(struct MdTraceInfo* pTraceInfo);
 
 /**
  * Print a string to the console.

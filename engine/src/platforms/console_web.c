@@ -26,6 +26,15 @@ void mdFormatString(char* buffer, mdSize length, char* format, ...)
 	va_end(args);
 }
 
+void mdPrintTrace(struct MdTraceInfo* pTraceInfo)
+{
+#if MD_DEBUG
+	MD_UNUSED(pTraceInfo);
+#else
+	MD_UNUSED(pTraceInfo);
+#endif
+}
+
 void mdPrint(const char* str)
 {
 	printf("%s", str);

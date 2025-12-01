@@ -1,6 +1,12 @@
 #if PLATFORM_IS_LINUX
 #include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
+#if MD_DEBUG
+#include <execinfo.h>
+#include <pthread.h>
+#include <unistd.h>
+#endif
 
 #include "MEEDEngine/platforms/console.h"
 
@@ -40,6 +46,45 @@ void mdFormatPrint(const char* format, ...)
 void mdPrint(const char* str)
 {
 	printf("%s", str);
+}
+
+void mdPrintTrace(struct MdTraceInfo* pTraceInfo)
+{
+#if MD_DEBUG
+	struct MdTraceInfo* pPrintTraceInfo = pTraceInfo;
+
+	if (pTraceInfo == MD_NULL)
+	{
+		pPrintTraceInfo = MD_MALLOC(struct MdTraceInfo);
+		mdMemorySet(pPrintTraceInfo, 0, sizeof(struct MdTraceInfo));
+
+		pPrintTraceInfo->framesCount = backtrace(pPrintTraceInfo->frames, MD_MAX_TRACE_FRAMES);
+		pPrintTraceInfo->threadId	 = getpid();
+	}
+
+	MD_ASSERT(pPrintTraceInfo->framesCount > 0);
+
+	struct MdConsoleConfig config;
+	config.color = MD_CONSOLE_COLOR_RED;
+	mdSetConsoleConfig(config);
+
+	mdFormatPrint("=== Stack Trace: ===\n");
+#if 0
+	char cmd[512];
+	snprintf(cmd, sizeof(cmd), "addr2line -e /proc/%d/exe -pif", pPrintTraceInfo->threadId);
+#endif
+	for (mdSize i = 0; i < pPrintTraceInfo->framesCount; i++)
+	{
+		char** function = backtrace_symbols(&pPrintTraceInfo->frames[i], 1);
+		mdPrint(function[0]);
+		mdPrint("\n");
+	}
+
+	config.color = MD_CONSOLE_COLOR_RESET;
+	mdSetConsoleConfig(config);
+#else
+	MD_UNUSED(pTraceInfo);
+#endif
 }
 
 #endif // PLATFORM_IS_LINUX

@@ -32,7 +32,11 @@ set(PROJECT_PRECOMPILED_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/include/MEEDEngine/pl
 set(PROJECT_LIBRARIES)
 
 if (PLATFORM_IS_LINUX AND NOT MD_USE_OPENGL)
-    list(APPEND PROJECT_LIBRARIES X11 -rdynamic)
+    list(APPEND PROJECT_LIBRARIES X11)
+endif()
+
+if (PLATFORM_IS_LINUX)
+    list(APPEND PROJECT_LIBRARIES -rdynamic)
 endif()
 
 # ================ Engine Lib ================

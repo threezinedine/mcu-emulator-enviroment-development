@@ -10,9 +10,9 @@ void mdWindowInitialize(void)
 
 struct MdWindowData* mdWindowCreate(u32 width, u32 height, const char* title)
 {
-	MEED_UNUSED(width);	 // Unused parameter in web builds.
-	MEED_UNUSED(height); // Unused parameter in web builds.
-	MEED_UNUSED(title);	 // Unused parameter in web builds.
+	MD_UNUSED(width);  // Unused parameter in web builds.
+	MD_UNUSED(height); // Unused parameter in web builds.
+	MD_UNUSED(title);  // Unused parameter in web builds.
 
 	// Window creation is not supported in web builds.
 	return MD_NULL;
@@ -20,7 +20,7 @@ struct MdWindowData* mdWindowCreate(u32 width, u32 height, const char* title)
 
 struct MdWindowEvent mdWindowPollEvents(struct MdWindowData* pWindowData)
 {
-	MEED_UNUSED(pWindowData); // Unused parameter in web builds.
+	MD_UNUSED(pWindowData); // Unused parameter in web builds.
 
 	struct MdWindowEvent event;
 	event.type = MD_WINDOW_EVENT_TYPE_NONE;
@@ -29,8 +29,8 @@ struct MdWindowEvent mdWindowPollEvents(struct MdWindowData* pWindowData)
 
 void mdWindowDestroy(struct MdWindowData* pWindowData)
 {
-	MEED_UNUSED(pWindowData); // Unused parameter in web builds.
-							  // No window destruction needed for web builds.
+	MD_UNUSED(pWindowData); // Unused parameter in web builds.
+							// No window destruction needed for web builds.
 }
 
 void mdWindowShutdown(void)

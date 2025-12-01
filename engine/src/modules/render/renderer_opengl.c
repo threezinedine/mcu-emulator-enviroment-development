@@ -57,8 +57,8 @@ void mdRenderEndFrame()
 
 void mdRenderDraw(u32 vertexCount, u32 instanceCount, u32 firstVertex, u32 firstInstance)
 {
-	MEED_UNUSED(instanceCount);
-	MEED_UNUSED(firstInstance);
+	MD_UNUSED(instanceCount);
+	MD_UNUSED(firstInstance);
 
 	MD_ASSERT(s_pRenderData != MD_NULL);
 

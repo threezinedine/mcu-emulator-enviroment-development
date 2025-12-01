@@ -29,6 +29,7 @@
 			mdFormatPrint("Assertion failed: %s at %s:%d\n", #expr, __FILE__, __LINE__);                               \
 			config.color = MD_CONSOLE_COLOR_RESET;                                                                     \
 			mdSetConsoleConfig(config);                                                                                \
+			mdPrintTrace(MD_NULL);                                                                                     \
 			debugBreak();                                                                                              \
 		}                                                                                                              \
 	} while (0)
@@ -46,6 +47,7 @@
 			mdFormatPrint("Assertion failed: %s at %s:%d\n", buffer, __FILE__, __LINE__);                              \
 			config.color = MD_CONSOLE_COLOR_RESET;                                                                     \
 			mdSetConsoleConfig(config);                                                                                \
+			mdPrintTrace(MD_NULL);                                                                                     \
 			debugBreak();                                                                                              \
 		}                                                                                                              \
 	} while (0)
@@ -62,7 +64,7 @@
 /**
  * Macro to mark a variable as unused to avoid compiler warnings.
  */
-#define MEED_UNUSED(x) (void)(x)
+#define MD_UNUSED(x) (void)(x)
 
 /**
  * This macro is used for marking that the symbol is intended for binding generation (python)
@@ -124,6 +126,7 @@ static_assert(sizeof(b32) == 4, "b32 size is not 4 bytes");
 #endif
 
 typedef MD_BINDING size_t mdSize;
+typedef MD_BINDING int	  mdPid;
 
 #define MD_NULL ((void*)0)
 

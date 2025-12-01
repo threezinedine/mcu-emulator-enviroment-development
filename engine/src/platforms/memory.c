@@ -5,15 +5,11 @@
 
 #if MD_DEBUG
 #if PLATFORM_IS_LINUX
-#include <execinfo.h>
 #include <pthread.h>
 #include <stdio.h>
-#include <unistd.h>
 #else
 #error "Backtrace capturing is not implemented for this platform."
 #endif
-
-#define MEMORY_MAX_TRACKED_FRAMES 16
 
 /**
  * The specific linked list node which is used only for tracking the allocated memory blocks.
@@ -21,11 +17,9 @@
  */
 struct MemoryNode
 {
-	void*  ptr;								  ///< Store the pointer address for later checking the freed memory.
-	mdSize size;							  ///< Store the size of the allocated memory block for later checking.
-	void*  frames[MEMORY_MAX_TRACKED_FRAMES]; ///< The backtrace frames when the memory was allocated.
-	mdSize framesCount;						  ///< The number of frames stored in the `frames` array.
-	pid_t  threadId;						  ///< The ID of the thread which allocated this memory block.
+	void*			   ptr;		  ///< Store the pointer address for later checking the freed memory.
+	mdSize			   size;	  ///< Store the size of the allocated memory block for later checking.
+	struct MdTraceInfo traceInfo; ///< The trace information when the memory was allocated.
 
 	struct MemoryNode* pNext;
 	struct MemoryNode* pPrev;
@@ -88,9 +82,9 @@ void* mdMalloc(mdSize size)
 	pNode->size = size;
 
 #if PLATFORM_IS_LINUX
-	mdMemorySet(pNode->frames, 0, sizeof(void*) * MEMORY_MAX_TRACKED_FRAMES);
-	pNode->framesCount = backtrace(pNode->frames, MEMORY_MAX_TRACKED_FRAMES);
-	pNode->threadId	   = getpid();
+	mdMemorySet(pNode->traceInfo.frames, 0, sizeof(void*) * MD_MAX_TRACE_FRAMES);
+	pNode->traceInfo.framesCount = backtrace(pNode->traceInfo.frames, MD_MAX_TRACE_FRAMES);
+	pNode->traceInfo.threadId	 = getpid();
 #endif
 
 	if (s_pMemoryHead == MD_NULL)
@@ -168,23 +162,11 @@ void mdMemoryShutdown()
 	// Shutdown code below this line if needed in the future.
 	if (s_pMemoryHead != MD_NULL)
 	{
+		mdPrintTrace(&s_pMemoryHead->traceInfo);
 #if PLATFORM_IS_LINUX
-		struct MdConsoleConfig config;
-		config.color = MD_CONSOLE_COLOR_RED;
-		mdSetConsoleConfig(config);
-
-		mdFormatPrint("=== Memory Leak Stack Trace: ===\n");
-		char cmd[512];
-		snprintf(cmd, sizeof(cmd), "addr2line -e /proc/%d/exe -pif", s_pMemoryHead->threadId);
-		for (mdSize i = 0; i < s_pMemoryHead->framesCount; i++)
-		{
-			char** function = backtrace_symbols(&s_pMemoryHead->frames[i], 1);
-			mdPrint(function[0]);
-			mdPrint("\n");
-		}
 		exit(139); // 139 is the exit code for segmentation fault.
-		config.color = MD_CONSOLE_COLOR_RESET;
-		mdSetConsoleConfig(config);
+#else
+#error "Memory leak handling exit code is not implemented for this platform."
 #endif
 	}
 

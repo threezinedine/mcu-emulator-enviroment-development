@@ -94,7 +94,7 @@ void mdRenderInitialize(struct MdWindowData* pWindowData)
 
 static void deleteGlobalVulkanInstance(void* pData)
 {
-	MEED_UNUSED(pData);
+	MD_UNUSED(pData);
 
 	MD_ASSERT(g_vulkan != MD_NULL);
 
@@ -141,7 +141,7 @@ static void createVulkanInstance()
 
 static void deleteVulkanInstance(void* pData)
 {
-	MEED_UNUSED(pData);
+	MD_UNUSED(pData);
 
 	MD_ASSERT(g_vulkan != MD_NULL);
 	MD_ASSERT(g_vulkan->instance != MD_NULL);
@@ -216,7 +216,7 @@ static void createValidationLayers()
 
 static void deleteDebugMessenger(void* pData)
 {
-	MEED_UNUSED(pData);
+	MD_UNUSED(pData);
 
 	MD_ASSERT(g_vulkan != MD_NULL);
 	MD_ASSERT(g_vulkan->instance != MD_NULL);
@@ -355,7 +355,7 @@ static void createSurface()
 
 static void deleteSurface(void* pData)
 {
-	MEED_UNUSED(pData);
+	MD_UNUSED(pData);
 
 	MD_ASSERT(g_vulkan != MD_NULL);
 	MD_ASSERT(g_vulkan->pWindowData != MD_NULL);
@@ -490,7 +490,7 @@ static void createDevice()
 
 static void deleteDevice(void* pData)
 {
-	MEED_UNUSED(pData);
+	MD_UNUSED(pData);
 
 	MD_ASSERT(g_vulkan != MD_NULL);
 	MD_ASSERT(g_vulkan->device != MD_NULL);
@@ -701,7 +701,7 @@ static void createSwapchain()
 
 static void deleteSwapchain(void* pData)
 {
-	MEED_UNUSED(pData);
+	MD_UNUSED(pData);
 
 	MD_ASSERT(g_vulkan != MD_NULL);
 	MD_ASSERT(g_vulkan->device != MD_NULL);
@@ -727,7 +727,7 @@ static void getSwapchainImages()
 
 static void freeSwapchainImages(void* pData)
 {
-	MEED_UNUSED(pData);
+	MD_UNUSED(pData);
 
 	MD_ASSERT(g_vulkan != MD_NULL);
 	MD_ASSERT(g_vulkan->pSwapchainImages != MD_NULL);
@@ -771,7 +771,7 @@ static void createSwapchainImageViews()
 
 static void freeSwapchainImageViews(void* pData)
 {
-	MEED_UNUSED(pData);
+	MD_UNUSED(pData);
 
 	MD_ASSERT(g_vulkan != MD_NULL);
 	MD_ASSERT(g_vulkan->pSwapchainImageViews != MD_NULL);
@@ -781,7 +781,7 @@ static void freeSwapchainImageViews(void* pData)
 
 static void deleteSwapchainImageViews(void* pData)
 {
-	MEED_UNUSED(pData);
+	MD_UNUSED(pData);
 
 	MD_ASSERT(g_vulkan != MD_NULL);
 	MD_ASSERT(g_vulkan->device != MD_NULL);
@@ -861,7 +861,7 @@ static void createRenderPass()
 
 static void deleteRenderPass(void* pData)
 {
-	MEED_UNUSED(pData);
+	MD_UNUSED(pData);
 
 	MD_ASSERT(g_vulkan != MD_NULL);
 	MD_ASSERT(g_vulkan->device != MD_NULL);
@@ -903,7 +903,7 @@ static void createCommandPools()
 
 static void deleteCommandPool(void* pData)
 {
-	MEED_UNUSED(pData);
+	MD_UNUSED(pData);
 
 	MD_ASSERT(g_vulkan != MD_NULL);
 	MD_ASSERT(g_vulkan->device != MD_NULL);
@@ -938,7 +938,7 @@ static void allocateCommandBuffers()
 
 static void freeCommandBuffers(void* pData)
 {
-	MEED_UNUSED(pData);
+	MD_UNUSED(pData);
 	MD_ASSERT(g_vulkan != MD_NULL);
 	MD_ASSERT(g_vulkan->device != MD_NULL);
 	MD_ASSERT(g_vulkan->graphicsCommandPool != MD_NULL);
@@ -980,7 +980,7 @@ static void createSyncObjects()
 
 static void deleteSyncObjects(void* pData)
 {
-	MEED_UNUSED(pData);
+	MD_UNUSED(pData);
 	MD_ASSERT(g_vulkan != MD_NULL);
 	MD_ASSERT(g_vulkan->device != MD_NULL);
 
