@@ -44,7 +44,7 @@ if (PLATFORM_IS_WEB)
         -sUSE_GLFW=3
         -sUSE_WEBGL2=1
         -sFULL_ES3=1
-        --preload-file ${CMAKE_SOURCE_DIR}/public/shaders/@shaders/
+        --preload-file ${PROJECT_BASE_DIR}/engine/assets/shaders/web@shaders/
     )
 
     add_custom_command(
