@@ -1,18 +1,18 @@
-#if MEED_USE_OPENGL
+#if MD_USE_OPENGL
 
 #include "MEEDEngine/modules/render/render.h"
 #include "opengl_common.h"
 
-struct OpenGLRenderData* s_pRenderData = MEED_NULL;
+struct OpenGLRenderData* s_pRenderData = MD_NULL;
 
 static u32		   vbo, vao;
-static GLFWwindow* s_pWindow = MEED_NULL;
+static GLFWwindow* s_pWindow = MD_NULL;
 
 void mdRenderInitialize(struct MdWindowData* pWindowData)
 {
-	MEED_ASSERT(s_pRenderData == MEED_NULL);
+	MD_ASSERT(s_pRenderData == MD_NULL);
 
-	s_pRenderData			   = MEED_MALLOC(struct OpenGLRenderData);
+	s_pRenderData			   = MD_MALLOC(struct OpenGLRenderData);
 	s_pRenderData->pWindowData = pWindowData;
 
 	// clang-format off
@@ -38,7 +38,7 @@ void mdRenderInitialize(struct MdWindowData* pWindowData)
 
 void mdRenderClearScreen(struct MdColor color)
 {
-	MEED_ASSERT(s_pRenderData != MEED_NULL);
+	MD_ASSERT(s_pRenderData != MD_NULL);
 
 	GL_ASSERT(glClearColor(color.r, color.g, color.b, color.a));
 	GL_ASSERT(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
@@ -46,7 +46,7 @@ void mdRenderClearScreen(struct MdColor color)
 
 void mdRenderStartFrame()
 {
-	MEED_ASSERT(s_pRenderData != MEED_NULL);
+	MD_ASSERT(s_pRenderData != MD_NULL);
 
 	GL_ASSERT(glBindVertexArray(vao));
 }
@@ -60,15 +60,15 @@ void mdRenderDraw(u32 vertexCount, u32 instanceCount, u32 firstVertex, u32 first
 	MEED_UNUSED(instanceCount);
 	MEED_UNUSED(firstInstance);
 
-	MEED_ASSERT(s_pRenderData != MEED_NULL);
+	MD_ASSERT(s_pRenderData != MD_NULL);
 
 	GL_ASSERT(glDrawArrays(GL_TRIANGLES, firstVertex, vertexCount));
 }
 
 void mdRenderPresent()
 {
-	MEED_ASSERT(s_pRenderData != MEED_NULL);
-	MEED_ASSERT(s_pWindow != MEED_NULL);
+	MD_ASSERT(s_pRenderData != MD_NULL);
+	MD_ASSERT(s_pWindow != MD_NULL);
 
 	GL_ASSERT(glfwSwapBuffers(s_pWindow));
 }
@@ -79,11 +79,11 @@ void mdRenderWaitIdle()
 
 void mdRenderShutdown()
 {
-	MEED_ASSERT(s_pRenderData != MEED_NULL);
+	MD_ASSERT(s_pRenderData != MD_NULL);
 
-	MEED_FREE(s_pRenderData, struct OpenGLRenderData);
-	s_pRenderData = MEED_NULL;
-	s_pRenderData = MEED_NULL;
+	MD_FREE(s_pRenderData, struct OpenGLRenderData);
+	s_pRenderData = MD_NULL;
+	s_pRenderData = MD_NULL;
 }
 
-#endif // MEED_USE_OPENGL
+#endif // MD_USE_OPENGL

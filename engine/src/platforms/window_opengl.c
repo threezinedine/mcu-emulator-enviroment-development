@@ -1,4 +1,4 @@
-#if MEED_USE_OPENGL
+#if MD_USE_OPENGL
 
 #include "MEEDEngine/platforms/common.h"
 #include "MEEDEngine/platforms/window.h"
@@ -18,31 +18,31 @@ struct OpenGLWindowData
 	GLFWwindow* pWindow;
 };
 
-static b8 s_isInitialized = MEED_FALSE; ///< Track if the windowing system is initialized
+static b8 s_isInitialized = MD_FALSE; ///< Track if the windowing system is initialized
 
 void mdWindowInitialize()
 {
-	MEED_ASSERT(s_isInitialized == MEED_FALSE);
+	MD_ASSERT(s_isInitialized == MD_FALSE);
 
 	i32 glfwError = glfwInit();
-	MEED_ASSERT_MSG(glfwInit() == GLFW_TRUE, "Failed to initialize GLFW with error code: %d", glfwError);
+	MD_ASSERT_MSG(glfwInit() == GLFW_TRUE, "Failed to initialize GLFW with error code: %d", glfwError);
 
-	s_isInitialized = MEED_TRUE;
+	s_isInitialized = MD_TRUE;
 }
 
 struct MdWindowData* mdWindowCreate(u32 width, u32 height, const char* title)
 {
-	MEED_ASSERT(s_isInitialized == MEED_TRUE);
-	struct MdWindowData* pWindowData = MEED_MALLOC(struct MdWindowData);
-	MEED_ASSERT(pWindowData != MEED_NULL);
+	MD_ASSERT(s_isInitialized == MD_TRUE);
+	struct MdWindowData* pWindowData = MD_MALLOC(struct MdWindowData);
+	MD_ASSERT(pWindowData != MD_NULL);
 	mdMemorySet(pWindowData, 0, sizeof(struct MdWindowData));
 
 	pWindowData->width	= width;
 	pWindowData->height = height;
 	pWindowData->title	= title;
 
-	pWindowData->pInternal = MEED_MALLOC(struct OpenGLWindowData);
-	MEED_ASSERT(pWindowData->pInternal != MEED_NULL);
+	pWindowData->pInternal = MD_MALLOC(struct OpenGLWindowData);
+	MD_ASSERT(pWindowData->pInternal != MD_NULL);
 	mdMemorySet(pWindowData->pInternal, 0, sizeof(struct OpenGLWindowData));
 	struct OpenGLWindowData* pOpenGLData = (struct OpenGLWindowData*)pWindowData->pInternal;
 
@@ -52,14 +52,14 @@ struct MdWindowData* mdWindowCreate(u32 width, u32 height, const char* title)
 	glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE); // already default but force it anyway
 
 	pOpenGLData->pWindow = glfwCreateWindow((i32)width, (i32)height, title, NULL, NULL);
-	MEED_ASSERT(pOpenGLData->pWindow != MEED_NULL);
+	MD_ASSERT(pOpenGLData->pWindow != MD_NULL);
 
 	glfwSetWindowAttrib(pOpenGLData->pWindow, GLFW_AUTO_ICONIFY, GLFW_FALSE);
 
 	glfwMakeContextCurrent(pOpenGLData->pWindow);
 
 #if !PLATFORM_IS_WEB
-	MEED_ASSERT_MSG(gladLoadGLLoader((GLADloadproc)glfwGetProcAddress) == 1, "Failed to initialize GLAD");
+	MD_ASSERT_MSG(gladLoadGLLoader((GLADloadproc)glfwGetProcAddress) == 1, "Failed to initialize GLAD");
 #endif
 
 	struct MdConsoleConfig config = {};
@@ -81,37 +81,37 @@ struct MdWindowData* mdWindowCreate(u32 width, u32 height, const char* title)
 
 struct MdWindowEvent mdWindowPollEvents(struct MdWindowData* pWindowData)
 {
-	MEED_ASSERT(s_isInitialized == MEED_TRUE);
-	MEED_ASSERT(pWindowData != MEED_NULL);
-	MEED_ASSERT(pWindowData->pInternal != MEED_NULL);
+	MD_ASSERT(s_isInitialized == MD_TRUE);
+	MD_ASSERT(pWindowData != MD_NULL);
+	MD_ASSERT(pWindowData->pInternal != MD_NULL);
 	struct OpenGLWindowData* pOpenGLData = (struct OpenGLWindowData*)pWindowData->pInternal;
 
 	glfwPollEvents();
-	pWindowData->shouldClose = glfwWindowShouldClose(pOpenGLData->pWindow) ? MEED_TRUE : MEED_FALSE;
+	pWindowData->shouldClose = glfwWindowShouldClose(pOpenGLData->pWindow) ? MD_TRUE : MD_FALSE;
 
 	return (struct MdWindowEvent){MD_WINDOW_EVENT_TYPE_NONE};
 }
 
 void mdWindowDestroy(struct MdWindowData* pWindowData)
 {
-	MEED_ASSERT(s_isInitialized == MEED_TRUE);
-	MEED_ASSERT(pWindowData != MEED_NULL);
-	MEED_ASSERT(pWindowData->pInternal != MEED_NULL);
+	MD_ASSERT(s_isInitialized == MD_TRUE);
+	MD_ASSERT(pWindowData != MD_NULL);
+	MD_ASSERT(pWindowData->pInternal != MD_NULL);
 	struct OpenGLWindowData* pOpenGLData = (struct OpenGLWindowData*)pWindowData->pInternal;
 
 	glfwDestroyWindow(pOpenGLData->pWindow);
 
-	MEED_FREE(pWindowData->pInternal, struct OpenGLWindowData);
-	MEED_FREE(pWindowData, struct MdWindowData);
+	MD_FREE(pWindowData->pInternal, struct OpenGLWindowData);
+	MD_FREE(pWindowData, struct MdWindowData);
 }
 
 void mdWindowShutdown()
 {
-	MEED_ASSERT(s_isInitialized == MEED_TRUE);
+	MD_ASSERT(s_isInitialized == MD_TRUE);
 
 	glfwTerminate();
 
-	s_isInitialized = MEED_FALSE;
+	s_isInitialized = MD_FALSE;
 }
 
-#endif // MEED_USE_OPENGL
+#endif // MD_USE_OPENGL

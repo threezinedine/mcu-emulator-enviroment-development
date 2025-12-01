@@ -25,7 +25,7 @@ TEST_F(DynamicArrayTest, CreateAndDestroy)
 {
 	EXPECT_NE(s_pArray, nullptr);
 	EXPECT_EQ(s_pArray->count, 0u);
-	EXPECT_EQ(s_pArray->capacity, MEED_DEFAULT_DYNAMIC_ARRAY_CAPACITY);
+	EXPECT_EQ(s_pArray->capacity, MD_DEFAULT_DYNAMIC_ARRAY_CAPACITY);
 }
 
 TEST_F(DynamicArrayTest, InitialCapacity)
@@ -222,10 +222,10 @@ TEST_F(DynamicArrayTest, WithDeleteCallback)
 {
 	struct MdDynamicArray* pArrayWithCallback = mdDynamicArrayCreate(0, deleteTestNode);
 
-	TestNode* pNode1 = MEED_MALLOC(TestNode);
+	TestNode* pNode1 = MD_MALLOC(TestNode);
 	pNode1->value	 = 100;
 
-	TestNode* pNode2 = MEED_MALLOC(TestNode);
+	TestNode* pNode2 = MD_MALLOC(TestNode);
 	pNode2->value	 = 200;
 
 	mdDynamicArrayPush(pArrayWithCallback, pNode1);
@@ -242,10 +242,10 @@ TEST_F(DynamicArrayTest, ClearWithDeleteCallback)
 {
 	struct MdDynamicArray* pArrayWithCallback = mdDynamicArrayCreate(0, deleteTestNode);
 
-	TestNode* pNode1 = MEED_MALLOC(TestNode);
+	TestNode* pNode1 = MD_MALLOC(TestNode);
 	pNode1->value	 = 100;
 
-	TestNode* pNode2 = MEED_MALLOC(TestNode);
+	TestNode* pNode2 = MD_MALLOC(TestNode);
 	pNode2->value	 = 200;
 
 	mdDynamicArrayPush(pArrayWithCallback, pNode1);
@@ -265,10 +265,10 @@ TEST_F(DynamicArrayTest, DeleteWithDeleteCallback)
 {
 	struct MdDynamicArray* pArrayWithCallback = mdDynamicArrayCreate(0, deleteTestNode);
 
-	TestNode* pNode1 = MEED_MALLOC(TestNode);
+	TestNode* pNode1 = MD_MALLOC(TestNode);
 	pNode1->value	 = 100;
 
-	TestNode* pNode2 = MEED_MALLOC(TestNode);
+	TestNode* pNode2 = MD_MALLOC(TestNode);
 	pNode2->value	 = 200;
 
 	mdDynamicArrayPush(pArrayWithCallback, pNode1);

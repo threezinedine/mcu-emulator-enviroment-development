@@ -159,10 +159,10 @@ TEST_F(LinkedListTest, EraseWithCallback)
 {
 	struct MdLinkedList* pListWithCallback = mdLinkedListCreate(deleteTestNode);
 
-	TestNode* pNode1 = MEED_MALLOC(TestNode);
+	TestNode* pNode1 = MD_MALLOC(TestNode);
 	pNode1->value	 = 100;
 
-	TestNode* pNode2 = MEED_MALLOC(TestNode);
+	TestNode* pNode2 = MD_MALLOC(TestNode);
 	pNode2->value	 = 200;
 
 	mdLinkedListPush(pListWithCallback, pNode1);
@@ -183,17 +183,17 @@ TEST_F(LinkedListTest, EraseWithCallback)
 TEST_F(LinkedListTest, EmptyListSize)
 {
 	EXPECT_EQ(mdLinkedListCount(s_pList), 0u);
-	EXPECT_EQ(mdLinkedListEmpty(s_pList), MEED_TRUE);
+	EXPECT_EQ(mdLinkedListEmpty(s_pList), MD_TRUE);
 }
 
 TEST_F(LinkedListTest, ListWithDeleteCallback)
 {
 	struct MdLinkedList* pListWithCallback = mdLinkedListCreate(deleteTestNode);
 
-	TestNode* pNode1 = MEED_MALLOC(TestNode);
+	TestNode* pNode1 = MD_MALLOC(TestNode);
 	pNode1->value	 = 100;
 
-	TestNode* pNode2 = MEED_MALLOC(TestNode);
+	TestNode* pNode2 = MD_MALLOC(TestNode);
 	pNode2->value	 = 200;
 
 	mdLinkedListPush(pListWithCallback, pNode1);
@@ -210,10 +210,10 @@ TEST_F(LinkedListTest, ClearWithDeleteCallback)
 {
 	struct MdLinkedList* pListWithCallback = mdLinkedListCreate(deleteTestNode);
 
-	TestNode* pNode1 = MEED_MALLOC(TestNode);
+	TestNode* pNode1 = MD_MALLOC(TestNode);
 	pNode1->value	 = 100;
 
-	TestNode* pNode2 = MEED_MALLOC(TestNode);
+	TestNode* pNode2 = MD_MALLOC(TestNode);
 	pNode2->value	 = 200;
 
 	mdLinkedListPush(pListWithCallback, pNode1);

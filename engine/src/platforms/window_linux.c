@@ -1,10 +1,10 @@
-#if PLATFORM_IS_LINUX && !MEED_USE_OPENGL
+#if PLATFORM_IS_LINUX && !MD_USE_OPENGL
 #include "MEEDEngine/platforms/window.h"
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-#if MEED_USE_VULKAN
+#if MD_USE_VULKAN
 #include <vulkan/vulkan_xlib.h>
 #endif
 
@@ -25,45 +25,45 @@ static i32 ignore_x_errors(Display* display, XErrorEvent* event)
 
 static XEvent event; ///< used for event polling, declared static to avoid reallocation on each poll
 
-static b8 s_isInitialized = MEED_FALSE; ///< Track if the windowing system is initialized
+static b8 s_isInitialized = MD_FALSE; ///< Track if the windowing system is initialized
 
 #define MEED_WINDOW_UTILS_ASSERTION()                                                                                  \
 	do                                                                                                                 \
 	{                                                                                                                  \
-		MEED_ASSERT_MSG(                                                                                               \
-			s_isInitialized == MEED_TRUE,                                                                              \
+		MD_ASSERT_MSG(                                                                                                 \
+			s_isInitialized == MD_TRUE,                                                                                \
 			"Windowing system is not initialized. Call mdWindowInitialize() before using window functions.");          \
-		MEED_ASSERT_MSG(pWindowData != MEED_NULL, "Provided MdWindowData pointer is NULL.");                           \
-		MEED_ASSERT_MSG(pWindowData->pInternal != MEED_NULL, "Internal window data pointer is NULL.");                 \
+		MD_ASSERT_MSG(pWindowData != MD_NULL, "Provided MdWindowData pointer is NULL.");                               \
+		MD_ASSERT_MSG(pWindowData->pInternal != MD_NULL, "Internal window data pointer is NULL.");                     \
 	} while (0)
 
 void mdWindowInitialize()
 {
-	MEED_ASSERT(s_isInitialized == MEED_FALSE);
+	MD_ASSERT(s_isInitialized == MD_FALSE);
 
 	// Set X11 error handler to ignore errors
 	XSetErrorHandler(ignore_x_errors);
 
 	// Initialization complete.
-	s_isInitialized = MEED_TRUE;
+	s_isInitialized = MD_TRUE;
 }
 
 struct MdWindowData* mdWindowCreate(u32 width, u32 height, const char* title)
 {
-	MEED_ASSERT(s_isInitialized == MEED_TRUE);
+	MD_ASSERT(s_isInitialized == MD_TRUE);
 
-	struct MdWindowData* pWindowData = MEED_MALLOC(struct MdWindowData);
-	MEED_ASSERT(pWindowData != MEED_NULL);
+	struct MdWindowData* pWindowData = MD_MALLOC(struct MdWindowData);
+	MD_ASSERT(pWindowData != MD_NULL);
 	pWindowData->width	= width;
 	pWindowData->height = height;
 	pWindowData->title	= title;
 
-	pWindowData->pInternal = MEED_MALLOC(struct LinuxWindowData);
-	MEED_ASSERT(pWindowData->pInternal != MEED_NULL);
+	pWindowData->pInternal = MD_MALLOC(struct LinuxWindowData);
+	MD_ASSERT(pWindowData->pInternal != MD_NULL);
 
 	struct LinuxWindowData* pLinuxData = (struct LinuxWindowData*)pWindowData->pInternal;
 	pLinuxData->pDisplay			   = XOpenDisplay(NULL);
-	MEED_ASSERT(pLinuxData->pDisplay != MEED_NULL);
+	MD_ASSERT(pLinuxData->pDisplay != MD_NULL);
 	pLinuxData->screen = DefaultScreen(pLinuxData->pDisplay);
 
 	pLinuxData->window = XCreateSimpleWindow(pLinuxData->pDisplay,
@@ -110,7 +110,7 @@ struct MdWindowEvent mdWindowPollEvents(struct MdWindowData* pWindowData)
 	{
 		if (event.xclient.data.l[0] == XInternAtom(pLinuxData->pDisplay, "WM_DELETE_WINDOW", False))
 		{
-			pWindowData->shouldClose = MEED_TRUE;
+			pWindowData->shouldClose = MD_TRUE;
 			windowEvent.type		 = MD_WINDOW_EVENT_TYPE_CLOSE;
 		}
 	}
@@ -118,7 +118,7 @@ struct MdWindowEvent mdWindowPollEvents(struct MdWindowData* pWindowData)
 	return windowEvent;
 }
 
-#if MEED_USE_VULKAN
+#if MD_USE_VULKAN
 VkResult mdWindowCreateVulkanSurface(struct MdWindowData* pWindowData, VkInstance instance, VkSurfaceKHR* pSurface)
 {
 	MEED_WINDOW_UTILS_ASSERTION();
@@ -131,14 +131,14 @@ VkResult mdWindowCreateVulkanSurface(struct MdWindowData* pWindowData, VkInstanc
 	createInfo.dpy						  = pLinuxData->pDisplay;
 	createInfo.window					  = pLinuxData->window;
 
-	return vkCreateXlibSurfaceKHR(instance, &createInfo, MEED_NULL, pSurface);
+	return vkCreateXlibSurfaceKHR(instance, &createInfo, MD_NULL, pSurface);
 }
 
 void mdWindowDestroyVulkanSurface(struct MdWindowData* pWindowData, VkInstance instance, VkSurfaceKHR surface)
 {
 	MEED_WINDOW_UTILS_ASSERTION();
 
-	vkDestroySurfaceKHR(instance, surface, MEED_NULL);
+	vkDestroySurfaceKHR(instance, surface, MD_NULL);
 }
 
 #endif
@@ -153,16 +153,16 @@ void mdWindowDestroy(struct MdWindowData* pWindowData)
 	XFlush(pLinuxData->pDisplay);
 	XCloseDisplay(pLinuxData->pDisplay);
 
-	MEED_FREE(pWindowData->pInternal, struct LinuxWindowData);
-	MEED_FREE(pWindowData, struct MdWindowData);
+	MD_FREE(pWindowData->pInternal, struct LinuxWindowData);
+	MD_FREE(pWindowData, struct MdWindowData);
 }
 
 void mdWindowShutdown()
 {
-	MEED_ASSERT(s_isInitialized == MEED_TRUE);
+	MD_ASSERT(s_isInitialized == MD_TRUE);
 
 	// Shutdown complete.
-	s_isInitialized = MEED_FALSE;
+	s_isInitialized = MD_FALSE;
 }
 
-#endif // PLATFORM_IS_LINUX && !MEED_USE_OPENGL
+#endif // PLATFORM_IS_LINUX && !MD_USE_OPENGL

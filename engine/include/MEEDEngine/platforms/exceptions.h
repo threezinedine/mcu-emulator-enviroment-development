@@ -31,13 +31,13 @@ void mdRaiseException(enum MdExceptionType type, const char* message, const char
  * @param type The type of exception to raise.
  * @param message The message associated with the exception.
  */
-#define MEED_THROW(type, message, ...)                                                                                 \
+#define MD_THROW(type, message, ...)                                                                                   \
 	do                                                                                                                 \
 	{                                                                                                                  \
 		char formattedMessage[512];                                                                                    \
 		mdFormatString(formattedMessage, sizeof(formattedMessage), message, ##__VA_ARGS__);                            \
 		mdRaiseException(type, formattedMessage, __FILE__, __LINE__);                                                  \
-	} while (MEED_FALSE);
+	} while (MD_FALSE);
 
 #if __cplusplus
 }

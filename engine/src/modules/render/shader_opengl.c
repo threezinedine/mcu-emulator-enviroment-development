@@ -1,24 +1,24 @@
-#if MEED_USE_OPENGL
+#if MD_USE_OPENGL
 
 #include "MEEDEngine/modules/render/shader.h"
 #include "opengl_common.h"
 
 struct MdShader* mdShaderCreate(enum MdShaderType type, const char* shaderSource)
 {
-	struct MdShader* pShader = MEED_MALLOC(struct MdShader);
-	MEED_ASSERT(pShader != MEED_NULL);
+	struct MdShader* pShader = MD_MALLOC(struct MdShader);
+	MD_ASSERT(pShader != MD_NULL);
 	mdMemorySet(pShader, 0, sizeof(struct MdShader));
 
 	pShader->type = type;
 
-	pShader->pInternal = MEED_MALLOC(struct OpenGLShader);
-	MEED_ASSERT(pShader->pInternal != MEED_NULL);
+	pShader->pInternal = MD_MALLOC(struct OpenGLShader);
+	MD_ASSERT(pShader->pInternal != MD_NULL);
 	mdMemorySet(pShader->pInternal, 0, sizeof(struct OpenGLShader));
 
 	struct OpenGLShader* pOpenGLShader = (struct OpenGLShader*)pShader->pInternal;
 
 	struct MdFileData* pFile = mdFileOpen(shaderSource, MD_FILE_MODE_READ);
-	MEED_ASSERT_MSG(pFile != MEED_NULL && pFile->isOpen, "Failed to open shader file \"%s\".", shaderSource);
+	MD_ASSERT_MSG(pFile != MD_NULL && pFile->isOpen, "Failed to open shader file \"%s\".", shaderSource);
 
 	GLenum shaderType;
 
@@ -40,7 +40,7 @@ struct MdShader* mdShaderCreate(enum MdShaderType type, const char* shaderSource
 		shaderType = GL_TESS_CONTROL_SHADER; // or GL_TESS_EVALUATION_SHADER based on specific use
 		break;
 	default:
-		MEED_UNTOUCHABLE();
+		MD_UNTOUCHABLE();
 	}
 
 	GL_ASSERT(pOpenGLShader->shaderID = glCreateShader(shaderType));
@@ -52,7 +52,7 @@ struct MdShader* mdShaderCreate(enum MdShaderType type, const char* shaderSource
 	{
 		char infoLog[512];
 		glGetShaderInfoLog(pOpenGLShader->shaderID, 512, NULL, infoLog);
-		MEED_ASSERT_MSG(MEED_FALSE, "Shader \"%s\" compilation failed: %s", shaderSource, infoLog);
+		MD_ASSERT_MSG(MD_FALSE, "Shader \"%s\" compilation failed: %s", shaderSource, infoLog);
 	}
 
 	mdFileClose(pFile);
@@ -62,14 +62,14 @@ struct MdShader* mdShaderCreate(enum MdShaderType type, const char* shaderSource
 
 void mdShaderDestroy(struct MdShader* pShader)
 {
-	MEED_ASSERT(pShader != MEED_NULL);
+	MD_ASSERT(pShader != MD_NULL);
 
 	struct OpenGLShader* pOpenGLShader = (struct OpenGLShader*)pShader->pInternal;
 	GL_ASSERT(glDeleteShader(pOpenGLShader->shaderID));
 
-	MEED_FREE(pShader->pInternal, struct OpenGLShader);
-	MEED_FREE(pShader, struct MdShader);
-	pShader = MEED_NULL;
+	MD_FREE(pShader->pInternal, struct OpenGLShader);
+	MD_FREE(pShader, struct MdShader);
+	pShader = MD_NULL;
 }
 
-#endif // MEED_USE_OPENGL
+#endif // MD_USE_OPENGL

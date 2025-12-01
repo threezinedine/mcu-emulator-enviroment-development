@@ -7,12 +7,12 @@ int main(void)
 
 	struct MdWindowData* pWindowData = mdWindowCreate(800, 600, "MEED Application Window");
 
-	while (pWindowData->shouldClose == MEED_FALSE)
+	while (pWindowData->shouldClose == MD_FALSE)
 	{
 		struct MdWindowEvent windowEvent = mdWindowPollEvents(pWindowData);
 		if (windowEvent.type == MD_WINDOW_EVENT_TYPE_CLOSE)
 		{
-			pWindowData->shouldClose = MEED_TRUE;
+			pWindowData->shouldClose = MD_TRUE;
 		}
 	}
 

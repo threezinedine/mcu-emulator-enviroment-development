@@ -1,5 +1,5 @@
-#if MEED_USE_VULKAN
+#if MD_USE_VULKAN
 
 #include "MEEDEngine/modules/render/vertex_buffer.h"
 
-#endif // MEED_USE_VULKAN
+#endif // MD_USE_VULKAN

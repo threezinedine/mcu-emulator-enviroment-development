@@ -4,7 +4,7 @@ int main(void)
 {
 	mdMemoryInitialize();
 
-	struct MdLinkedList* pList = mdLinkedListCreate(MEED_NULL);
+	struct MdLinkedList* pList = mdLinkedListCreate(MD_NULL);
 
 	mdLinkedListPush(pList, (void*)1);
 

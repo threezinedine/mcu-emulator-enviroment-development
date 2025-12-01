@@ -10,9 +10,9 @@
             ],
             "defines": [
                 "{{ PLATFORM_DEFINE }}",
-                "MEED_DEBUG",
-                "MEED_USE_VULKAN=1",
-                "MEED_USE_OPENGL=0",
+                "MD_DEBUG",
+                "MD_USE_VULKAN=1",
+                "MD_USE_OPENGL=0",
                 "PROJECT_BASE_DIR=\"{{ BASE_DIR }}\""
             ],
             "compilerPath": "{{ COMPILER_PATH }}",

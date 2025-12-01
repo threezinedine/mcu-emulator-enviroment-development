@@ -5,7 +5,7 @@ int main()
 	mdMemoryInitialize();
 
 	void* ptr = mdMalloc(128);
-	MEED_ASSERT_MSG(ptr != MEED_NULL, "Memory allocation failed!");
+	MD_ASSERT_MSG(ptr != MD_NULL, "Memory allocation failed!");
 
 	mdFree(ptr, 128);
 

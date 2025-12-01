@@ -1,4 +1,4 @@
-#if MEED_USE_VULKAN
+#if MD_USE_VULKAN
 
 #include "MEEDEngine/core/core.h"
 #include "MEEDEngine/modules/release_stack/release_stack.h"
@@ -6,7 +6,7 @@
 #include "MEEDEngine/platforms/platforms.h"
 #include "vulkan_common.h"
 
-b8 s_isInitialized = MEED_FALSE;
+b8 s_isInitialized = MD_FALSE;
 
 static const char* instanceExtensions[] = {
 	"VK_KHR_surface",
@@ -21,17 +21,17 @@ static const char* deviceExtensions[] = {
 };
 
 static const char* layers[] = {
-#if MEED_DEBUG
+#if MD_DEBUG
 	"VK_LAYER_KHRONOS_validation",
 #endif
 };
 
-struct MEEDVulkan* g_vulkan = MEED_NULL; // Global Vulkan instance
+struct MEEDVulkan* g_vulkan = MD_NULL; // Global Vulkan instance
 
-static struct MdReleaseStack* s_releaseStack = MEED_NULL; // Global release stack instance
+static struct MdReleaseStack* s_releaseStack = MD_NULL; // Global release stack instance
 
 static void createVulkanInstance();
-#if MEED_DEBUG
+#if MD_DEBUG
 static void createValidationLayers();
 #endif
 static void choosePhysicalDevice();
@@ -52,16 +52,16 @@ static void deleteGlobalVulkanInstance(void*);
 
 void mdRenderInitialize(struct MdWindowData* pWindowData)
 {
-	MEED_ASSERT_MSG(!s_isInitialized, "Rendering module is already initialized.");
-	MEED_ASSERT(pWindowData != MEED_NULL);
-	MEED_ASSERT(g_vulkan == MEED_NULL);
-	MEED_ASSERT(s_releaseStack == MEED_NULL);
+	MD_ASSERT_MSG(!s_isInitialized, "Rendering module is already initialized.");
+	MD_ASSERT(pWindowData != MD_NULL);
+	MD_ASSERT(g_vulkan == MD_NULL);
+	MD_ASSERT(s_releaseStack == MD_NULL);
 	// Implementation of rendering module initialization
 	s_releaseStack = mdReleaseStackCreate();
 
-	g_vulkan = MEED_MALLOC(struct MEEDVulkan);
+	g_vulkan = MD_MALLOC(struct MEEDVulkan);
 	mdMemorySet(g_vulkan, 0, sizeof(struct MEEDVulkan));
-	mdReleaseStackPush(s_releaseStack, MEED_NULL, deleteGlobalVulkanInstance);
+	mdReleaseStackPush(s_releaseStack, MD_NULL, deleteGlobalVulkanInstance);
 
 	// Setup initial values for Vulkan context
 	g_vulkan->pWindowData = pWindowData;
@@ -72,7 +72,7 @@ void mdRenderInitialize(struct MdWindowData* pWindowData)
 	g_vulkan->queueFamilies.transferFamily = NULL_GRAPHICS_FAMILY;
 
 	createVulkanInstance();
-#if MEED_DEBUG
+#if MD_DEBUG
 	createValidationLayers();
 #endif
 	choosePhysicalDevice();
@@ -89,35 +89,35 @@ void mdRenderInitialize(struct MdWindowData* pWindowData)
 	allocateCommandBuffers();
 	createSyncObjects();
 
-	s_isInitialized = MEED_TRUE;
+	s_isInitialized = MD_TRUE;
 }
 
 static void deleteGlobalVulkanInstance(void* pData)
 {
 	MEED_UNUSED(pData);
 
-	MEED_ASSERT(g_vulkan != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
 
-	MEED_FREE(g_vulkan, struct MEEDVulkan);
+	MD_FREE(g_vulkan, struct MEEDVulkan);
 }
 
 void mdRenderShutdown()
 {
-	MEED_ASSERT_MSG(s_isInitialized, "Rendering module is not initialized.");
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(s_releaseStack != MEED_NULL);
+	MD_ASSERT_MSG(s_isInitialized, "Rendering module is not initialized.");
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(s_releaseStack != MD_NULL);
 	// Implementation of rendering module shutdown
 
 	mdReleaseStackDestroy(s_releaseStack);
-	s_isInitialized = MEED_FALSE;
+	s_isInitialized = MD_FALSE;
 }
 
 static void deleteVulkanInstance(void*);
 
 static void createVulkanInstance()
 {
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(s_releaseStack != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(s_releaseStack != MD_NULL);
 
 	VkApplicationInfo appInfo  = {};
 	appInfo.sType			   = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -130,23 +130,23 @@ static void createVulkanInstance()
 	VkInstanceCreateInfo instanceCreateInfo	   = {};
 	instanceCreateInfo.sType				   = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 	instanceCreateInfo.pApplicationInfo		   = &appInfo;
-	instanceCreateInfo.enabledExtensionCount   = MEED_ARRAY_SIZE(instanceExtensions);
+	instanceCreateInfo.enabledExtensionCount   = MD_ARRAY_SIZE(instanceExtensions);
 	instanceCreateInfo.ppEnabledExtensionNames = instanceExtensions;
-	instanceCreateInfo.enabledLayerCount	   = MEED_ARRAY_SIZE(layers);
+	instanceCreateInfo.enabledLayerCount	   = MD_ARRAY_SIZE(layers);
 	instanceCreateInfo.ppEnabledLayerNames	   = layers;
 
-	VK_ASSERT(vkCreateInstance(&instanceCreateInfo, MEED_NULL, &g_vulkan->instance));
-	mdReleaseStackPush(s_releaseStack, MEED_NULL, deleteVulkanInstance);
+	VK_ASSERT(vkCreateInstance(&instanceCreateInfo, MD_NULL, &g_vulkan->instance));
+	mdReleaseStackPush(s_releaseStack, MD_NULL, deleteVulkanInstance);
 }
 
 static void deleteVulkanInstance(void* pData)
 {
 	MEED_UNUSED(pData);
 
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->instance != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->instance != MD_NULL);
 
-	vkDestroyInstance(g_vulkan->instance, MEED_NULL);
+	vkDestroyInstance(g_vulkan->instance, MD_NULL);
 }
 
 VKAPI_ATTR VkBool32 VKAPI_CALL vulkanDebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT	   messageSeverity,
@@ -185,14 +185,14 @@ VKAPI_ATTR VkBool32 VKAPI_CALL vulkanDebugCallback(VkDebugUtilsMessageSeverityFl
 	return VK_FALSE;
 }
 
-#if MEED_DEBUG
+#if MD_DEBUG
 static void deleteDebugMessenger(void*);
 
 static void createValidationLayers()
 {
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->instance != MEED_NULL);
-	MEED_ASSERT(s_releaseStack != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->instance != MD_NULL);
+	MD_ASSERT(s_releaseStack != MD_NULL);
 
 	VkDebugUtilsMessengerCreateInfoEXT messengerCreateInfo = {};
 
@@ -208,26 +208,26 @@ static void createValidationLayers()
 	PFN_vkCreateDebugUtilsMessengerEXT createDebugUtilsMessengerEXT =
 		(PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(g_vulkan->instance, "vkCreateDebugUtilsMessengerEXT");
 
-	MEED_ASSERT(createDebugUtilsMessengerEXT != MEED_NULL);
+	MD_ASSERT(createDebugUtilsMessengerEXT != MD_NULL);
 	VK_ASSERT(
-		createDebugUtilsMessengerEXT(g_vulkan->instance, &messengerCreateInfo, MEED_NULL, &g_vulkan->debugMessenger));
-	mdReleaseStackPush(s_releaseStack, MEED_NULL, deleteDebugMessenger);
+		createDebugUtilsMessengerEXT(g_vulkan->instance, &messengerCreateInfo, MD_NULL, &g_vulkan->debugMessenger));
+	mdReleaseStackPush(s_releaseStack, MD_NULL, deleteDebugMessenger);
 }
 
 static void deleteDebugMessenger(void* pData)
 {
 	MEED_UNUSED(pData);
 
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->instance != MEED_NULL);
-	MEED_ASSERT(g_vulkan->debugMessenger != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->instance != MD_NULL);
+	MD_ASSERT(g_vulkan->debugMessenger != MD_NULL);
 
 	PFN_vkDestroyDebugUtilsMessengerEXT destroyDebugUtilsMessengerEXT =
 		(PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(g_vulkan->instance,
 																   "vkDestroyDebugUtilsMessengerEXT");
 
-	MEED_ASSERT(destroyDebugUtilsMessengerEXT != MEED_NULL);
-	destroyDebugUtilsMessengerEXT(g_vulkan->instance, g_vulkan->debugMessenger, MEED_NULL);
+	MD_ASSERT(destroyDebugUtilsMessengerEXT != MD_NULL);
+	destroyDebugUtilsMessengerEXT(g_vulkan->instance, g_vulkan->debugMessenger, MD_NULL);
 }
 #endif
 
@@ -235,15 +235,15 @@ static u32 isDeviceSuitable(VkPhysicalDevice device);
 
 static void choosePhysicalDevice()
 {
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->instance != MEED_NULL);
-	MEED_ASSERT(s_releaseStack != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->instance != MD_NULL);
+	MD_ASSERT(s_releaseStack != MD_NULL);
 
 	u32 devicesCount = 0;
-	VK_ASSERT(vkEnumeratePhysicalDevices(g_vulkan->instance, &devicesCount, MEED_NULL));
-	MEED_ASSERT_MSG(devicesCount > 0, "Failed to find GPUs with Vulkan support.");
+	VK_ASSERT(vkEnumeratePhysicalDevices(g_vulkan->instance, &devicesCount, MD_NULL));
+	MD_ASSERT_MSG(devicesCount > 0, "Failed to find GPUs with Vulkan support.");
 
-	VkPhysicalDevice* pDevices = MEED_MALLOC_ARRAY(VkPhysicalDevice, devicesCount);
+	VkPhysicalDevice* pDevices = MD_MALLOC_ARRAY(VkPhysicalDevice, devicesCount);
 	VK_ASSERT(vkEnumeratePhysicalDevices(g_vulkan->instance, &devicesCount, pDevices));
 
 	u32 highestScore	= 0;
@@ -259,9 +259,9 @@ static void choosePhysicalDevice()
 		}
 	}
 
-	MEED_ASSERT_MSG(bestDeviceIndex != -1, "Failed to find a suitable GPU.");
+	MD_ASSERT_MSG(bestDeviceIndex != -1, "Failed to find a suitable GPU.");
 	g_vulkan->physicalDevice = pDevices[bestDeviceIndex];
-	MEED_FREE_ARRAY(pDevices, VkPhysicalDevice, devicesCount);
+	MD_FREE_ARRAY(pDevices, VkPhysicalDevice, devicesCount);
 }
 
 static b8  checkDeviceExtensionsSupport(VkPhysicalDevice device);
@@ -280,34 +280,34 @@ static u32 isDeviceSuitable(VkPhysicalDevice device)
 static b8 checkDeviceExtensionsSupport(VkPhysicalDevice device)
 {
 	u32 deviceExtensionsCount = 0;
-	vkEnumerateDeviceExtensionProperties(device, MEED_NULL, &deviceExtensionsCount, MEED_NULL);
-	MEED_ASSERT_MSG(deviceExtensionsCount > 0, "Failed to get device extension properties.");
+	vkEnumerateDeviceExtensionProperties(device, MD_NULL, &deviceExtensionsCount, MD_NULL);
+	MD_ASSERT_MSG(deviceExtensionsCount > 0, "Failed to get device extension properties.");
 
-	VkExtensionProperties* pAvailableExtensions = MEED_MALLOC_ARRAY(VkExtensionProperties, deviceExtensionsCount);
-	vkEnumerateDeviceExtensionProperties(device, MEED_NULL, &deviceExtensionsCount, pAvailableExtensions);
+	VkExtensionProperties* pAvailableExtensions = MD_MALLOC_ARRAY(VkExtensionProperties, deviceExtensionsCount);
+	vkEnumerateDeviceExtensionProperties(device, MD_NULL, &deviceExtensionsCount, pAvailableExtensions);
 
-	for (u32 requiredEXTIndex = 0u; requiredEXTIndex < MEED_ARRAY_SIZE(deviceExtensions); ++requiredEXTIndex)
+	for (u32 requiredEXTIndex = 0u; requiredEXTIndex < MD_ARRAY_SIZE(deviceExtensions); ++requiredEXTIndex)
 	{
-		b8 extensionFound = MEED_FALSE;
+		b8 extensionFound = MD_FALSE;
 		for (u32 availableEXTIndex = 0u; availableEXTIndex < deviceExtensionsCount; ++availableEXTIndex)
 		{
 			if (mdStringCompare(deviceExtensions[requiredEXTIndex],
 								pAvailableExtensions[availableEXTIndex].extensionName) == 0)
 			{
-				extensionFound = MEED_TRUE;
+				extensionFound = MD_TRUE;
 				break;
 			}
 		}
 
 		if (!extensionFound)
 		{
-			MEED_FREE_ARRAY(pAvailableExtensions, VkExtensionProperties, deviceExtensionsCount);
-			return MEED_FALSE;
+			MD_FREE_ARRAY(pAvailableExtensions, VkExtensionProperties, deviceExtensionsCount);
+			return MD_FALSE;
 		}
 	}
 
-	MEED_FREE_ARRAY(pAvailableExtensions, VkExtensionProperties, deviceExtensionsCount);
-	return MEED_TRUE;
+	MD_FREE_ARRAY(pAvailableExtensions, VkExtensionProperties, deviceExtensionsCount);
+	return MD_TRUE;
 }
 
 static u32 rateDevice(VkPhysicalDevice device)
@@ -342,44 +342,44 @@ static u32 rateDevice(VkPhysicalDevice device)
 static void deleteSurface(void*);
 static void createSurface()
 {
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->pWindowData != MEED_NULL);
-	MEED_ASSERT(g_vulkan->instance != MEED_NULL);
-	MEED_ASSERT(g_vulkan->physicalDevice != MEED_NULL);
-	MEED_ASSERT(g_vulkan->surface == MEED_NULL);
-	MEED_ASSERT(s_releaseStack != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->pWindowData != MD_NULL);
+	MD_ASSERT(g_vulkan->instance != MD_NULL);
+	MD_ASSERT(g_vulkan->physicalDevice != MD_NULL);
+	MD_ASSERT(g_vulkan->surface == MD_NULL);
+	MD_ASSERT(s_releaseStack != MD_NULL);
 
 	VK_ASSERT(mdWindowCreateVulkanSurface(g_vulkan->pWindowData, g_vulkan->instance, &g_vulkan->surface));
-	mdReleaseStackPush(s_releaseStack, MEED_NULL, deleteSurface);
+	mdReleaseStackPush(s_releaseStack, MD_NULL, deleteSurface);
 };
 
 static void deleteSurface(void* pData)
 {
 	MEED_UNUSED(pData);
 
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->pWindowData != MEED_NULL);
-	MEED_ASSERT(g_vulkan->instance != MEED_NULL);
-	MEED_ASSERT(g_vulkan->surface != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->pWindowData != MD_NULL);
+	MD_ASSERT(g_vulkan->instance != MD_NULL);
+	MD_ASSERT(g_vulkan->surface != MD_NULL);
 
 	mdWindowDestroyVulkanSurface(g_vulkan->pWindowData, g_vulkan->instance, g_vulkan->surface);
 }
 
 static void getQueueFamilyIndices()
 {
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->instance != MEED_NULL);
-	MEED_ASSERT(g_vulkan->physicalDevice != MEED_NULL);
-	MEED_ASSERT(g_vulkan->queueFamilies.graphicsFamily == NULL_GRAPHICS_FAMILY);
-	MEED_ASSERT(g_vulkan->queueFamilies.presentFamily == NULL_GRAPHICS_FAMILY);
-	MEED_ASSERT(g_vulkan->queueFamilies.computeFamily == NULL_GRAPHICS_FAMILY);
-	MEED_ASSERT(g_vulkan->queueFamilies.transferFamily == NULL_GRAPHICS_FAMILY);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->instance != MD_NULL);
+	MD_ASSERT(g_vulkan->physicalDevice != MD_NULL);
+	MD_ASSERT(g_vulkan->queueFamilies.graphicsFamily == NULL_GRAPHICS_FAMILY);
+	MD_ASSERT(g_vulkan->queueFamilies.presentFamily == NULL_GRAPHICS_FAMILY);
+	MD_ASSERT(g_vulkan->queueFamilies.computeFamily == NULL_GRAPHICS_FAMILY);
+	MD_ASSERT(g_vulkan->queueFamilies.transferFamily == NULL_GRAPHICS_FAMILY);
 
 	u32 queueFamiliesCount = 0;
-	vkGetPhysicalDeviceQueueFamilyProperties(g_vulkan->physicalDevice, &queueFamiliesCount, MEED_NULL);
-	MEED_ASSERT_MSG(queueFamiliesCount > 0, "Failed to get queue family properties.");
+	vkGetPhysicalDeviceQueueFamilyProperties(g_vulkan->physicalDevice, &queueFamiliesCount, MD_NULL);
+	MD_ASSERT_MSG(queueFamiliesCount > 0, "Failed to get queue family properties.");
 
-	VkQueueFamilyProperties* pQueueFamilies = MEED_MALLOC_ARRAY(VkQueueFamilyProperties, queueFamiliesCount);
+	VkQueueFamilyProperties* pQueueFamilies = MD_MALLOC_ARRAY(VkQueueFamilyProperties, queueFamiliesCount);
 	vkGetPhysicalDeviceQueueFamilyProperties(g_vulkan->physicalDevice, &queueFamiliesCount, pQueueFamilies);
 
 	for (i32 queueFamilyIndex = 0; queueFamilyIndex < queueFamiliesCount; ++queueFamilyIndex)
@@ -417,22 +417,22 @@ static void getQueueFamilyIndices()
 		}
 	}
 
-	MEED_ASSERT_MSG(g_vulkan->queueFamilies.graphicsFamily != NULL_GRAPHICS_FAMILY,
-					"Failed to find a graphics queue family.");
+	MD_ASSERT_MSG(g_vulkan->queueFamilies.graphicsFamily != NULL_GRAPHICS_FAMILY,
+				  "Failed to find a graphics queue family.");
 
-	MEED_ASSERT_MSG(g_vulkan->queueFamilies.presentFamily != NULL_GRAPHICS_FAMILY,
-					"Failed to find a present queue family.");
+	MD_ASSERT_MSG(g_vulkan->queueFamilies.presentFamily != NULL_GRAPHICS_FAMILY,
+				  "Failed to find a present queue family.");
 
-	MEED_FREE_ARRAY(pQueueFamilies, VkQueueFamilyProperties, queueFamiliesCount);
+	MD_FREE_ARRAY(pQueueFamilies, VkQueueFamilyProperties, queueFamiliesCount);
 }
 
 static void deleteDevice(void*);
 static i32	queueFamilyCompare(const void*, const void*);
 static void createDevice()
 {
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->instance != MEED_NULL);
-	MEED_ASSERT(g_vulkan->physicalDevice != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->instance != MD_NULL);
+	MD_ASSERT(g_vulkan->physicalDevice != MD_NULL);
 
 	float queuePriority = 1.0f;
 
@@ -442,7 +442,7 @@ static void createDevice()
 	};
 
 	struct MdSet* pSet				 = mdSetCreate(queueFamilyCompare);
-	u32			  familyIndicesCount = MEED_ARRAY_SIZE(familyIndices);
+	u32			  familyIndicesCount = MD_ARRAY_SIZE(familyIndices);
 	for (u32 i = 0u; i < familyIndicesCount; ++i)
 	{
 		mdSetPush(pSet, &familyIndices[i]);
@@ -450,7 +450,7 @@ static void createDevice()
 
 	u32 uniqueQueueFamiliesCount = mdSetCount(pSet);
 
-	VkDeviceQueueCreateInfo* pQueueCreateInfos = MEED_MALLOC_ARRAY(VkDeviceQueueCreateInfo, uniqueQueueFamiliesCount);
+	VkDeviceQueueCreateInfo* pQueueCreateInfos = MD_MALLOC_ARRAY(VkDeviceQueueCreateInfo, uniqueQueueFamiliesCount);
 
 	for (u32 i = 0u; i < uniqueQueueFamiliesCount; ++i)
 	{
@@ -476,15 +476,15 @@ static void createDevice()
 	VkDeviceCreateInfo deviceCreateInfo		 = {};
 	deviceCreateInfo.sType					 = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 	deviceCreateInfo.pNext					 = &vulkan13Features;
-	deviceCreateInfo.enabledExtensionCount	 = MEED_ARRAY_SIZE(deviceExtensions);
+	deviceCreateInfo.enabledExtensionCount	 = MD_ARRAY_SIZE(deviceExtensions);
 	deviceCreateInfo.ppEnabledExtensionNames = deviceExtensions;
 	deviceCreateInfo.queueCreateInfoCount	 = uniqueQueueFamiliesCount;
 	deviceCreateInfo.pQueueCreateInfos		 = pQueueCreateInfos;
 
-	VK_ASSERT(vkCreateDevice(g_vulkan->physicalDevice, &deviceCreateInfo, MEED_NULL, &g_vulkan->device));
-	mdReleaseStackPush(s_releaseStack, MEED_NULL, deleteDevice);
+	VK_ASSERT(vkCreateDevice(g_vulkan->physicalDevice, &deviceCreateInfo, MD_NULL, &g_vulkan->device));
+	mdReleaseStackPush(s_releaseStack, MD_NULL, deleteDevice);
 
-	MEED_FREE_ARRAY(pQueueCreateInfos, VkDeviceQueueCreateInfo, uniqueQueueFamiliesCount);
+	MD_FREE_ARRAY(pQueueCreateInfos, VkDeviceQueueCreateInfo, uniqueQueueFamiliesCount);
 	mdSetDestroy(pSet);
 }
 
@@ -492,10 +492,10 @@ static void deleteDevice(void* pData)
 {
 	MEED_UNUSED(pData);
 
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->device != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->device != MD_NULL);
 
-	vkDestroyDevice(g_vulkan->device, MEED_NULL);
+	vkDestroyDevice(g_vulkan->device, MD_NULL);
 }
 
 static i32 queueFamilyCompare(const void* pA, const void* pB)
@@ -505,10 +505,10 @@ static i32 queueFamilyCompare(const void* pA, const void* pB)
 
 static void getQueues()
 {
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->device != MEED_NULL);
-	MEED_ASSERT(g_vulkan->queueFamilies.graphicsFamily != NULL_GRAPHICS_FAMILY);
-	MEED_ASSERT(g_vulkan->queueFamilies.presentFamily != NULL_GRAPHICS_FAMILY);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->device != MD_NULL);
+	MD_ASSERT(g_vulkan->queueFamilies.graphicsFamily != NULL_GRAPHICS_FAMILY);
+	MD_ASSERT(g_vulkan->queueFamilies.presentFamily != NULL_GRAPHICS_FAMILY);
 
 	vkGetDeviceQueue(g_vulkan->device, g_vulkan->queueFamilies.graphicsFamily, 0, &g_vulkan->graphicsQueue);
 	vkGetDeviceQueue(g_vulkan->device, g_vulkan->queueFamilies.presentFamily, 0, &g_vulkan->presentQueue);
@@ -521,10 +521,10 @@ static void chooseImagesCount();
 
 static void chooseSwapchainSettings()
 {
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->physicalDevice != MEED_NULL);
-	MEED_ASSERT(g_vulkan->device != MEED_NULL);
-	MEED_ASSERT(g_vulkan->surface != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->physicalDevice != MD_NULL);
+	MD_ASSERT(g_vulkan->device != MD_NULL);
+	MD_ASSERT(g_vulkan->surface != MD_NULL);
 
 	chooseExtent();
 	choosePresentMode();
@@ -536,10 +536,10 @@ static void clamp(u32* value, u32 min, u32 max);
 
 static void chooseExtent()
 {
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->physicalDevice != MEED_NULL);
-	MEED_ASSERT(g_vulkan->device != MEED_NULL);
-	MEED_ASSERT(g_vulkan->surface != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->physicalDevice != MD_NULL);
+	MD_ASSERT(g_vulkan->device != MD_NULL);
+	MD_ASSERT(g_vulkan->surface != MD_NULL);
 
 	VkSurfaceCapabilitiesKHR capabilities;
 	VK_ASSERT(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(g_vulkan->physicalDevice, g_vulkan->surface, &capabilities));
@@ -576,15 +576,15 @@ static void clamp(u32* value, u32 min, u32 max)
 
 static void choosePresentMode()
 {
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->physicalDevice != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->physicalDevice != MD_NULL);
 
 	u32 presentModesCount = 0;
 	VK_ASSERT(vkGetPhysicalDeviceSurfacePresentModesKHR(
-		g_vulkan->physicalDevice, g_vulkan->surface, &presentModesCount, MEED_NULL));
-	MEED_ASSERT_MSG(presentModesCount > 0, "Failed to get present modes.");
+		g_vulkan->physicalDevice, g_vulkan->surface, &presentModesCount, MD_NULL));
+	MD_ASSERT_MSG(presentModesCount > 0, "Failed to get present modes.");
 
-	VkPresentModeKHR* pPresentModes = MEED_MALLOC_ARRAY(VkPresentModeKHR, presentModesCount);
+	VkPresentModeKHR* pPresentModes = MD_MALLOC_ARRAY(VkPresentModeKHR, presentModesCount);
 	VK_ASSERT(vkGetPhysicalDeviceSurfacePresentModesKHR(
 		g_vulkan->physicalDevice, g_vulkan->surface, &presentModesCount, pPresentModes));
 
@@ -604,21 +604,21 @@ static void choosePresentMode()
 	}
 
 	g_vulkan->presentMode = VK_PRESENT_MODE_FIFO_KHR;
-	MEED_FREE_ARRAY(pPresentModes, VkPresentModeKHR, presentModesCount);
+	MD_FREE_ARRAY(pPresentModes, VkPresentModeKHR, presentModesCount);
 	return;
 }
 
 static void chooseFormat()
 {
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->physicalDevice != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->physicalDevice != MD_NULL);
 
 	u32 formatsCount = 0;
 	VK_ASSERT(
-		vkGetPhysicalDeviceSurfaceFormatsKHR(g_vulkan->physicalDevice, g_vulkan->surface, &formatsCount, MEED_NULL));
-	MEED_ASSERT_MSG(formatsCount > 0, "Failed to get surface formats.");
+		vkGetPhysicalDeviceSurfaceFormatsKHR(g_vulkan->physicalDevice, g_vulkan->surface, &formatsCount, MD_NULL));
+	MD_ASSERT_MSG(formatsCount > 0, "Failed to get surface formats.");
 
-	VkSurfaceFormatKHR* pFormats = MEED_MALLOC_ARRAY(VkSurfaceFormatKHR, formatsCount);
+	VkSurfaceFormatKHR* pFormats = MD_MALLOC_ARRAY(VkSurfaceFormatKHR, formatsCount);
 
 	VK_ASSERT(
 		vkGetPhysicalDeviceSurfaceFormatsKHR(g_vulkan->physicalDevice, g_vulkan->surface, &formatsCount, pFormats));
@@ -629,19 +629,19 @@ static void chooseFormat()
 			pFormats[i].colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
 		{
 			g_vulkan->surfaceFormat = pFormats[i];
-			MEED_FREE_ARRAY(pFormats, VkSurfaceFormatKHR, formatsCount);
+			MD_FREE_ARRAY(pFormats, VkSurfaceFormatKHR, formatsCount);
 			return;
 		}
 	}
 
 	g_vulkan->surfaceFormat = pFormats[0]; // Fallback to the first format
-	MEED_FREE_ARRAY(pFormats, VkSurfaceFormatKHR, formatsCount);
+	MD_FREE_ARRAY(pFormats, VkSurfaceFormatKHR, formatsCount);
 }
 
 static void chooseImagesCount()
 {
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->physicalDevice != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->physicalDevice != MD_NULL);
 
 	VkSurfaceCapabilitiesKHR capabilities;
 	VK_ASSERT(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(g_vulkan->physicalDevice, g_vulkan->surface, &capabilities));
@@ -658,9 +658,9 @@ static void chooseImagesCount()
 static void deleteSwapchain(void*);
 static void createSwapchain()
 {
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->device != MEED_NULL);
-	MEED_ASSERT(g_vulkan->surface != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->device != MD_NULL);
+	MD_ASSERT(g_vulkan->surface != MD_NULL);
 
 	VkSwapchainCreateInfoKHR swapchainCreateInfo = {};
 	swapchainCreateInfo.sType					 = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
@@ -692,34 +692,34 @@ static void createSwapchain()
 	{
 		swapchainCreateInfo.imageSharingMode	  = VK_SHARING_MODE_EXCLUSIVE;
 		swapchainCreateInfo.queueFamilyIndexCount = 0;
-		swapchainCreateInfo.pQueueFamilyIndices	  = MEED_NULL;
+		swapchainCreateInfo.pQueueFamilyIndices	  = MD_NULL;
 	}
 
-	VK_ASSERT(vkCreateSwapchainKHR(g_vulkan->device, &swapchainCreateInfo, MEED_NULL, &g_vulkan->swapchain));
-	mdReleaseStackPush(s_releaseStack, MEED_NULL, deleteSwapchain);
+	VK_ASSERT(vkCreateSwapchainKHR(g_vulkan->device, &swapchainCreateInfo, MD_NULL, &g_vulkan->swapchain));
+	mdReleaseStackPush(s_releaseStack, MD_NULL, deleteSwapchain);
 }
 
 static void deleteSwapchain(void* pData)
 {
 	MEED_UNUSED(pData);
 
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->device != MEED_NULL);
-	MEED_ASSERT(g_vulkan->swapchain != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->device != MD_NULL);
+	MD_ASSERT(g_vulkan->swapchain != MD_NULL);
 
-	vkDestroySwapchainKHR(g_vulkan->device, g_vulkan->swapchain, MEED_NULL);
+	vkDestroySwapchainKHR(g_vulkan->device, g_vulkan->swapchain, MD_NULL);
 }
 
 static void freeSwapchainImages(void*);
 static void getSwapchainImages()
 {
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->device != MEED_NULL);
-	MEED_ASSERT(g_vulkan->swapchain != MEED_NULL);
-	MEED_ASSERT(g_vulkan->pSwapchainImages == MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->device != MD_NULL);
+	MD_ASSERT(g_vulkan->swapchain != MD_NULL);
+	MD_ASSERT(g_vulkan->pSwapchainImages == MD_NULL);
 
-	g_vulkan->pSwapchainImages = MEED_MALLOC_ARRAY(VkImage, g_vulkan->imagesCount);
-	mdReleaseStackPush(s_releaseStack, MEED_NULL, freeSwapchainImages);
+	g_vulkan->pSwapchainImages = MD_MALLOC_ARRAY(VkImage, g_vulkan->imagesCount);
+	mdReleaseStackPush(s_releaseStack, MD_NULL, freeSwapchainImages);
 
 	VK_ASSERT(vkGetSwapchainImagesKHR(
 		g_vulkan->device, g_vulkan->swapchain, &g_vulkan->imagesCount, g_vulkan->pSwapchainImages));
@@ -729,22 +729,22 @@ static void freeSwapchainImages(void* pData)
 {
 	MEED_UNUSED(pData);
 
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->pSwapchainImages != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->pSwapchainImages != MD_NULL);
 
-	MEED_FREE_ARRAY(g_vulkan->pSwapchainImages, VkImage, g_vulkan->imagesCount);
+	MD_FREE_ARRAY(g_vulkan->pSwapchainImages, VkImage, g_vulkan->imagesCount);
 }
 
 static void freeSwapchainImageViews(void*);
 static void deleteSwapchainImageViews(void*);
 static void createSwapchainImageViews()
 {
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->pSwapchainImages != MEED_NULL);
-	MEED_ASSERT(g_vulkan->pSwapchainImageViews == MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->pSwapchainImages != MD_NULL);
+	MD_ASSERT(g_vulkan->pSwapchainImageViews == MD_NULL);
 
-	g_vulkan->pSwapchainImageViews = MEED_MALLOC_ARRAY(VkImageView, g_vulkan->imagesCount);
-	mdReleaseStackPush(s_releaseStack, MEED_NULL, freeSwapchainImageViews);
+	g_vulkan->pSwapchainImageViews = MD_MALLOC_ARRAY(VkImageView, g_vulkan->imagesCount);
+	mdReleaseStackPush(s_releaseStack, MD_NULL, freeSwapchainImageViews);
 
 	for (u32 imageIndex = 0u; imageIndex < g_vulkan->imagesCount; ++imageIndex)
 	{
@@ -764,41 +764,41 @@ static void createSwapchainImageViews()
 		imageViewCreateInfo.subresourceRange.layerCount		= 1;
 
 		VK_ASSERT(vkCreateImageView(
-			g_vulkan->device, &imageViewCreateInfo, MEED_NULL, &g_vulkan->pSwapchainImageViews[imageIndex]));
+			g_vulkan->device, &imageViewCreateInfo, MD_NULL, &g_vulkan->pSwapchainImageViews[imageIndex]));
 	}
-	mdReleaseStackPush(s_releaseStack, MEED_NULL, deleteSwapchainImageViews);
+	mdReleaseStackPush(s_releaseStack, MD_NULL, deleteSwapchainImageViews);
 }
 
 static void freeSwapchainImageViews(void* pData)
 {
 	MEED_UNUSED(pData);
 
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->pSwapchainImageViews != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->pSwapchainImageViews != MD_NULL);
 
-	MEED_FREE_ARRAY(g_vulkan->pSwapchainImageViews, VkImageView, g_vulkan->imagesCount);
+	MD_FREE_ARRAY(g_vulkan->pSwapchainImageViews, VkImageView, g_vulkan->imagesCount);
 }
 
 static void deleteSwapchainImageViews(void* pData)
 {
 	MEED_UNUSED(pData);
 
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->device != MEED_NULL);
-	MEED_ASSERT(g_vulkan->pSwapchainImageViews != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->device != MD_NULL);
+	MD_ASSERT(g_vulkan->pSwapchainImageViews != MD_NULL);
 
 	for (u32 imageIndex = 0u; imageIndex < g_vulkan->imagesCount; ++imageIndex)
 	{
-		vkDestroyImageView(g_vulkan->device, g_vulkan->pSwapchainImageViews[imageIndex], MEED_NULL);
+		vkDestroyImageView(g_vulkan->device, g_vulkan->pSwapchainImageViews[imageIndex], MD_NULL);
 	}
 }
 
 static void deleteRenderPass(void*);
 static void createRenderPass()
 {
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->device != MEED_NULL);
-	MEED_ASSERT(g_vulkan->renderPass == MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->device != MD_NULL);
+	MD_ASSERT(g_vulkan->renderPass == MD_NULL);
 
 	VkAttachmentDescription colorAttachment = {};
 	colorAttachment.format					= g_vulkan->surfaceFormat.format;
@@ -848,42 +848,42 @@ static void createRenderPass()
 
 	VkRenderPassCreateInfo renderPassCreateInfo = {};
 	renderPassCreateInfo.sType					= VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-	renderPassCreateInfo.attachmentCount		= MEED_ARRAY_SIZE(attachments);
+	renderPassCreateInfo.attachmentCount		= MD_ARRAY_SIZE(attachments);
 	renderPassCreateInfo.pAttachments			= attachments;
 	renderPassCreateInfo.subpassCount			= 1;
 	renderPassCreateInfo.pSubpasses				= &subpass;
 	renderPassCreateInfo.dependencyCount		= 1;
 	renderPassCreateInfo.pDependencies			= &dependency;
 
-	VK_ASSERT(vkCreateRenderPass(g_vulkan->device, &renderPassCreateInfo, MEED_NULL, &g_vulkan->renderPass));
-	mdReleaseStackPush(s_releaseStack, MEED_NULL, deleteRenderPass);
+	VK_ASSERT(vkCreateRenderPass(g_vulkan->device, &renderPassCreateInfo, MD_NULL, &g_vulkan->renderPass));
+	mdReleaseStackPush(s_releaseStack, MD_NULL, deleteRenderPass);
 }
 
 static void deleteRenderPass(void* pData)
 {
 	MEED_UNUSED(pData);
 
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->device != MEED_NULL);
-	MEED_ASSERT(g_vulkan->renderPass != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->device != MD_NULL);
+	MD_ASSERT(g_vulkan->renderPass != MD_NULL);
 
-	vkDestroyRenderPass(g_vulkan->device, g_vulkan->renderPass, MEED_NULL);
+	vkDestroyRenderPass(g_vulkan->device, g_vulkan->renderPass, MD_NULL);
 }
 
 static void deleteCommandPool(void*);
 static void createCommandPools()
 {
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->device != MEED_NULL);
-	MEED_ASSERT(g_vulkan->graphicsCommandPool == MEED_NULL);
-	MEED_ASSERT(g_vulkan->presentCommandPool == MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->device != MD_NULL);
+	MD_ASSERT(g_vulkan->graphicsCommandPool == MD_NULL);
+	MD_ASSERT(g_vulkan->presentCommandPool == MD_NULL);
 
 	VkCommandPoolCreateInfo commandPoolCreateInfo = {};
 	commandPoolCreateInfo.sType					  = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 	commandPoolCreateInfo.flags					  = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 	commandPoolCreateInfo.queueFamilyIndex		  = g_vulkan->queueFamilies.graphicsFamily;
-	VK_ASSERT(vkCreateCommandPool(g_vulkan->device, &commandPoolCreateInfo, MEED_NULL, &g_vulkan->graphicsCommandPool));
-	mdReleaseStackPush(s_releaseStack, MEED_NULL, deleteCommandPool);
+	VK_ASSERT(vkCreateCommandPool(g_vulkan->device, &commandPoolCreateInfo, MD_NULL, &g_vulkan->graphicsCommandPool));
+	mdReleaseStackPush(s_releaseStack, MD_NULL, deleteCommandPool);
 
 	if (g_vulkan->queueFamilies.presentFamily != g_vulkan->queueFamilies.graphicsFamily)
 	{
@@ -892,8 +892,8 @@ static void createCommandPools()
 		presentCommandPoolCreateInfo.flags					 = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 		presentCommandPoolCreateInfo.queueFamilyIndex		 = g_vulkan->queueFamilies.presentFamily;
 		VK_ASSERT(vkCreateCommandPool(
-			g_vulkan->device, &presentCommandPoolCreateInfo, MEED_NULL, &g_vulkan->presentCommandPool));
-		mdReleaseStackPush(s_releaseStack, MEED_NULL, deleteCommandPool);
+			g_vulkan->device, &presentCommandPoolCreateInfo, MD_NULL, &g_vulkan->presentCommandPool));
+		mdReleaseStackPush(s_releaseStack, MD_NULL, deleteCommandPool);
 	}
 	else
 	{
@@ -905,26 +905,26 @@ static void deleteCommandPool(void* pData)
 {
 	MEED_UNUSED(pData);
 
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->device != MEED_NULL);
-	MEED_ASSERT(g_vulkan->graphicsCommandPool != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->device != MD_NULL);
+	MD_ASSERT(g_vulkan->graphicsCommandPool != MD_NULL);
 
-	vkDestroyCommandPool(g_vulkan->device, g_vulkan->graphicsCommandPool, MEED_NULL);
+	vkDestroyCommandPool(g_vulkan->device, g_vulkan->graphicsCommandPool, MD_NULL);
 
 	if (g_vulkan->queueFamilies.graphicsFamily != g_vulkan->queueFamilies.presentFamily)
 	{
-		MEED_ASSERT(g_vulkan->presentCommandPool != MEED_NULL);
-		vkDestroyCommandPool(g_vulkan->device, g_vulkan->presentCommandPool, MEED_NULL);
+		MD_ASSERT(g_vulkan->presentCommandPool != MD_NULL);
+		vkDestroyCommandPool(g_vulkan->device, g_vulkan->presentCommandPool, MD_NULL);
 	}
 }
 
 static void freeCommandBuffers(void*);
 static void allocateCommandBuffers()
 {
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->device != MEED_NULL);
-	MEED_ASSERT(g_vulkan->graphicsCommandPool != MEED_NULL);
-	MEED_ASSERT(g_vulkan->presentCommandPool != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->device != MD_NULL);
+	MD_ASSERT(g_vulkan->graphicsCommandPool != MD_NULL);
+	MD_ASSERT(g_vulkan->presentCommandPool != MD_NULL);
 
 	VkCommandBufferAllocateInfo graphicsCommandBufferAllocateInfo = {};
 	graphicsCommandBufferAllocateInfo.sType						  = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -933,16 +933,16 @@ static void allocateCommandBuffers()
 	graphicsCommandBufferAllocateInfo.commandBufferCount		  = FRAME_IN_FLIGHT_COUNT;
 	VK_ASSERT(vkAllocateCommandBuffers(
 		g_vulkan->device, &graphicsCommandBufferAllocateInfo, g_vulkan->graphicsCommandBuffers));
-	mdReleaseStackPush(s_releaseStack, MEED_NULL, freeCommandBuffers);
+	mdReleaseStackPush(s_releaseStack, MD_NULL, freeCommandBuffers);
 }
 
 static void freeCommandBuffers(void* pData)
 {
 	MEED_UNUSED(pData);
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->device != MEED_NULL);
-	MEED_ASSERT(g_vulkan->graphicsCommandPool != MEED_NULL);
-	MEED_ASSERT(g_vulkan->graphicsCommandBuffers != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->device != MD_NULL);
+	MD_ASSERT(g_vulkan->graphicsCommandPool != MD_NULL);
+	MD_ASSERT(g_vulkan->graphicsCommandBuffers != MD_NULL);
 
 	vkFreeCommandBuffers(
 		g_vulkan->device, g_vulkan->graphicsCommandPool, FRAME_IN_FLIGHT_COUNT, g_vulkan->graphicsCommandBuffers);
@@ -951,48 +951,48 @@ static void freeCommandBuffers(void* pData)
 static void deleteSyncObjects(void*);
 static void createSyncObjects()
 {
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->device != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->device != MD_NULL);
 
 	for (u32 frameIndex = 0u; frameIndex < FRAME_IN_FLIGHT_COUNT; ++frameIndex)
 	{
 		VkSemaphoreCreateInfo renderFinishedSemaphore = {};
 		renderFinishedSemaphore.sType				  = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 		VK_ASSERT(vkCreateSemaphore(
-			g_vulkan->device, &renderFinishedSemaphore, MEED_NULL, &g_vulkan->renderFinishedSemaphores[frameIndex]));
+			g_vulkan->device, &renderFinishedSemaphore, MD_NULL, &g_vulkan->renderFinishedSemaphores[frameIndex]));
 
 		VkSemaphoreCreateInfo imageAvailableSemaphore = {};
 		imageAvailableSemaphore.sType				  = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
 		VK_ASSERT(vkCreateSemaphore(
-			g_vulkan->device, &imageAvailableSemaphore, MEED_NULL, &g_vulkan->imageAvailableSemaphores[frameIndex]));
+			g_vulkan->device, &imageAvailableSemaphore, MD_NULL, &g_vulkan->imageAvailableSemaphores[frameIndex]));
 
 		VkFenceCreateInfo inFlightFenceCreateInfo = {};
 		inFlightFenceCreateInfo.sType			  = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 		inFlightFenceCreateInfo.flags			  = VK_FENCE_CREATE_SIGNALED_BIT;
 
-		VK_ASSERT(vkCreateFence(
-			g_vulkan->device, &inFlightFenceCreateInfo, MEED_NULL, &g_vulkan->inFlightFences[frameIndex]));
+		VK_ASSERT(
+			vkCreateFence(g_vulkan->device, &inFlightFenceCreateInfo, MD_NULL, &g_vulkan->inFlightFences[frameIndex]));
 	}
 
-	mdReleaseStackPush(s_releaseStack, MEED_NULL, deleteSyncObjects);
+	mdReleaseStackPush(s_releaseStack, MD_NULL, deleteSyncObjects);
 }
 
 static void deleteSyncObjects(void* pData)
 {
 	MEED_UNUSED(pData);
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->device != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->device != MD_NULL);
 
 	for (u32 frameIndex = 0u; frameIndex < FRAME_IN_FLIGHT_COUNT; ++frameIndex)
 	{
-		MEED_ASSERT(g_vulkan->inFlightFences[frameIndex] != MEED_NULL);
-		MEED_ASSERT(g_vulkan->renderFinishedSemaphores[frameIndex] != MEED_NULL);
-		MEED_ASSERT(g_vulkan->imageAvailableSemaphores[frameIndex] != MEED_NULL);
+		MD_ASSERT(g_vulkan->inFlightFences[frameIndex] != MD_NULL);
+		MD_ASSERT(g_vulkan->renderFinishedSemaphores[frameIndex] != MD_NULL);
+		MD_ASSERT(g_vulkan->imageAvailableSemaphores[frameIndex] != MD_NULL);
 
-		vkDestroyFence(g_vulkan->device, g_vulkan->inFlightFences[frameIndex], MEED_NULL);
-		vkDestroySemaphore(g_vulkan->device, g_vulkan->renderFinishedSemaphores[frameIndex], MEED_NULL);
-		vkDestroySemaphore(g_vulkan->device, g_vulkan->imageAvailableSemaphores[frameIndex], MEED_NULL);
+		vkDestroyFence(g_vulkan->device, g_vulkan->inFlightFences[frameIndex], MD_NULL);
+		vkDestroySemaphore(g_vulkan->device, g_vulkan->renderFinishedSemaphores[frameIndex], MD_NULL);
+		vkDestroySemaphore(g_vulkan->device, g_vulkan->imageAvailableSemaphores[frameIndex], MD_NULL);
 	}
 }
 
@@ -1006,8 +1006,8 @@ static void transitionImageLayout(VkImage			   image,
 
 void mdRenderStartFrame()
 {
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->graphicsCommandBuffers != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->graphicsCommandBuffers != MD_NULL);
 
 	vkWaitForFences(g_vulkan->device, 1, &g_vulkan->inFlightFences[g_vulkan->currentFrame], VK_TRUE, UINT64_MAX);
 	VK_ASSERT(vkResetFences(g_vulkan->device, 1, &g_vulkan->inFlightFences[g_vulkan->currentFrame]));
@@ -1062,7 +1062,7 @@ void mdRenderStartFrame()
 
 void mdRenderClearScreen(struct MdColor color)
 {
-	MEED_ASSERT(g_vulkan != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
 
 	VkClearValue clearValue		= {};
 	clearValue.color.float32[0] = color.r;
@@ -1081,8 +1081,8 @@ void mdRenderClearScreen(struct MdColor color)
 
 void mdRenderDraw(u32 vertexCount, u32 instanceCount, u32 firstVertex, u32 firstInstance)
 {
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->graphicsCommandBuffers != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->graphicsCommandBuffers != MD_NULL);
 
 	vkCmdDraw(g_vulkan->graphicsCommandBuffers[g_vulkan->currentFrame],
 			  vertexCount,
@@ -1093,9 +1093,9 @@ void mdRenderDraw(u32 vertexCount, u32 instanceCount, u32 firstVertex, u32 first
 
 void mdRenderEndFrame()
 {
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->graphicsCommandBuffers != MEED_NULL);
-	MEED_ASSERT(g_vulkan->graphicsQueue != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->graphicsCommandBuffers != MD_NULL);
+	MD_ASSERT(g_vulkan->graphicsQueue != MD_NULL);
 
 	vkCmdEndRendering(g_vulkan->graphicsCommandBuffers[g_vulkan->currentFrame]);
 
@@ -1124,12 +1124,12 @@ void mdRenderEndFrame()
 
 	VkSubmitInfo submitInfo			= {};
 	submitInfo.sType				= VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	submitInfo.waitSemaphoreCount	= MEED_ARRAY_SIZE(waitSemaphores);
+	submitInfo.waitSemaphoreCount	= MD_ARRAY_SIZE(waitSemaphores);
 	submitInfo.pWaitSemaphores		= waitSemaphores;
 	submitInfo.pWaitDstStageMask	= waitStages;
 	submitInfo.commandBufferCount	= 1;
 	submitInfo.pCommandBuffers		= &g_vulkan->graphicsCommandBuffers[g_vulkan->currentFrame];
-	submitInfo.signalSemaphoreCount = MEED_ARRAY_SIZE(signalSemaphores);
+	submitInfo.signalSemaphoreCount = MD_ARRAY_SIZE(signalSemaphores);
 	submitInfo.pSignalSemaphores	= signalSemaphores;
 
 	VK_ASSERT(vkQueueSubmit(g_vulkan->graphicsQueue, 1, &submitInfo, g_vulkan->inFlightFences[g_vulkan->currentFrame]));
@@ -1137,8 +1137,8 @@ void mdRenderEndFrame()
 
 void mdRenderPresent()
 {
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->presentQueue != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->presentQueue != MD_NULL);
 
 	VkSemaphore waitSemaphores[] = {
 		g_vulkan->renderFinishedSemaphores[g_vulkan->currentFrame],
@@ -1146,7 +1146,7 @@ void mdRenderPresent()
 
 	VkPresentInfoKHR presentInfo   = {};
 	presentInfo.sType			   = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-	presentInfo.waitSemaphoreCount = MEED_ARRAY_SIZE(waitSemaphores);
+	presentInfo.waitSemaphoreCount = MD_ARRAY_SIZE(waitSemaphores);
 	presentInfo.pWaitSemaphores	   = waitSemaphores;
 	presentInfo.swapchainCount	   = 1;
 	presentInfo.pSwapchains		   = &g_vulkan->swapchain;
@@ -1165,8 +1165,8 @@ static void transitionImageLayout(VkImage			   image,
 								  VkPipelineStageFlags srcStage,
 								  VkPipelineStageFlags dstStage)
 {
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->graphicsCommandBuffers != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->graphicsCommandBuffers != MD_NULL);
 
 	VkCommandBuffer commandBuffer = g_vulkan->graphicsCommandBuffers[g_vulkan->currentFrame];
 
@@ -1185,15 +1185,15 @@ static void transitionImageLayout(VkImage			   image,
 	barrier.subresourceRange.baseArrayLayer = 0;
 	barrier.subresourceRange.layerCount		= 1;
 
-	vkCmdPipelineBarrier(commandBuffer, srcStage, dstStage, 0, 0, MEED_NULL, 0, MEED_NULL, 1, &barrier);
+	vkCmdPipelineBarrier(commandBuffer, srcStage, dstStage, 0, 0, MD_NULL, 0, MD_NULL, 1, &barrier);
 }
 
 void mdRenderWaitIdle()
 {
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->device != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->device != MD_NULL);
 
 	vkDeviceWaitIdle(g_vulkan->device);
 }
 
-#endif // MEED_USE_VULKAN
+#endif // MD_USE_VULKAN

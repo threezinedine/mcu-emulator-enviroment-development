@@ -1,4 +1,4 @@
-#if MEED_USE_OPENGL
+#if MD_USE_OPENGL
 
 // clang-format off
 #if !PLATFORM_IS_WEB
@@ -33,7 +33,7 @@ extern struct OpenGLRenderData* s_pRenderData;
 		while (glGetError());                                                                                          \
 		exp;                                                                                                           \
 		GLenum err = glGetError();                                                                                     \
-		MEED_ASSERT_MSG(err == GL_NO_ERROR, "OpenGL error occurred with code %u", err);                                \
-	} while (MEED_FALSE)
+		MD_ASSERT_MSG(err == GL_NO_ERROR, "OpenGL error occurred with code %u", err);                                  \
+	} while (MD_FALSE)
 
-#endif // MEED_USE_OPENGL
+#endif // MD_USE_OPENGL

@@ -1,10 +1,10 @@
 #pragma once
-#if MEED_DEBUG
+#if MD_DEBUG
 #include <assert.h>
 #endif
 
-#define MEED_PATH_SEPARATOR		'/'
-#define MEED_PATH_SEPARATOR_STR "/"
+#define MD_PATH_SEPARATOR	  '/'
+#define MD_PATH_SEPARATOR_STR "/"
 
 #if PLATFORM_IS_WINDOWS
 #define debugBreak() __debugbreak()
@@ -17,8 +17,8 @@
 #include <emscripten/emscripten.h>
 #endif
 
-#if MEED_DEBUG
-#define MEED_ASSERT(expr)                                                                                              \
+#if MD_DEBUG
+#define MD_ASSERT(expr)                                                                                                \
 	do                                                                                                                 \
 	{                                                                                                                  \
 		if (!(expr))                                                                                                   \
@@ -33,7 +33,7 @@
 		}                                                                                                              \
 	} while (0)
 
-#define MEED_ASSERT_MSG(expr, msg, ...)                                                                                \
+#define MD_ASSERT_MSG(expr, msg, ...)                                                                                  \
 	do                                                                                                                 \
 	{                                                                                                                  \
 		if (!(expr))                                                                                                   \
@@ -51,12 +51,12 @@
 	} while (0)
 
 // Macro to mark a variable as untouchable for debugging purposes.
-#define MEED_UNTOUCHABLE() MEED_ASSERT_MSG(MEED_FALSE, "This code path should be unreachable!")
+#define MD_UNTOUCHABLE() MD_ASSERT_MSG(MD_FALSE, "This code path should be unreachable!")
 
 #else
-#define MEED_ASSERT(expr)
-#define MEED_ASSERT_MSG(expr, msg, ...)
-#define MEED_UNTOUCHABLE()
+#define MD_ASSERT(expr)
+#define MD_ASSERT_MSG(expr, msg, ...)
+#define MD_UNTOUCHABLE()
 #endif
 
 /**
@@ -68,11 +68,11 @@
  * This macro is used for marking that the symbol is intended for binding generation (python)
  */
 #if defined(__clang__)
-#define MEED_BINDING __attribute__((annotate("binding")))
-#define MEED_HIDDEN	 __attribute__((annotate("hidden")))
+#define MD_BINDING __attribute__((annotate("binding")))
+#define MD_HIDDEN  __attribute__((annotate("hidden")))
 #else
-#define MEED_BINDING
-#define MEED_HIDDEN
+#define MD_BINDING
+#define MD_HIDDEN
 #endif
 
 #if defined(__EMSCRIPTEN__)
@@ -83,65 +83,65 @@
 
 // =================== Types defined ===================
 
-typedef MEED_BINDING unsigned char		u8;
-typedef MEED_BINDING unsigned short		u16;
-typedef MEED_BINDING unsigned int		u32;
-typedef MEED_BINDING unsigned long long u64;
+typedef MD_BINDING unsigned char	  u8;
+typedef MD_BINDING unsigned short	  u16;
+typedef MD_BINDING unsigned int		  u32;
+typedef MD_BINDING unsigned long long u64;
 
-#if MEED_DEBUG
+#if MD_DEBUG
 static_assert(sizeof(u8) == 1, "u8 size is not 1 byte");
 static_assert(sizeof(u16) == 2, "u16 size is not 2 bytes");
 static_assert(sizeof(u32) == 4, "u32 size is not 4 bytes");
 static_assert(sizeof(u64) == 8, "u64 size is not 8 bytes");
 #endif
 
-typedef MEED_BINDING char	   i8;
-typedef MEED_BINDING short	   i16;
-typedef MEED_BINDING int	   i32;
-typedef MEED_BINDING long long i64;
+typedef MD_BINDING char		 i8;
+typedef MD_BINDING short	 i16;
+typedef MD_BINDING int		 i32;
+typedef MD_BINDING long long i64;
 
-#if MEED_DEBUG
+#if MD_DEBUG
 static_assert(sizeof(i8) == 1, "i8 size is not 1 byte");
 static_assert(sizeof(i16) == 2, "i16 size is not 2 bytes");
 static_assert(sizeof(i32) == 4, "i32 size is not 4 bytes");
 static_assert(sizeof(i64) == 8, "i64 size is not 8 bytes");
 #endif
 
-typedef MEED_BINDING float	f32;
-typedef MEED_BINDING double f64;
+typedef MD_BINDING float  f32;
+typedef MD_BINDING double f64;
 
-#if MEED_DEBUG
+#if MD_DEBUG
 static_assert(sizeof(f32) == 4, "f32 size is not 4 bytes");
 static_assert(sizeof(f64) == 8, "f64 size is not 8 bytes");
 #endif
 
-typedef MEED_BINDING unsigned char b8;
-typedef MEED_BINDING unsigned int  b32;
+typedef MD_BINDING unsigned char b8;
+typedef MD_BINDING unsigned int	 b32;
 
-#if MEED_DEBUG
+#if MD_DEBUG
 static_assert(sizeof(b8) == 1, "b8 size is not 1 byte");
 static_assert(sizeof(b32) == 4, "b32 size is not 4 bytes");
 #endif
 
-typedef MEED_BINDING size_t mdSize;
+typedef MD_BINDING size_t mdSize;
 
-#define MEED_NULL ((void*)0)
+#define MD_NULL ((void*)0)
 
-#define MEED_TRUE  ((b8)1)
-#define MEED_FALSE ((b8)0)
+#define MD_TRUE	 ((b8)1)
+#define MD_FALSE ((b8)0)
 
-#define MEED_ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
+#define MD_ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 
 /**
  * Convert predefined macro to c string.
  *
  * @example
  * ```c
- * STRINGIFY(PROJECT_BASE_DIR) -> "/path/to/project"
+ * MD_STRINGIFY(PROJECT_BASE_DIR) -> "/path/to/project"
  * ```
  */
-#define MEED_STRINGIFY(x)  _MEED_STRINGIFY(x)
-#define _MEED_STRINGIFY(x) #x
+#define MD_STRINGIFY(x)	 _MD_STRINGIFY(x)
+#define _MD_STRINGIFY(x) #x
 
 #include "console.h"
 #include "exceptions.h"

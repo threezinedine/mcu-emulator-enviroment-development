@@ -8,14 +8,14 @@ int main(void)
 
 	mdRenderInitialize(pWindow);
 
-#if MEED_USE_VULKAN
+#if MD_USE_VULKAN
 	struct MdPipeline* pPipeline =
-		mdPipelineCreate(MEED_STRINGIFY(PROJECT_BASE_DIR) "/engine/build/debug/shaders/triangle.vert.spv",
-						 MEED_STRINGIFY(PROJECT_BASE_DIR) "/engine/build/debug/shaders/triangle.frag.spv");
-#elif MEED_USE_OPENGL
+		mdPipelineCreate(MD_STRINGIFY(PROJECT_BASE_DIR) "/engine/build/debug/shaders/triangle.vert.spv",
+						 MD_STRINGIFY(PROJECT_BASE_DIR) "/engine/build/debug/shaders/triangle.frag.spv");
+#elif MD_USE_OPENGL
 	struct MdPipeline* pPipeline =
-		mdPipelineCreate(MEED_STRINGIFY(PROJECT_BASE_DIR) "/engine/assets/shaders/opengl/triangle.vert",
-						 MEED_STRINGIFY(PROJECT_BASE_DIR) "/engine/assets/shaders/opengl/triangle.frag");
+		mdPipelineCreate(MD_STRINGIFY(PROJECT_BASE_DIR) "/engine/assets/shaders/opengl/triangle.vert",
+						 MD_STRINGIFY(PROJECT_BASE_DIR) "/engine/assets/shaders/opengl/triangle.frag");
 #else
 #error "No rendering backend selected."
 #endif

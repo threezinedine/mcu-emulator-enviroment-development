@@ -1,7 +1,7 @@
 #include "MEEDEngine/MEEDEngine.h"
 
-struct MdWindowData* pWindowData = MEED_NULL;
-struct MdPipeline*	 pPipeline	 = MEED_NULL;
+struct MdWindowData* pWindowData = MD_NULL;
+struct MdPipeline*	 pPipeline	 = MD_NULL;
 
 void mainLoop();
 
@@ -19,20 +19,20 @@ int main(void)
 
 #if PLATFORM_IS_WEB
 	pPipeline = mdPipelineCreate("shaders/triangle.vert", "shaders/triangle.frag");
-#elif MEED_USE_VULKAN
-	pPipeline = mdPipelineCreate(MEED_STRINGIFY(PROJECT_BASE_DIR) "/app/build/debug/shaders/triangle.vert.spv",
-								 MEED_STRINGIFY(PROJECT_BASE_DIR) "/app/build/debug/shaders/triangle.frag.spv");
-#elif MEED_USE_OPENGL
-	pPipeline = mdPipelineCreate(MEED_STRINGIFY(PROJECT_BASE_DIR) "/engine/assets/shaders/opengl/triangle.vert",
-								 MEED_STRINGIFY(PROJECT_BASE_DIR) "/engine/assets/shaders/opengl/triangle.frag");
+#elif MD_USE_VULKAN
+	pPipeline = mdPipelineCreate(MD_STRINGIFY(PROJECT_BASE_DIR) "/app/build/debug/shaders/triangle.vert.spv",
+								 MD_STRINGIFY(PROJECT_BASE_DIR) "/app/build/debug/shaders/triangle.frag.spv");
+#elif MD_USE_OPENGL
+	pPipeline = mdPipelineCreate(MD_STRINGIFY(PROJECT_BASE_DIR) "/engine/assets/shaders/opengl/triangle.vert",
+								 MD_STRINGIFY(PROJECT_BASE_DIR) "/engine/assets/shaders/opengl/triangle.frag");
 #else
 #error "No rendering backend selected."
 #endif
 
 #if PLATFORM_IS_WEB
-	emscripten_set_main_loop(mainLoop, 0, MEED_TRUE);
+	emscripten_set_main_loop(mainLoop, 0, MD_TRUE);
 #else
-	while (pWindowData->shouldClose == MEED_FALSE)
+	while (pWindowData->shouldClose == MD_FALSE)
 	{
 		mainLoop();
 	}
@@ -55,7 +55,7 @@ void mainLoop()
 
 	if (windowEvent.type == MD_WINDOW_EVENT_TYPE_CLOSE)
 	{
-		pWindowData->shouldClose = MEED_TRUE;
+		pWindowData->shouldClose = MD_TRUE;
 	}
 
 	mdRenderClearScreen((struct MdColor){0.2f, 0.3f, 0.3f, 1.0f});

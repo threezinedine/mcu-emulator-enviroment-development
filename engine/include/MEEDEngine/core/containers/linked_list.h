@@ -105,7 +105,7 @@ u32 mdLinkedListCount(struct MdLinkedList* pList);
  * This function checks whether the linked list contains any elements.
  *
  * @param pList Pointer to the MdLinkedList. If NULL, raises an assertion.
- * @return MEED_TRUE if the list is empty, MEED_FALSE otherwise.
+ * @return MD_TRUE if the list is empty, MD_FALSE otherwise.
  */
 b8 mdLinkedListEmpty(struct MdLinkedList* pList);
 

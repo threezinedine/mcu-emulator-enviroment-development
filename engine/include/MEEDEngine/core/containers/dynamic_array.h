@@ -7,7 +7,7 @@ extern "C" {
 #include "MEEDEngine/platforms/common.h"
 #include "callback.h"
 
-#define MEED_DEFAULT_DYNAMIC_ARRAY_CAPACITY 2
+#define MD_DEFAULT_DYNAMIC_ARRAY_CAPACITY 2
 
 /**
  * @file dynamic_array.h

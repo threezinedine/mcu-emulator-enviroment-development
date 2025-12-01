@@ -1,32 +1,32 @@
-#if MEED_USE_VULKAN
+#if MD_USE_VULKAN
 
 #include "MEEDEngine/modules/render/shader.h"
 #include "vulkan_common.h"
 
 struct MdShader* mdShaderCreate(enum MdShaderType type, const char* filePath)
 {
-	struct MdShader* pShader = MEED_MALLOC(struct MdShader);
-	MEED_ASSERT(pShader != MEED_NULL);
+	struct MdShader* pShader = MD_MALLOC(struct MdShader);
+	MD_ASSERT(pShader != MD_NULL);
 	pShader->type = type;
 
-	pShader->pInternal = MEED_MALLOC(struct VulkanShader);
-	MEED_ASSERT(pShader->pInternal != MEED_NULL);
+	pShader->pInternal = MD_MALLOC(struct VulkanShader);
+	MD_ASSERT(pShader->pInternal != MD_NULL);
 
 	struct VulkanShader* pVulkanShader = (struct VulkanShader*)pShader->pInternal;
 	mdMemorySet(pVulkanShader, 0, sizeof(struct VulkanShader));
 
 	// Load SPIR-V binary from file
 	struct MdFileData* pFile = mdFileOpen(filePath, MD_FILE_MODE_READ);
-	MEED_ASSERT_MSG(pFile != MEED_NULL && pFile->isOpen, "Failed to open shader file \"%s\".", filePath);
+	MD_ASSERT_MSG(pFile != MD_NULL && pFile->isOpen, "Failed to open shader file \"%s\".", filePath);
 
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->device != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->device != MD_NULL);
 
 	VkShaderModuleCreateInfo createInfo = {};
 	createInfo.sType					= VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 	createInfo.codeSize					= pFile->size;
 	createInfo.pCode					= (const u32*)pFile->content;
-	VK_ASSERT(vkCreateShaderModule(g_vulkan->device, &createInfo, MEED_NULL, &pVulkanShader->module));
+	VK_ASSERT(vkCreateShaderModule(g_vulkan->device, &createInfo, MD_NULL, &pVulkanShader->module));
 
 	mdFileClose(pFile);
 
@@ -35,15 +35,15 @@ struct MdShader* mdShaderCreate(enum MdShaderType type, const char* filePath)
 
 void mdShaderDestroy(struct MdShader* pShader)
 {
-	MEED_ASSERT(pShader != MEED_NULL);
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->device != MEED_NULL);
+	MD_ASSERT(pShader != MD_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->device != MD_NULL);
 
 	struct VulkanShader* pVulkanShader = (struct VulkanShader*)pShader->pInternal;
-	vkDestroyShaderModule(g_vulkan->device, pVulkanShader->module, MEED_NULL);
+	vkDestroyShaderModule(g_vulkan->device, pVulkanShader->module, MD_NULL);
 
-	MEED_FREE(pShader->pInternal, struct VulkanShader);
-	MEED_FREE(pShader, struct MdShader);
+	MD_FREE(pShader->pInternal, struct VulkanShader);
+	MD_FREE(pShader, struct MdShader);
 }
 
-#endif // MEED_USE_VULKAN
+#endif // MD_USE_VULKAN

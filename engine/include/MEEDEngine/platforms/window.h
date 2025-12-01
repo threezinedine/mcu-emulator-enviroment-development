@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-#if MEED_USE_VULKAN
+#if MD_USE_VULKAN
 #include <vulkan/vulkan.h>
 #endif
 
@@ -50,7 +50,7 @@ struct MdWindowEvent
 /**
  * Needed information for working with the windowing system.
  */
-struct MEED_BINDING MdWindowData
+struct MD_BINDING MdWindowData
 {
 	void* pInternal; ///< Used for storing custom windowing system data (e.g Windows, Linux, MacOS, SDL, GLFW, etc.)
 
@@ -76,7 +76,7 @@ void mdWindowInitialize();
  */
 struct MdWindowData* mdWindowCreate(u32 width, u32 height, const char* title);
 
-#if MEED_USE_VULKAN
+#if MD_USE_VULKAN
 /**
  * Get the Vulkan surface for the specified window.
  *

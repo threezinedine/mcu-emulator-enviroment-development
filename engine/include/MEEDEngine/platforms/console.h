@@ -9,7 +9,7 @@ extern "C" {
  * All possible color which the console can display, using
  * `mdPlatformSetColor` for modifying the color.
  */
-enum MEED_BINDING MdConsoleColor : u8
+enum MD_BINDING MdConsoleColor : u8
 {
 	MD_CONSOLE_COLOR_RESET,
 	MD_CONSOLE_COLOR_RED,
@@ -25,7 +25,7 @@ enum MEED_BINDING MdConsoleColor : u8
 /**
  * Configuration structure for the console platform.
  */
-struct MEED_BINDING MdConsoleConfig
+struct MD_BINDING MdConsoleConfig
 {
 	enum MdConsoleColor color; ///< The color to set the console to.
 };
@@ -34,7 +34,7 @@ struct MEED_BINDING MdConsoleConfig
  * Modify the following content's color which is used by `mdPrint`.
  * @param color The color to set the console to.
  */
-void mdSetConsoleConfig(struct MdConsoleConfig config) MEED_BINDING;
+void mdSetConsoleConfig(struct MdConsoleConfig config) MD_BINDING;
 
 /**
  * Print formatted content to a buffer.
@@ -56,7 +56,7 @@ void mdFormatPrint(const char* format, ...);
  * Print a string to the console.
  * @param str The string to print.
  */
-void mdPrint(const char* str) MEED_BINDING;
+void mdPrint(const char* str) MD_BINDING;
 
 #if __cplusplus
 }

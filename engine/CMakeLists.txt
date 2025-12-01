@@ -31,7 +31,7 @@ set(PROJECT_DEFINITIONS ${COMMON_DEFINITIONS})
 set(PROJECT_PRECOMPILED_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/include/MEEDEngine/platforms/common.h)
 set(PROJECT_LIBRARIES)
 
-if (PLATFORM_IS_LINUX AND NOT MEED_USE_OPENGL)
+if (PLATFORM_IS_LINUX AND NOT MD_USE_OPENGL)
     list(APPEND PROJECT_LIBRARIES X11 -rdynamic)
 endif()
 
@@ -82,7 +82,7 @@ if (PLATFORM_IS_WEB)
     )
 endif()
 
-if (MEED_USE_VULKAN)
+if (MD_USE_VULKAN)
     MEEDFindPackage(MEEDVulkan "Dependencies")
     target_link_libraries(
         ${PROJECT_NAME}
@@ -112,7 +112,7 @@ if (MEED_USE_VULKAN)
     CompileAllVulkanShaders(${PROJECT_NAME})
 endif()
 
-if (MEED_USE_OPENGL)
+if (MD_USE_OPENGL)
     MEEDFindPackage(MEEDGlfw "Dependencies")
     target_link_libraries(
         ${PROJECT_NAME}
@@ -128,7 +128,7 @@ if (NOT PLATFORM_IS_WEB)
     # ================ Tests ================
     add_subdirectory("tests")
 
-    if (MEED_DEBUG)
+    if (MD_DEBUG)
         # ================ Engine Binding Lib ================
         set(BINDING_PROJECT "${PROJECT_NAME}Binding")
         set(BINDING_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/tmp/binding.cpp)

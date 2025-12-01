@@ -1,4 +1,4 @@
-#if MEED_USE_OPENGL
+#if MD_USE_OPENGL
 
 #include "MEEDEngine/modules/release_stack/release_stack.h"
 #include "MEEDEngine/modules/render/pipeline.h"
@@ -7,15 +7,15 @@
 
 void freeInternalOpenGLPipeline(void* pData)
 {
-	MEED_ASSERT(pData != MEED_NULL);
+	MD_ASSERT(pData != MD_NULL);
 	struct MdPipeline* pPipeline = (struct MdPipeline*)pData;
 
-	MEED_FREE(pPipeline->pInternal, struct OpenGLPipeline);
+	MD_FREE(pPipeline->pInternal, struct OpenGLPipeline);
 }
 
 static void deleteProgram(void* pData)
 {
-	MEED_ASSERT(pData != MEED_NULL);
+	MD_ASSERT(pData != MD_NULL);
 
 	struct MdPipeline*	   pPipeline	   = (struct MdPipeline*)pData;
 	struct OpenGLPipeline* pOpenGLPipeline = (struct OpenGLPipeline*)pPipeline->pInternal;
@@ -24,16 +24,16 @@ static void deleteProgram(void* pData)
 
 struct MdPipeline* mdPipelineCreate(const char* vertexShaderPath, const char* fragmentShaderPath)
 {
-	struct MdPipeline* pPipeline = MEED_MALLOC(struct MdPipeline);
-	MEED_ASSERT(pPipeline != MEED_NULL);
+	struct MdPipeline* pPipeline = MD_MALLOC(struct MdPipeline);
+	MD_ASSERT(pPipeline != MD_NULL);
 	mdMemorySet(pPipeline, 0, sizeof(struct MdPipeline));
 
 	pPipeline->pReleaseStack	  = mdReleaseStackCreate();
 	pPipeline->vertexShaderPath	  = vertexShaderPath;
 	pPipeline->fragmentShaderPath = fragmentShaderPath;
 
-	pPipeline->pInternal = MEED_MALLOC(struct OpenGLPipeline);
-	MEED_ASSERT(pPipeline->pInternal != MEED_NULL);
+	pPipeline->pInternal = MD_MALLOC(struct OpenGLPipeline);
+	MD_ASSERT(pPipeline->pInternal != MD_NULL);
 	mdMemorySet(pPipeline->pInternal, 0, sizeof(struct OpenGLPipeline));
 	mdReleaseStackPush(pPipeline->pReleaseStack, pPipeline, freeInternalOpenGLPipeline);
 
@@ -57,7 +57,7 @@ struct MdPipeline* mdPipelineCreate(const char* vertexShaderPath, const char* fr
 	{
 		char infoLog[512];
 		glGetProgramInfoLog(pOpenGLPipeline->shaderProgram, 512, NULL, infoLog);
-		MEED_ASSERT_MSG(MEED_FALSE, "Shader program linking failed: %s", infoLog);
+		MD_ASSERT_MSG(MD_FALSE, "Shader program linking failed: %s", infoLog);
 	}
 
 	mdShaderDestroy(pFragmentShader);
@@ -70,18 +70,18 @@ struct MdPipeline* mdPipelineCreate(const char* vertexShaderPath, const char* fr
 
 void mdPipelineUse(struct MdPipeline* pPipeline)
 {
-	MEED_ASSERT(pPipeline != MEED_NULL);
+	MD_ASSERT(pPipeline != MD_NULL);
 	struct OpenGLPipeline* pOpenGLPipeline = (struct OpenGLPipeline*)pPipeline->pInternal;
 	GL_ASSERT(glUseProgram(pOpenGLPipeline->shaderProgram));
 }
 
 void mdPipelineDestroy(struct MdPipeline* pPipeline)
 {
-	MEED_ASSERT(pPipeline != MEED_NULL);
+	MD_ASSERT(pPipeline != MD_NULL);
 
 	mdReleaseStackDestroy(pPipeline->pReleaseStack);
-	MEED_FREE(pPipeline, struct MdPipeline);
-	pPipeline = MEED_NULL;
+	MD_FREE(pPipeline, struct MdPipeline);
+	pPipeline = MD_NULL;
 }
 
-#endif // MEED_USE_OPENGL
+#endif // MD_USE_OPENGL

@@ -1,4 +1,4 @@
-#if MEED_USE_VULKAN
+#if MD_USE_VULKAN
 
 #include "MEEDEngine/modules/render/pipeline.h"
 #include "MEEDEngine/modules/render/shader.h"
@@ -13,15 +13,15 @@ static void deleteShaderResources(void*);
 struct MdPipeline* mdPipelineCreate(const char* vertexShaderPath, const char* fragmentShaderPath)
 {
 	// Implementation of pipeline creation using Vulkan
-	struct MdPipeline* pPipeline = MEED_MALLOC(struct MdPipeline);
-	MEED_ASSERT(pPipeline != MEED_NULL);
+	struct MdPipeline* pPipeline = MD_MALLOC(struct MdPipeline);
+	MD_ASSERT(pPipeline != MD_NULL);
 
 	pPipeline->vertexShaderPath	  = vertexShaderPath;
 	pPipeline->fragmentShaderPath = fragmentShaderPath;
 	pPipeline->pReleaseStack	  = mdReleaseStackCreate();
 
-	pPipeline->pInternal = MEED_MALLOC(struct VulkanPipeline);
-	MEED_ASSERT(pPipeline->pInternal != MEED_NULL);
+	pPipeline->pInternal = MD_MALLOC(struct VulkanPipeline);
+	MD_ASSERT(pPipeline->pInternal != MD_NULL);
 
 	mdReleaseStackPush(pPipeline->pReleaseStack, pPipeline, freeInternalPipeline);
 
@@ -40,15 +40,15 @@ struct MdPipeline* mdPipelineCreate(const char* vertexShaderPath, const char* fr
 
 static void freeInternalPipeline(void* pData)
 {
-	MEED_ASSERT(pData != MEED_NULL);
+	MD_ASSERT(pData != MD_NULL);
 	struct MdPipeline* pPipeline = (struct MdPipeline*)pData;
 
-	MEED_FREE(pPipeline->pInternal, struct VulkanPipeline);
+	MD_FREE(pPipeline->pInternal, struct VulkanPipeline);
 }
 
 static void deleteShaderResources(void* pData)
 {
-	MEED_ASSERT(pData != MEED_NULL);
+	MD_ASSERT(pData != MD_NULL);
 	struct MdPipeline* pPipeline = (struct MdPipeline*)pData;
 
 	struct VulkanPipeline* pVulkanPipeline = (struct VulkanPipeline*)pPipeline->pInternal;
@@ -60,47 +60,47 @@ static void deleteShaderResources(void* pData)
 static void destroyLayout(void* pData);
 static void createLayout(struct MdPipeline* pPipeline)
 {
-	MEED_ASSERT(pPipeline != MEED_NULL);
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->device != MEED_NULL);
+	MD_ASSERT(pPipeline != MD_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->device != MD_NULL);
 
 	struct VulkanPipeline* pVulkanPipeline = (struct VulkanPipeline*)pPipeline->pInternal;
 
 	VkPipelineLayoutCreateInfo layoutCreateInfo = {};
 	layoutCreateInfo.sType						= VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-	layoutCreateInfo.pPushConstantRanges		= MEED_NULL;
+	layoutCreateInfo.pPushConstantRanges		= MD_NULL;
 	layoutCreateInfo.pushConstantRangeCount		= 0;
-	layoutCreateInfo.pSetLayouts				= MEED_NULL;
+	layoutCreateInfo.pSetLayouts				= MD_NULL;
 	layoutCreateInfo.setLayoutCount				= 0;
 
-	VK_ASSERT(vkCreatePipelineLayout(g_vulkan->device, &layoutCreateInfo, MEED_NULL, &pVulkanPipeline->layout));
+	VK_ASSERT(vkCreatePipelineLayout(g_vulkan->device, &layoutCreateInfo, MD_NULL, &pVulkanPipeline->layout));
 	mdReleaseStackPush(pPipeline->pReleaseStack, pPipeline, destroyLayout);
 }
 
 static void destroyLayout(void* pData)
 {
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->device != MEED_NULL);
-	MEED_ASSERT(pData != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->device != MD_NULL);
+	MD_ASSERT(pData != MD_NULL);
 	struct MdPipeline*	   pPipeline	   = (struct MdPipeline*)pData;
 	struct VulkanPipeline* pVulkanPipeline = (struct VulkanPipeline*)pPipeline->pInternal;
 
-	vkDestroyPipelineLayout(g_vulkan->device, pVulkanPipeline->layout, MEED_NULL);
+	vkDestroyPipelineLayout(g_vulkan->device, pVulkanPipeline->layout, MD_NULL);
 }
 
 static void destroyPipeline(void* pData);
 static void createPipeline(struct MdPipeline* pPipeline)
 {
-	MEED_ASSERT(pPipeline != MEED_NULL);
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->device != MEED_NULL);
-	// MEED_ASSERT(g_vulkan->renderPass != MEED_NULL);
+	MD_ASSERT(pPipeline != MD_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->device != MD_NULL);
+	// MD_ASSERT(g_vulkan->renderPass != MD_NULL);
 
 	struct VulkanPipeline* pVulkanPipeline = (struct VulkanPipeline*)pPipeline->pInternal;
 
-	MEED_ASSERT(pVulkanPipeline->pVertexShader != MEED_NULL);
-	MEED_ASSERT(pVulkanPipeline->pFragmentShader != MEED_NULL);
-	MEED_ASSERT(pVulkanPipeline->layout != MEED_NULL);
+	MD_ASSERT(pVulkanPipeline->pVertexShader != MD_NULL);
+	MD_ASSERT(pVulkanPipeline->pFragmentShader != MD_NULL);
+	MD_ASSERT(pVulkanPipeline->layout != MD_NULL);
 
 	struct VulkanShader* pVertexVulkanShader = (struct VulkanShader*)pVulkanPipeline->pVertexShader->pInternal;
 	VkPipelineShaderStageCreateInfo vertexShaderStageInfo = {};
@@ -121,9 +121,9 @@ static void createPipeline(struct MdPipeline* pPipeline)
 	VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
 	vertexInputInfo.sType								 = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 	vertexInputInfo.vertexBindingDescriptionCount		 = 0;
-	vertexInputInfo.pVertexBindingDescriptions			 = MEED_NULL;
+	vertexInputInfo.pVertexBindingDescriptions			 = MD_NULL;
 	vertexInputInfo.vertexAttributeDescriptionCount		 = 0;
-	vertexInputInfo.pVertexAttributeDescriptions		 = MEED_NULL;
+	vertexInputInfo.pVertexAttributeDescriptions		 = MD_NULL;
 
 	VkPipelineInputAssemblyStateCreateInfo inputAssembly = {};
 	inputAssembly.sType									 = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -170,7 +170,7 @@ static void createPipeline(struct MdPipeline* pPipeline)
 	multisampling.sampleShadingEnable				   = VK_FALSE;
 	multisampling.rasterizationSamples				   = VK_SAMPLE_COUNT_1_BIT;
 	multisampling.minSampleShading					   = 1.0f;
-	multisampling.pSampleMask						   = MEED_NULL;
+	multisampling.pSampleMask						   = MD_NULL;
 	multisampling.alphaToCoverageEnable				   = VK_FALSE;
 	multisampling.alphaToOneEnable					   = VK_FALSE;
 
@@ -202,7 +202,7 @@ static void createPipeline(struct MdPipeline* pPipeline)
 
 	VkPipelineDynamicStateCreateInfo dynamicState = {};
 	dynamicState.sType							  = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-	dynamicState.dynamicStateCount				  = MEED_ARRAY_SIZE(dynamicStates);
+	dynamicState.dynamicStateCount				  = MD_ARRAY_SIZE(dynamicStates);
 	dynamicState.pDynamicStates					  = dynamicStates;
 
 	VkFormat colorFormats[] = {g_vulkan->surfaceFormat.format};
@@ -217,11 +217,11 @@ static void createPipeline(struct MdPipeline* pPipeline)
 	VkGraphicsPipelineCreateInfo pipelineCreateInfo = {};
 	pipelineCreateInfo.sType						= VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 	pipelineCreateInfo.pNext						= &pipelineRenderingInfo;
-	pipelineCreateInfo.stageCount					= MEED_ARRAY_SIZE(shaderStages);
+	pipelineCreateInfo.stageCount					= MD_ARRAY_SIZE(shaderStages);
 	pipelineCreateInfo.pStages						= shaderStages;
 	pipelineCreateInfo.pVertexInputState			= &vertexInputInfo;
 	pipelineCreateInfo.pInputAssemblyState			= &inputAssembly;
-	pipelineCreateInfo.pTessellationState			= MEED_NULL;
+	pipelineCreateInfo.pTessellationState			= MD_NULL;
 	pipelineCreateInfo.pViewportState				= &viewportState;
 	pipelineCreateInfo.pRasterizationState			= &rasterizer;
 	pipelineCreateInfo.pMultisampleState			= &multisampling;
@@ -232,32 +232,32 @@ static void createPipeline(struct MdPipeline* pPipeline)
 #if 0
 	pipelineCreateInfo.renderPass					= g_vulkan->renderPass;
 #else
-	pipelineCreateInfo.renderPass = MEED_NULL;
+	pipelineCreateInfo.renderPass = MD_NULL;
 #endif
 	pipelineCreateInfo.subpass = 0;
 
 	VK_ASSERT(vkCreateGraphicsPipelines(
-		g_vulkan->device, VK_NULL_HANDLE, 1, &pipelineCreateInfo, MEED_NULL, &pVulkanPipeline->pipeline));
+		g_vulkan->device, VK_NULL_HANDLE, 1, &pipelineCreateInfo, MD_NULL, &pVulkanPipeline->pipeline));
 
 	mdReleaseStackPush(pPipeline->pReleaseStack, pPipeline, destroyPipeline);
 }
 
 static void destroyPipeline(void* pData)
 {
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->device != MEED_NULL);
-	MEED_ASSERT(pData != MEED_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->device != MD_NULL);
+	MD_ASSERT(pData != MD_NULL);
 	struct MdPipeline*	   pPipeline	   = (struct MdPipeline*)pData;
 	struct VulkanPipeline* pVulkanPipeline = (struct VulkanPipeline*)pPipeline->pInternal;
 
-	vkDestroyPipeline(g_vulkan->device, pVulkanPipeline->pipeline, MEED_NULL);
+	vkDestroyPipeline(g_vulkan->device, pVulkanPipeline->pipeline, MD_NULL);
 }
 
 void mdPipelineUse(struct MdPipeline* pPipeline)
 {
-	MEED_ASSERT(pPipeline != MEED_NULL);
-	MEED_ASSERT(g_vulkan != MEED_NULL);
-	MEED_ASSERT(g_vulkan->graphicsCommandBuffers != MEED_NULL);
+	MD_ASSERT(pPipeline != MD_NULL);
+	MD_ASSERT(g_vulkan != MD_NULL);
+	MD_ASSERT(g_vulkan->graphicsCommandBuffers != MD_NULL);
 
 	struct VulkanPipeline* pVulkanPipeline = (struct VulkanPipeline*)pPipeline->pInternal;
 
@@ -268,11 +268,11 @@ void mdPipelineUse(struct MdPipeline* pPipeline)
 
 void mdPipelineDestroy(struct MdPipeline* pPipeline)
 {
-	MEED_ASSERT(pPipeline != MEED_NULL);
-	MEED_ASSERT(pPipeline->pReleaseStack != MEED_NULL);
+	MD_ASSERT(pPipeline != MD_NULL);
+	MD_ASSERT(pPipeline->pReleaseStack != MD_NULL);
 
 	mdReleaseStackDestroy(pPipeline->pReleaseStack);
-	MEED_FREE(pPipeline, struct MdPipeline);
+	MD_FREE(pPipeline, struct MdPipeline);
 }
 
-#endif // MEED_USE_VULKAN
+#endif // MD_USE_VULKAN

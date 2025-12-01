@@ -79,7 +79,7 @@ void mdMemoryShutdown();
  * @param type The type of the object to allocate memory for.
  * @return A pointer to the allocated memory cast to the specified type.
  */
-#define MEED_MALLOC(type) (type*)mdMalloc(sizeof(type))
+#define MD_MALLOC(type) (type*)mdMalloc(sizeof(type))
 
 /**
  * Helper macro to allocate memory for an array of a specific type.
@@ -87,19 +87,19 @@ void mdMemoryShutdown();
  * @param count The number of objects to allocate memory for.
  * @return A pointer to the allocated memory cast to the specified type.
  */
-#define MEED_MALLOC_ARRAY(type, count) (type*)mdMalloc(sizeof(type) * (count))
+#define MD_MALLOC_ARRAY(type, count) (type*)mdMalloc(sizeof(type) * (count))
 
 /**
  * Helper macro to free memory allocated for a specific type.
  * @param ptr A pointer to the memory block to free.
  */
-#define MEED_FREE(ptr, type) mdFree((void*)(ptr), sizeof(type))
+#define MD_FREE(ptr, type) mdFree((void*)(ptr), sizeof(type))
 
 /**
  * Helper macro to free memory allocated for an array of a specific type.
  * @param ptr A pointer to the memory block to free.
  */
-#define MEED_FREE_ARRAY(ptr, type, count) mdFree((void*)(ptr), sizeof(type) * (count))
+#define MD_FREE_ARRAY(ptr, type, count) mdFree((void*)(ptr), sizeof(type) * (count))
 
 #if __cplusplus
 }

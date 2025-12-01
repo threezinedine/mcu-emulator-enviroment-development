@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if MEED_DEBUG
+#if MD_DEBUG
 #if PLATFORM_IS_LINUX
 #include <execinfo.h>
 #include <pthread.h>
@@ -33,13 +33,13 @@ struct MemoryNode
 /**
  * Must be tracked to avoid multiple initializations and non-initializations.
  */
-static b8 s_isInitialized = MEED_FALSE;
+static b8 s_isInitialized = MD_FALSE;
 
 /**
  * The needed information for the linked list head and tail pointers.
  */
-static struct MemoryNode* s_pMemoryHead = MEED_NULL;
-static struct MemoryNode* s_pMemoryTail = MEED_NULL;
+static struct MemoryNode* s_pMemoryHead = MD_NULL;
+static struct MemoryNode* s_pMemoryTail = MD_NULL;
 
 /**
  * Be modified by the `_malloc` and `_free` functions, just be used for
@@ -65,21 +65,21 @@ static void _free(void* ptr, mdSize size);
 
 void mdMemoryInitialize()
 {
-	MEED_ASSERT(s_isInitialized == MEED_FALSE);
-	MEED_ASSERT(s_totalAllocatedMemory == 0);
-	MEED_ASSERT(s_pMemoryHead == MEED_NULL);
-	MEED_ASSERT(s_pMemoryTail == MEED_NULL);
+	MD_ASSERT(s_isInitialized == MD_FALSE);
+	MD_ASSERT(s_totalAllocatedMemory == 0);
+	MD_ASSERT(s_pMemoryHead == MD_NULL);
+	MD_ASSERT(s_pMemoryTail == MD_NULL);
 
 	// Initialize code below this line if needed in the future.
 
 	// Initialization complete.
 
-	s_isInitialized = MEED_TRUE;
+	s_isInitialized = MD_TRUE;
 }
 
 void* mdMalloc(mdSize size)
 {
-	MEED_ASSERT(s_isInitialized == MEED_TRUE);
+	MD_ASSERT(s_isInitialized == MD_TRUE);
 
 	struct MemoryNode* pNode = (struct MemoryNode*)_malloc(sizeof(struct MemoryNode));
 	mdMemorySet(pNode, 0, sizeof(struct MemoryNode));
@@ -93,10 +93,10 @@ void* mdMalloc(mdSize size)
 	pNode->threadId	   = getpid();
 #endif
 
-	if (s_pMemoryHead == MEED_NULL)
+	if (s_pMemoryHead == MD_NULL)
 	{
 		s_pMemoryHead = pNode;
-		pNode->pNext  = MEED_NULL;
+		pNode->pNext  = MD_NULL;
 	}
 	else
 	{
@@ -106,7 +106,7 @@ void* mdMalloc(mdSize size)
 	pNode->pPrev  = s_pMemoryTail;
 	s_pMemoryTail = pNode;
 
-	MEED_ASSERT(pNode->ptr != MEED_NULL);
+	MD_ASSERT(pNode->ptr != MD_NULL);
 	return pNode->ptr;
 }
 
@@ -114,21 +114,21 @@ static struct MemoryNode* _findNodeByPtr(void* ptr);
 
 void mdFree(void* ptr, mdSize size)
 {
-	MEED_ASSERT(s_isInitialized == MEED_TRUE);
+	MD_ASSERT(s_isInitialized == MD_TRUE);
 
 	struct MemoryNode* pNode = _findNodeByPtr(ptr);
-	MEED_ASSERT_MSG(pNode != MEED_NULL, "Attempting to free untracked or already freed memory at address %p.", ptr);
+	MD_ASSERT_MSG(pNode != MD_NULL, "Attempting to free untracked or already freed memory at address %p.", ptr);
 
-	MEED_ASSERT_MSG(pNode->size == size,
-					"Freeing memory size mismatch at address %p: expected %zu bytes, got %zu bytes.",
-					ptr,
-					pNode->size,
-					size);
+	MD_ASSERT_MSG(pNode->size == size,
+				  "Freeing memory size mismatch at address %p: expected %zu bytes, got %zu bytes.",
+				  ptr,
+				  pNode->size,
+				  size);
 
 	_free(ptr, pNode->size); // Note: size should be tracked and passed here for accurate memory tracking.
 
 	// Remove the node from the linked list.
-	if (pNode->pPrev != MEED_NULL)
+	if (pNode->pPrev != MD_NULL)
 	{
 		pNode->pPrev->pNext = pNode->pNext;
 	}
@@ -137,7 +137,7 @@ void mdFree(void* ptr, mdSize size)
 		s_pMemoryHead = pNode->pNext;
 	}
 
-	if (pNode->pNext != MEED_NULL)
+	if (pNode->pNext != MD_NULL)
 	{
 		pNode->pNext->pPrev = pNode->pPrev;
 	}
@@ -151,39 +151,39 @@ void mdFree(void* ptr, mdSize size)
 
 void* mdMemoryCopy(void* pDest, const void* pSrc, mdSize size)
 {
-	MEED_ASSERT(s_isInitialized == MEED_TRUE);
+	MD_ASSERT(s_isInitialized == MD_TRUE);
 	return memcpy(pDest, pSrc, size);
 }
 
 void* mdMemorySet(void* pDest, u8 value, mdSize size)
 {
-	MEED_ASSERT(s_isInitialized == MEED_TRUE);
+	MD_ASSERT(s_isInitialized == MD_TRUE);
 	return memset(pDest, value, size);
 }
 
 u32 mdGetStringLength(const char* str)
 {
-	MEED_ASSERT(s_isInitialized == MEED_TRUE);
-	MEED_ASSERT(str != MEED_NULL);
+	MD_ASSERT(s_isInitialized == MD_TRUE);
+	MD_ASSERT(str != MD_NULL);
 
 	return strlen(str);
 }
 
 i32 mdStringCompare(const char* str1, const char* str2)
 {
-	MEED_ASSERT(s_isInitialized == MEED_TRUE);
-	MEED_ASSERT(str1 != MEED_NULL);
-	MEED_ASSERT(str2 != MEED_NULL);
+	MD_ASSERT(s_isInitialized == MD_TRUE);
+	MD_ASSERT(str1 != MD_NULL);
+	MD_ASSERT(str2 != MD_NULL);
 
 	return strcmp(str1, str2);
 }
 
 void mdMemoryShutdown()
 {
-	MEED_ASSERT(s_isInitialized == MEED_TRUE);
+	MD_ASSERT(s_isInitialized == MD_TRUE);
 
 	// Shutdown code below this line if needed in the future.
-	if (s_pMemoryHead != MEED_NULL)
+	if (s_pMemoryHead != MD_NULL)
 	{
 #if PLATFORM_IS_LINUX
 		struct MdConsoleConfig config;
@@ -212,15 +212,15 @@ void mdMemoryShutdown()
 		config.color = MD_CONSOLE_COLOR_RESET;
 		mdSetConsoleConfig(config);
 #else
-		MEED_UNTOUCHABLE();
+		MD_UNTOUCHABLE();
 #endif
 	}
 
 	// Shutdown complete.
 
-	MEED_ASSERT_MSG(s_totalAllocatedMemory == 0,
-					"Memory leak detected: Total allocated memory is %zu bytes during shutdown.",
-					s_totalAllocatedMemory);
+	MD_ASSERT_MSG(s_totalAllocatedMemory == 0,
+				  "Memory leak detected: Total allocated memory is %zu bytes during shutdown.",
+				  s_totalAllocatedMemory);
 }
 
 static void* _malloc(mdSize size)
@@ -238,7 +238,7 @@ static void _free(void* ptr, mdSize size)
 static struct MemoryNode* _findNodeByPtr(void* ptr)
 {
 	struct MemoryNode* pCurrent = s_pMemoryHead;
-	while (pCurrent != MEED_NULL)
+	while (pCurrent != MD_NULL)
 	{
 		if (pCurrent->ptr == (void*)ptr)
 		{
@@ -247,10 +247,10 @@ static struct MemoryNode* _findNodeByPtr(void* ptr)
 		pCurrent = pCurrent->pNext;
 	}
 
-	return MEED_NULL;
+	return MD_NULL;
 }
 
-#else // MEED_RELEASE
+#else // MD_RELEASE
 
 void mdMemoryInitialize()
 {
@@ -280,7 +280,7 @@ void* mdMemorySet(void* pDest, u8 value, mdSize size)
 
 u32 mdGetStringLength(const char* str)
 {
-	MEED_ASSERT(str != MEED_NULL);
+	MD_ASSERT(str != MD_NULL);
 
 	u32 length = 0;
 	while (str[length] != '\0')
@@ -293,9 +293,9 @@ u32 mdGetStringLength(const char* str)
 
 i32 mdStringCompare(const char* str1, const char* str2)
 {
-	MEED_ASSERT(s_isInitialized == MEED_TRUE);
-	MEED_ASSERT(str1 != MEED_NULL);
-	MEED_ASSERT(str2 != MEED_NULL);
+	MD_ASSERT(s_isInitialized == MD_TRUE);
+	MD_ASSERT(str1 != MD_NULL);
+	MD_ASSERT(str2 != MD_NULL);
 
 	return strcmp(str1, str2);
 }
@@ -305,4 +305,4 @@ void mdMemoryShutdown()
 	// No-op in release mode.
 }
 
-#endif // MEED_DEBUG
+#endif // MD_DEBUG

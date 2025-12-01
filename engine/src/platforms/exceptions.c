@@ -19,7 +19,7 @@ void mdRaiseException(enum MdExceptionType type, const char* message, const char
 		mdFormatString(errorBuffer, sizeof(errorBuffer), "Invalid Operation Exception: %s", message);
 		break;
 	default:
-		MEED_UNTOUCHABLE();
+		MD_UNTOUCHABLE();
 	}
 
 	struct MdConsoleConfig config;

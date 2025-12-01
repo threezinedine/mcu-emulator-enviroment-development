@@ -26,7 +26,7 @@ protected:
 
 TEST_F(SetTest, CreateAndDestroy)
 {
-	EXPECT_NE(s_pSet, MEED_NULL);
+	EXPECT_NE(s_pSet, MD_NULL);
 	EXPECT_EQ(mdSetCount(s_pSet), 0u);
 }
 
@@ -80,7 +80,7 @@ TEST_F(SetTest, PushNullData)
 {
 	EXPECT_EXIT(
 		{
-			mdSetPush(s_pSet, MEED_NULL);
+			mdSetPush(s_pSet, MD_NULL);
 			std::exit(MD_EXCEPTION_TYPE_INVALID_OPERATION);
 		},
 		testing::ExitedWithCode(MD_EXCEPTION_TYPE_INVALID_OPERATION),
@@ -137,5 +137,5 @@ TEST_F(SetTest, FindElement)
 	u32 bIndex = mdSetFind(s_pSet, &b);
 
 	EXPECT_EQ(aIndex, 0u);
-	EXPECT_EQ(bIndex, MEED_SET_NOT_FOUND_INDEX);
+	EXPECT_EQ(bIndex, MD_SET_NOT_FOUND_INDEX);
 }

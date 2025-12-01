@@ -8,7 +8,7 @@ extern "C" {
 #include "callback.h"
 #include "linked_list.h"
 
-#define MEED_SET_NOT_FOUND_INDEX ((u32)(-1))
+#define MD_SET_NOT_FOUND_INDEX ((u32)(-1))
 
 /**
  * @file set.h
@@ -123,7 +123,7 @@ void mdSetClear(struct MdSet* pSet);
  *
  * @param pSet Pointer to the MdSet. If NULL, raises an assertion.
  * @param pData Pointer to the data to find in the set.
- * @return The zero-based index of the element if found; otherwise, returns `MEED_SET_NOT_FOUND_INDEX`.
+ * @return The zero-based index of the element if found; otherwise, returns `MD_SET_NOT_FOUND_INDEX`.
  */
 u32 mdSetFind(struct MdSet* pSet, void* pData);
 

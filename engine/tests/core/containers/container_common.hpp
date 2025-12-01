@@ -11,8 +11,8 @@ struct TestNode
 void deleteTestNode(void* pData)
 {
 	TestNode* pNode = (TestNode*)pData;
-	MEED_FREE(pNode, TestNode);
-	pData = MEED_NULL;
+	MD_FREE(pNode, TestNode);
+	pData = MD_NULL;
 	s_deleteCallCount++;
 }
 } // anonymous namespace

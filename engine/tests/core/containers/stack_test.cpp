@@ -46,7 +46,7 @@ TEST_F(StackTest, PopWithEmptyStack)
 	EXPECT_EQ(*(int*)mdStackTop(s_pStack), 10);
 
 	mdStackPop(s_pStack);
-	EXPECT_TRUE(mdStackEmpty(s_pStack) == MEED_TRUE);
+	EXPECT_TRUE(mdStackEmpty(s_pStack) == MD_TRUE);
 
 	EXPECT_EXIT(
 		{
@@ -59,13 +59,13 @@ TEST_F(StackTest, PopWithEmptyStack)
 
 TEST_F(StackTest, EmptyStack)
 {
-	EXPECT_TRUE(mdStackEmpty(s_pStack) == MEED_TRUE);
+	EXPECT_TRUE(mdStackEmpty(s_pStack) == MD_TRUE);
 
 	mdStackPush(s_pStack, &a);
-	EXPECT_TRUE(mdStackEmpty(s_pStack) == MEED_FALSE);
+	EXPECT_TRUE(mdStackEmpty(s_pStack) == MD_FALSE);
 
 	mdStackPop(s_pStack);
-	EXPECT_TRUE(mdStackEmpty(s_pStack) == MEED_TRUE);
+	EXPECT_TRUE(mdStackEmpty(s_pStack) == MD_TRUE);
 }
 
 TEST_F(StackTest, GetCount)
@@ -101,17 +101,17 @@ TEST_F(StackTest, Clear)
 
 	mdStackClear(s_pStack);
 	EXPECT_EQ(mdStackGetCount(s_pStack), 0u);
-	EXPECT_TRUE(mdStackEmpty(s_pStack) == MEED_TRUE);
+	EXPECT_TRUE(mdStackEmpty(s_pStack) == MD_TRUE);
 }
 
 TEST_F(StackTest, TestWithCallback)
 {
 	struct MdStack* pStackWithCallback = mdStackCreate(deleteTestNode);
 
-	TestNode* pNode1 = MEED_MALLOC(TestNode);
+	TestNode* pNode1 = MD_MALLOC(TestNode);
 	pNode1->value	 = 100;
 
-	TestNode* pNode2 = MEED_MALLOC(TestNode);
+	TestNode* pNode2 = MD_MALLOC(TestNode);
 	pNode2->value	 = 200;
 
 	mdStackPush(pStackWithCallback, pNode1);
@@ -129,7 +129,7 @@ TEST_F(StackTest, TestWithCallback)
 	mdStackClear(pStackWithCallback);
 	EXPECT_EQ(s_deleteCallCount, 2);
 
-	TestNode* pNode3 = MEED_MALLOC(TestNode);
+	TestNode* pNode3 = MD_MALLOC(TestNode);
 	pNode3->value	 = 300;
 
 	mdStackPush(pStackWithCallback, pNode3);

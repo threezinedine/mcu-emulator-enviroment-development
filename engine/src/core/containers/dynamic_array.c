@@ -2,18 +2,18 @@
 
 struct MdDynamicArray* mdDynamicArrayCreate(u32 initialCapacity, MdNodeDataDeleteCallback pDeleteCallback)
 {
-	struct MdDynamicArray* pArray = MEED_MALLOC(struct MdDynamicArray);
-	MEED_ASSERT(pArray != MEED_NULL);
+	struct MdDynamicArray* pArray = MD_MALLOC(struct MdDynamicArray);
+	MD_ASSERT(pArray != MD_NULL);
 
 	if (initialCapacity == 0)
 	{
-		initialCapacity = MEED_DEFAULT_DYNAMIC_ARRAY_CAPACITY;
+		initialCapacity = MD_DEFAULT_DYNAMIC_ARRAY_CAPACITY;
 	}
 
 	pArray->count	 = 0;
 	pArray->capacity = initialCapacity;
-	pArray->pData	 = MEED_MALLOC_ARRAY(void*, initialCapacity);
-	MEED_ASSERT(pArray->pData != MEED_NULL);
+	pArray->pData	 = MD_MALLOC_ARRAY(void*, initialCapacity);
+	MD_ASSERT(pArray->pData != MD_NULL);
 	pArray->pDeleteCallback = pDeleteCallback;
 
 	return pArray;
@@ -21,7 +21,7 @@ struct MdDynamicArray* mdDynamicArrayCreate(u32 initialCapacity, MdNodeDataDelet
 
 void mdDynamicArrayPush(struct MdDynamicArray* pArray, void* pData)
 {
-	MEED_ASSERT(pArray != MEED_NULL);
+	MD_ASSERT(pArray != MD_NULL);
 
 	if (pArray->count >= pArray->capacity)
 	{
@@ -34,34 +34,34 @@ void mdDynamicArrayPush(struct MdDynamicArray* pArray, void* pData)
 
 u32 mdDynamicArrayCount(struct MdDynamicArray* pArray)
 {
-	MEED_ASSERT(pArray != MEED_NULL);
+	MD_ASSERT(pArray != MD_NULL);
 	return pArray->count;
 }
 
 void* mdDynamicArrayAt(struct MdDynamicArray* pArray, u32 index)
 {
-	MEED_ASSERT(pArray != MEED_NULL);
+	MD_ASSERT(pArray != MD_NULL);
 
 	return pArray->pData[index];
 }
 
 void mdDynamicArrayResize(struct MdDynamicArray* pArray, u32 newCapacity)
 {
-	MEED_ASSERT(pArray != MEED_NULL);
+	MD_ASSERT(pArray != MD_NULL);
 
 	if (newCapacity <= pArray->capacity)
 	{
-		MEED_THROW(MD_EXCEPTION_TYPE_INVALID_OPERATION,
-				   "New capacity %u must be greater than current capacity %u.",
-				   newCapacity,
-				   pArray->capacity);
+		MD_THROW(MD_EXCEPTION_TYPE_INVALID_OPERATION,
+				 "New capacity %u must be greater than current capacity %u.",
+				 newCapacity,
+				 pArray->capacity);
 	}
 
-	void** pNewData = MEED_MALLOC_ARRAY(void*, newCapacity);
-	MEED_ASSERT(pNewData != MEED_NULL);
+	void** pNewData = MD_MALLOC_ARRAY(void*, newCapacity);
+	MD_ASSERT(pNewData != MD_NULL);
 
 	mdMemoryCopy(pNewData, pArray->pData, sizeof(void*) * pArray->count);
-	MEED_FREE_ARRAY(pArray->pData, void*, pArray->capacity);
+	MD_FREE_ARRAY(pArray->pData, void*, pArray->capacity);
 
 	pArray->pData	 = pNewData;
 	pArray->capacity = newCapacity;
@@ -69,9 +69,9 @@ void mdDynamicArrayResize(struct MdDynamicArray* pArray, u32 newCapacity)
 
 void mdDynamicArrayClear(struct MdDynamicArray* pArray)
 {
-	MEED_ASSERT(pArray != MEED_NULL);
+	MD_ASSERT(pArray != MD_NULL);
 
-	if (pArray->pDeleteCallback != MEED_NULL)
+	if (pArray->pDeleteCallback != MD_NULL)
 	{
 		for (u32 i = 0; i < pArray->count; i++)
 		{
@@ -84,14 +84,14 @@ void mdDynamicArrayClear(struct MdDynamicArray* pArray)
 
 void mdDynamicArrayInsert(struct MdDynamicArray* pArray, u32 index, void* pData)
 {
-	MEED_ASSERT(pArray != MEED_NULL);
+	MD_ASSERT(pArray != MD_NULL);
 
 	if (index > pArray->count)
 	{
-		MEED_THROW(MD_EXCEPTION_TYPE_OUT_OF_INDEX,
-				   "Index out of bounds: Attempted to insert at index %u in a dynamic array of size %u.",
-				   index,
-				   pArray->count);
+		MD_THROW(MD_EXCEPTION_TYPE_OUT_OF_INDEX,
+				 "Index out of bounds: Attempted to insert at index %u in a dynamic array of size %u.",
+				 index,
+				 pArray->count);
 	}
 
 	if (pArray->count >= pArray->capacity)
@@ -110,17 +110,17 @@ void mdDynamicArrayInsert(struct MdDynamicArray* pArray, u32 index, void* pData)
 
 void mdDynamicArrayErase(struct MdDynamicArray* pArray, u32 index)
 {
-	MEED_ASSERT(pArray != MEED_NULL);
+	MD_ASSERT(pArray != MD_NULL);
 
 	if (index >= pArray->count)
 	{
-		MEED_THROW(MD_EXCEPTION_TYPE_OUT_OF_INDEX,
-				   "Index out of bounds: Attempted to erase index %u in a dynamic array of size %u.",
-				   index,
-				   pArray->count);
+		MD_THROW(MD_EXCEPTION_TYPE_OUT_OF_INDEX,
+				 "Index out of bounds: Attempted to erase index %u in a dynamic array of size %u.",
+				 index,
+				 pArray->count);
 	}
 
-	if (pArray->pDeleteCallback != MEED_NULL)
+	if (pArray->pDeleteCallback != MD_NULL)
 	{
 		pArray->pDeleteCallback(pArray->pData[index]);
 	}
@@ -135,10 +135,10 @@ void mdDynamicArrayErase(struct MdDynamicArray* pArray, u32 index)
 
 void mdDynamicArrayDestroy(struct MdDynamicArray* pArray)
 {
-	MEED_ASSERT(pArray != MEED_NULL);
+	MD_ASSERT(pArray != MD_NULL);
 
 	mdDynamicArrayClear(pArray);
 
-	MEED_FREE_ARRAY(pArray->pData, void*, pArray->capacity);
-	MEED_FREE(pArray, struct MdDynamicArray);
+	MD_FREE_ARRAY(pArray->pData, void*, pArray->capacity);
+	MD_FREE(pArray, struct MdDynamicArray);
 }

@@ -15,7 +15,7 @@ struct MdWindowData* mdWindowCreate(u32 width, u32 height, const char* title)
 	MEED_UNUSED(title);	 // Unused parameter in web builds.
 
 	// Window creation is not supported in web builds.
-	return MEED_NULL;
+	return MD_NULL;
 }
 
 struct MdWindowEvent mdWindowPollEvents(struct MdWindowData* pWindowData)

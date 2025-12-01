@@ -1,5 +1,5 @@
 #pragma once
-#if MEED_USE_VULKAN
+#if MD_USE_VULKAN
 #include "MEEDEngine/platforms/platforms.h"
 #include <vulkan/vulkan.h>
 
@@ -43,7 +43,7 @@ struct MEEDVulkan
 	struct MdWindowData* pWindowData;
 
 	VkInstance instance;
-#if MEED_DEBUG
+#if MD_DEBUG
 	VkDebugUtilsMessengerEXT debugMessenger;
 #endif
 	VkPhysicalDevice		  physicalDevice;
@@ -84,15 +84,15 @@ struct MEEDVulkan
 
 extern struct MEEDVulkan* g_vulkan; // Global Vulkan instance
 
-#if MEED_DEBUG
+#if MD_DEBUG
 #define VK_ASSERT(call)                                                                                                \
 	do                                                                                                                 \
 	{                                                                                                                  \
 		VkResult result = call;                                                                                        \
-		MEED_ASSERT_MSG(result == VK_SUCCESS, "Vulkan call failed with error code: %d", result);                       \
+		MD_ASSERT_MSG(result == VK_SUCCESS, "Vulkan call failed with error code: %d", result);                         \
 	} while (0)
 #else
 #define VK_ASSERT(call) call
 #endif
 
-#endif // MEED_USE_VULKAN
+#endif // MD_USE_VULKAN
