@@ -18,7 +18,7 @@ void mdFormatPrint(const char* format, ...)
 	va_end(args);
 }
 
-void mdFormatString(char* buffer, mdSize length, char* format, ...)
+void mdFormatString(char* buffer, mdSize length, const char* format, ...)
 {
 	va_list args;
 	va_start(args, format);

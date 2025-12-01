@@ -5,8 +5,10 @@
 
 #if MD_DEBUG
 #if PLATFORM_IS_LINUX
+#include <execinfo.h>
 #include <pthread.h>
 #include <stdio.h>
+#include <unistd.h>
 #else
 #error "Backtrace capturing is not implemented for this platform."
 #endif
