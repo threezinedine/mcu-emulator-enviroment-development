@@ -8,10 +8,10 @@ struct LinuxFileData
 	i32 fd;
 };
 
-struct MEEDFileData* meedPlatformOpenFile(const char* filePath, enum MEEDFileMode mode)
+struct MEEDFileData* mdPlatformOpenFile(const char* filePath, enum MEEDFileMode mode)
 {
 	struct MEEDFileData* pFileData = MEED_MALLOC(struct MEEDFileData);
-	meedPlatformMemorySet(pFileData, 0, sizeof(struct MEEDFileData));
+	mdPlatformMemorySet(pFileData, 0, sizeof(struct MEEDFileData));
 
 	pFileData->isOpen	= MEED_FALSE;
 	pFileData->filePath = filePath;
@@ -66,13 +66,13 @@ struct MEEDFileData* meedPlatformOpenFile(const char* filePath, enum MEEDFileMod
 	return pFileData;
 }
 
-b8 meedPlatformIsOpen(struct MEEDFileData* pFileData)
+b8 mdPlatformIsOpen(struct MEEDFileData* pFileData)
 {
 	MEED_ASSERT(pFileData != MEED_NULL);
 	return pFileData->isOpen;
 }
 
-void meedPlatformWrite(struct MEEDFileData* pFileData, const char* data, meedSize size)
+void mdPlatformWrite(struct MEEDFileData* pFileData, const char* data, mdSize size)
 {
 	MEED_ASSERT(pFileData != MEED_NULL);
 	MEED_ASSERT(pFileData->isOpen == MEED_TRUE);
@@ -87,7 +87,7 @@ void meedPlatformWrite(struct MEEDFileData* pFileData, const char* data, meedSiz
 					bytesWritten);
 }
 
-void meedPlatformCloseFile(struct MEEDFileData* pFileData)
+void mdPlatformCloseFile(struct MEEDFileData* pFileData)
 {
 	MEED_ASSERT(pFileData != MEED_NULL);
 

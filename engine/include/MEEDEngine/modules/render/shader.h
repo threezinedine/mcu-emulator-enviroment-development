@@ -36,13 +36,13 @@ struct MEEDShader
  * @param filePath The file path to the shader source code.
  * @return A pointer to the created `MEEDShader` structure.
  */
-struct MEEDShader* meedShaderCreate(enum MEEDShaderType type, const char* filePath);
+struct MEEDShader* mdShaderCreate(enum MEEDShaderType type, const char* filePath);
 
 /**
  * Destroys a previously created shader.
  * @param pShader A pointer to the `MEEDShader` structure to destroy.
  */
-void meedShaderDestroy(struct MEEDShader* pShader);
+void mdShaderDestroy(struct MEEDShader* pShader);
 
 #if __cplusplus
 }

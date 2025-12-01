@@ -6,11 +6,11 @@
 
 #include "MEEDEngine/platforms/console.h"
 
-void meedPlatformSetConsoleConfig(struct MEEDPlatformConsoleConfig config)
+void mdPlatformSetConsoleConfig(struct MEEDPlatformConsoleConfig config)
 {
 }
 
-void meedPlatformFPrint(const char* format, ...)
+void mdPlatformFPrint(const char* format, ...)
 {
 	va_list args;
 	va_start(args, format);
@@ -18,7 +18,7 @@ void meedPlatformFPrint(const char* format, ...)
 	va_end(args);
 }
 
-void meedPlatformBufferedPrint(char* buffer, meedSize length, char* format, ...)
+void mdPlatformBufferedPrint(char* buffer, mdSize length, char* format, ...)
 {
 	va_list args;
 	va_start(args, format);
@@ -26,7 +26,7 @@ void meedPlatformBufferedPrint(char* buffer, meedSize length, char* format, ...)
 	va_end(args);
 }
 
-void meedPlatformPrint(const char* str)
+void mdPlatformPrint(const char* str)
 {
 	printf("%s", str);
 }

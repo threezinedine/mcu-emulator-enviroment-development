@@ -10,7 +10,7 @@ static void createPipeline(struct MEEDPipeline* pPipeline);
 static void freeInternalPipeline(void*);
 static void deleteShaderResources(void*);
 
-struct MEEDPipeline* meedPipelineCreate(const char* vertexShaderPath, const char* fragmentShaderPath)
+struct MEEDPipeline* mdPipelineCreate(const char* vertexShaderPath, const char* fragmentShaderPath)
 {
 	// Implementation of pipeline creation using Vulkan
 	struct MEEDPipeline* pPipeline = MEED_MALLOC(struct MEEDPipeline);
@@ -18,19 +18,19 @@ struct MEEDPipeline* meedPipelineCreate(const char* vertexShaderPath, const char
 
 	pPipeline->vertexShaderPath	  = vertexShaderPath;
 	pPipeline->fragmentShaderPath = fragmentShaderPath;
-	pPipeline->pReleaseStack	  = meedReleaseStackCreate();
+	pPipeline->pReleaseStack	  = mdReleaseStackCreate();
 
 	pPipeline->pInternal = MEED_MALLOC(struct VulkanPipeline);
 	MEED_ASSERT(pPipeline->pInternal != MEED_NULL);
 
-	meedReleaseStackPush(pPipeline->pReleaseStack, pPipeline, freeInternalPipeline);
+	mdReleaseStackPush(pPipeline->pReleaseStack, pPipeline, freeInternalPipeline);
 
 	struct VulkanPipeline* pVulkanPipeline = (struct VulkanPipeline*)pPipeline->pInternal;
-	meedPlatformMemorySet(pVulkanPipeline, 0, sizeof(struct VulkanPipeline));
+	mdPlatformMemorySet(pVulkanPipeline, 0, sizeof(struct VulkanPipeline));
 
-	pVulkanPipeline->pVertexShader	 = meedShaderCreate(MEED_SHADER_TYPE_VERTEX, vertexShaderPath);
-	pVulkanPipeline->pFragmentShader = meedShaderCreate(MEED_SHADER_TYPE_FRAGMENT, fragmentShaderPath);
-	meedReleaseStackPush(pPipeline->pReleaseStack, pPipeline, deleteShaderResources);
+	pVulkanPipeline->pVertexShader	 = mdShaderCreate(MEED_SHADER_TYPE_VERTEX, vertexShaderPath);
+	pVulkanPipeline->pFragmentShader = mdShaderCreate(MEED_SHADER_TYPE_FRAGMENT, fragmentShaderPath);
+	mdReleaseStackPush(pPipeline->pReleaseStack, pPipeline, deleteShaderResources);
 
 	createLayout(pPipeline);
 	createPipeline(pPipeline);
@@ -53,8 +53,8 @@ static void deleteShaderResources(void* pData)
 
 	struct VulkanPipeline* pVulkanPipeline = (struct VulkanPipeline*)pPipeline->pInternal;
 
-	meedShaderDestroy(pVulkanPipeline->pVertexShader);
-	meedShaderDestroy(pVulkanPipeline->pFragmentShader);
+	mdShaderDestroy(pVulkanPipeline->pVertexShader);
+	mdShaderDestroy(pVulkanPipeline->pFragmentShader);
 }
 
 static void destroyLayout(void* pData);
@@ -74,7 +74,7 @@ static void createLayout(struct MEEDPipeline* pPipeline)
 	layoutCreateInfo.setLayoutCount				= 0;
 
 	VK_ASSERT(vkCreatePipelineLayout(g_vulkan->device, &layoutCreateInfo, MEED_NULL, &pVulkanPipeline->layout));
-	meedReleaseStackPush(pPipeline->pReleaseStack, pPipeline, destroyLayout);
+	mdReleaseStackPush(pPipeline->pReleaseStack, pPipeline, destroyLayout);
 }
 
 static void destroyLayout(void* pData)
@@ -239,7 +239,7 @@ static void createPipeline(struct MEEDPipeline* pPipeline)
 	VK_ASSERT(vkCreateGraphicsPipelines(
 		g_vulkan->device, VK_NULL_HANDLE, 1, &pipelineCreateInfo, MEED_NULL, &pVulkanPipeline->pipeline));
 
-	meedReleaseStackPush(pPipeline->pReleaseStack, pPipeline, destroyPipeline);
+	mdReleaseStackPush(pPipeline->pReleaseStack, pPipeline, destroyPipeline);
 }
 
 static void destroyPipeline(void* pData)
@@ -253,7 +253,7 @@ static void destroyPipeline(void* pData)
 	vkDestroyPipeline(g_vulkan->device, pVulkanPipeline->pipeline, MEED_NULL);
 }
 
-void meedPipelineUse(struct MEEDPipeline* pPipeline)
+void mdPipelineUse(struct MEEDPipeline* pPipeline)
 {
 	MEED_ASSERT(pPipeline != MEED_NULL);
 	MEED_ASSERT(g_vulkan != MEED_NULL);
@@ -266,12 +266,12 @@ void meedPipelineUse(struct MEEDPipeline* pPipeline)
 					  pVulkanPipeline->pipeline);
 }
 
-void meedPipelineDestroy(struct MEEDPipeline* pPipeline)
+void mdPipelineDestroy(struct MEEDPipeline* pPipeline)
 {
 	MEED_ASSERT(pPipeline != MEED_NULL);
 	MEED_ASSERT(pPipeline->pReleaseStack != MEED_NULL);
 
-	meedReleaseStackDestroy(pPipeline->pReleaseStack);
+	mdReleaseStackDestroy(pPipeline->pReleaseStack);
 	MEED_FREE(pPipeline, struct MEEDPipeline);
 }
 

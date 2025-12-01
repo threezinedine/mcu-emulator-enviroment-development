@@ -30,7 +30,7 @@ struct MEEDStack
  *
  * @return Pointer to the newly created MEEDStack.
  */
-struct MEEDStack* meedStackCreate(MEEDNodeDataDeleteCallback pDeleteCallback);
+struct MEEDStack* mdStackCreate(MEEDNodeDataDeleteCallback pDeleteCallback);
 
 /**
  * Pops data from the top of the stack.
@@ -38,7 +38,7 @@ struct MEEDStack* meedStackCreate(MEEDNodeDataDeleteCallback pDeleteCallback);
  * @param pStack Pointer to the MEEDStack. If NULL, raises an assertion.
  * @return Pointer to the data popped from the top of the stack.
  */
-b8 meedStackEmpty(struct MEEDStack* pStack);
+b8 mdStackEmpty(struct MEEDStack* pStack);
 
 /**
  * Gets the number of elements in the stack.
@@ -46,7 +46,7 @@ b8 meedStackEmpty(struct MEEDStack* pStack);
  * @param pStack Pointer to the MEEDStack. If NULL, raises an assertion.
  * @return The number of elements in the stack.
  */
-u32 meedStackGetCount(struct MEEDStack* pStack);
+u32 mdStackGetCount(struct MEEDStack* pStack);
 
 /**
  * Pushes data onto the top of the stack.
@@ -54,7 +54,7 @@ u32 meedStackGetCount(struct MEEDStack* pStack);
  * @param pStack Pointer to the MEEDStack. If NULL, raises an assertion.
  * @param pData Pointer to the data to be pushed onto the stack.
  */
-void meedStackPush(struct MEEDStack* pStack, void* pData);
+void mdStackPush(struct MEEDStack* pStack, void* pData);
 
 /**
  * Retrieves the data at the top of the stack without removing it.
@@ -62,21 +62,21 @@ void meedStackPush(struct MEEDStack* pStack, void* pData);
  * @param pStack Pointer to the MEEDStack. If NULL, raises an assertion.
  * @return Pointer to the data at the top of the stack.
  */
-void* meedStackTop(struct MEEDStack* pStack);
+void* mdStackTop(struct MEEDStack* pStack);
 
 /**
  * Removes the data at the top of the stack.
  *
  * @param pStack Pointer to the MEEDStack. If NULL, raises an assertion.
  */
-void meedStackPop(struct MEEDStack* pStack);
+void mdStackPop(struct MEEDStack* pStack);
 
 /**
  * Clears all elements from the stack.
  *
  * @param pStack Pointer to the MEEDStack. If NULL, raises an assertion.
  */
-void meedStackClear(struct MEEDStack* pStack);
+void mdStackClear(struct MEEDStack* pStack);
 
 /**
  * Destroys a stack and frees its memory.
@@ -88,7 +88,7 @@ void meedStackClear(struct MEEDStack* pStack);
  *
  * @param pStack Pointer to the MEEDStack. If NULL, raises an assertion.
  */
-void meedStackDestroy(struct MEEDStack* pStack);
+void mdStackDestroy(struct MEEDStack* pStack);
 
 #if __cplusplus
 }

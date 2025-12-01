@@ -32,12 +32,12 @@ static b8 s_isInitialized = MEED_FALSE; ///< Track if the windowing system is in
 	{                                                                                                                  \
 		MEED_ASSERT_MSG(                                                                                               \
 			s_isInitialized == MEED_TRUE,                                                                              \
-			"Windowing system is not initialized. Call meedWindowInitialize() before using window functions.");        \
+			"Windowing system is not initialized. Call mdWindowInitialize() before using window functions.");          \
 		MEED_ASSERT_MSG(pWindowData != MEED_NULL, "Provided MEEDWindowData pointer is NULL.");                         \
 		MEED_ASSERT_MSG(pWindowData->pInternal != MEED_NULL, "Internal window data pointer is NULL.");                 \
 	} while (0)
 
-void meedWindowInitialize()
+void mdWindowInitialize()
 {
 	MEED_ASSERT(s_isInitialized == MEED_FALSE);
 
@@ -48,7 +48,7 @@ void meedWindowInitialize()
 	s_isInitialized = MEED_TRUE;
 }
 
-struct MEEDWindowData* meedWindowCreate(u32 width, u32 height, const char* title)
+struct MEEDWindowData* mdWindowCreate(u32 width, u32 height, const char* title)
 {
 	MEED_ASSERT(s_isInitialized == MEED_TRUE);
 
@@ -81,7 +81,7 @@ struct MEEDWindowData* meedWindowCreate(u32 width, u32 height, const char* title
 	XStoreName(pLinuxData->pDisplay, pLinuxData->window, title);
 
 	XSizeHints sizeHints;
-	meedPlatformMemorySet(&sizeHints, 0, sizeof(XSizeHints));
+	mdPlatformMemorySet(&sizeHints, 0, sizeof(XSizeHints));
 	sizeHints.flags		 = PMinSize | PMaxSize;
 	sizeHints.min_width	 = width;
 	sizeHints.min_height = height;
@@ -95,7 +95,7 @@ struct MEEDWindowData* meedWindowCreate(u32 width, u32 height, const char* title
 	return pWindowData;
 }
 
-struct MEEDWindowEvent meedWindowPollEvents(struct MEEDWindowData* pWindowData)
+struct MEEDWindowEvent mdWindowPollEvents(struct MEEDWindowData* pWindowData)
 {
 	MEED_WINDOW_UTILS_ASSERTION();
 
@@ -103,7 +103,7 @@ struct MEEDWindowEvent meedWindowPollEvents(struct MEEDWindowData* pWindowData)
 
 	XNextEvent(pLinuxData->pDisplay, &event);
 	struct MEEDWindowEvent windowEvent;
-	meedPlatformMemorySet(&windowEvent, 0, sizeof(struct MEEDWindowEvent));
+	mdPlatformMemorySet(&windowEvent, 0, sizeof(struct MEEDWindowEvent));
 	windowEvent.type = MEED_WINDOW_EVENT_TYPE_NONE;
 
 	if (event.type == ClientMessage)
@@ -119,7 +119,7 @@ struct MEEDWindowEvent meedWindowPollEvents(struct MEEDWindowData* pWindowData)
 }
 
 #if MEED_USE_VULKAN
-VkResult meedWindowCreateVulkanSurface(struct MEEDWindowData* pWindowData, VkInstance instance, VkSurfaceKHR* pSurface)
+VkResult mdWindowCreateVulkanSurface(struct MEEDWindowData* pWindowData, VkInstance instance, VkSurfaceKHR* pSurface)
 {
 	MEED_WINDOW_UTILS_ASSERTION();
 
@@ -134,7 +134,7 @@ VkResult meedWindowCreateVulkanSurface(struct MEEDWindowData* pWindowData, VkIns
 	return vkCreateXlibSurfaceKHR(instance, &createInfo, MEED_NULL, pSurface);
 }
 
-void meedWindowDestroyVulkanSurface(struct MEEDWindowData* pWindowData, VkInstance instance, VkSurfaceKHR surface)
+void mdWindowDestroyVulkanSurface(struct MEEDWindowData* pWindowData, VkInstance instance, VkSurfaceKHR surface)
 {
 	MEED_WINDOW_UTILS_ASSERTION();
 
@@ -143,7 +143,7 @@ void meedWindowDestroyVulkanSurface(struct MEEDWindowData* pWindowData, VkInstan
 
 #endif
 
-void meedWindowDestroy(struct MEEDWindowData* pWindowData)
+void mdWindowDestroy(struct MEEDWindowData* pWindowData)
 {
 	MEED_WINDOW_UTILS_ASSERTION();
 
@@ -157,7 +157,7 @@ void meedWindowDestroy(struct MEEDWindowData* pWindowData)
 	MEED_FREE(pWindowData, struct MEEDWindowData);
 }
 
-void meedWindowShutdown()
+void mdWindowShutdown()
 {
 	MEED_ASSERT(s_isInitialized == MEED_TRUE);
 

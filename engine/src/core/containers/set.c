@@ -1,13 +1,13 @@
 #include "MEEDEngine/core/containers/set.h"
 
-struct MEEDSet* meedSetCreate(MEEDSetCompareCallback pCompareCallback)
+struct MEEDSet* mdSetCreate(MEEDSetCompareCallback pCompareCallback)
 {
 	MEED_ASSERT(pCompareCallback != MEED_NULL);
 
 	struct MEEDSet* pSet = MEED_MALLOC(struct MEEDSet);
 	MEED_ASSERT(pSet != MEED_NULL);
 
-	pSet->pList = meedLinkedListCreate(MEED_NULL);
+	pSet->pList = mdLinkedListCreate(MEED_NULL);
 	MEED_ASSERT(pSet->pList != MEED_NULL);
 
 	pSet->pCompareCallback = pCompareCallback;
@@ -15,13 +15,13 @@ struct MEEDSet* meedSetCreate(MEEDSetCompareCallback pCompareCallback)
 	return pSet;
 }
 
-u32 meedSetCount(struct MEEDSet* pSet)
+u32 mdSetCount(struct MEEDSet* pSet)
 {
 	MEED_ASSERT(pSet != MEED_NULL);
-	return meedLinkedListCount(pSet->pList);
+	return mdLinkedListCount(pSet->pList);
 }
 
-void meedSetPush(struct MEEDSet* pSet, void* pData)
+void mdSetPush(struct MEEDSet* pSet, void* pData)
 {
 	MEED_ASSERT(pSet != MEED_NULL);
 	MEED_ASSERT(pSet->pCompareCallback != MEED_NULL);
@@ -46,7 +46,7 @@ void meedSetPush(struct MEEDSet* pSet, void* pData)
 		}
 		else if (cmpResult > 0)
 		{
-			meedLinkedListInsert(pSet->pList, index, pData);
+			mdLinkedListInsert(pSet->pList, index, pData);
 			return;
 		}
 		else
@@ -56,34 +56,34 @@ void meedSetPush(struct MEEDSet* pSet, void* pData)
 		}
 	}
 
-	meedLinkedListPush(pSet->pList, pData);
+	mdLinkedListPush(pSet->pList, pData);
 }
 
-void* meedSetAt(struct MEEDSet* pSet, u32 index)
+void* mdSetAt(struct MEEDSet* pSet, u32 index)
 {
 	MEED_ASSERT(pSet != MEED_NULL);
 	MEED_ASSERT(pSet->pList != MEED_NULL);
 
-	return meedLinkedListAt(pSet->pList, index);
+	return mdLinkedListAt(pSet->pList, index);
 }
 
-void meedSetErase(struct MEEDSet* pSet, u32 index)
+void mdSetErase(struct MEEDSet* pSet, u32 index)
 {
 	MEED_ASSERT(pSet != MEED_NULL);
 	MEED_ASSERT(pSet->pList != MEED_NULL);
 
-	meedLinkedListErase(pSet->pList, index);
+	mdLinkedListErase(pSet->pList, index);
 }
 
-void meedSetClear(struct MEEDSet* pSet)
+void mdSetClear(struct MEEDSet* pSet)
 {
 	MEED_ASSERT(pSet != MEED_NULL);
 	MEED_ASSERT(pSet->pList != MEED_NULL);
 
-	meedLinkedListClear(pSet->pList);
+	mdLinkedListClear(pSet->pList);
 }
 
-u32 meedSetFind(struct MEEDSet* pSet, void* pData)
+u32 mdSetFind(struct MEEDSet* pSet, void* pData)
 {
 	MEED_ASSERT(pSet != MEED_NULL);
 	MEED_ASSERT(pSet->pCompareCallback != MEED_NULL);
@@ -115,10 +115,10 @@ u32 meedSetFind(struct MEEDSet* pSet, void* pData)
 	return MEED_SET_NOT_FOUND_INDEX;
 }
 
-void meedSetDestroy(struct MEEDSet* pSet)
+void mdSetDestroy(struct MEEDSet* pSet)
 {
 	MEED_ASSERT(pSet != MEED_NULL);
 
-	meedLinkedListDestroy(pSet->pList);
+	mdLinkedListDestroy(pSet->pList);
 	MEED_FREE(pSet, struct MEEDSet);
 }

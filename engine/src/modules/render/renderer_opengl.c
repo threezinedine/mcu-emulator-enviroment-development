@@ -8,7 +8,7 @@ struct OpenGLRenderData* s_pRenderData = MEED_NULL;
 static u32		   vbo, vao;
 static GLFWwindow* s_pWindow = MEED_NULL;
 
-void meedRenderInitialize(struct MEEDWindowData* pWindowData)
+void mdRenderInitialize(struct MEEDWindowData* pWindowData)
 {
 	MEED_ASSERT(s_pRenderData == MEED_NULL);
 
@@ -36,7 +36,7 @@ void meedRenderInitialize(struct MEEDWindowData* pWindowData)
 	s_pWindow = (GLFWwindow*)glfwGetCurrentContext();
 }
 
-void meedRenderClearScreen(struct MEEDColor color)
+void mdRenderClearScreen(struct MEEDColor color)
 {
 	MEED_ASSERT(s_pRenderData != MEED_NULL);
 
@@ -44,18 +44,18 @@ void meedRenderClearScreen(struct MEEDColor color)
 	GL_ASSERT(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }
 
-void meedRenderStartFrame()
+void mdRenderStartFrame()
 {
 	MEED_ASSERT(s_pRenderData != MEED_NULL);
 
 	GL_ASSERT(glBindVertexArray(vao));
 }
 
-void meedRenderEndFrame()
+void mdRenderEndFrame()
 {
 }
 
-void meedRenderDraw(u32 vertexCount, u32 instanceCount, u32 firstVertex, u32 firstInstance)
+void mdRenderDraw(u32 vertexCount, u32 instanceCount, u32 firstVertex, u32 firstInstance)
 {
 	MEED_UNUSED(instanceCount);
 	MEED_UNUSED(firstInstance);
@@ -65,7 +65,7 @@ void meedRenderDraw(u32 vertexCount, u32 instanceCount, u32 firstVertex, u32 fir
 	GL_ASSERT(glDrawArrays(GL_TRIANGLES, firstVertex, vertexCount));
 }
 
-void meedRenderPresent()
+void mdRenderPresent()
 {
 	MEED_ASSERT(s_pRenderData != MEED_NULL);
 	MEED_ASSERT(s_pWindow != MEED_NULL);
@@ -73,11 +73,11 @@ void meedRenderPresent()
 	GL_ASSERT(glfwSwapBuffers(s_pWindow));
 }
 
-void meedRenderWaitIdle()
+void mdRenderWaitIdle()
 {
 }
 
-void meedRenderShutdown()
+void mdRenderShutdown()
 {
 	MEED_ASSERT(s_pRenderData != MEED_NULL);
 

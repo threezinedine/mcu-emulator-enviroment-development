@@ -50,7 +50,7 @@ struct MEEDLinkedList
  *
  * @return Pointer to the newly created MEEDLinkedList.
  */
-struct MEEDLinkedList* meedLinkedListCreate(MEEDNodeDataDeleteCallback pDeleteCallback);
+struct MEEDLinkedList* mdLinkedListCreate(MEEDNodeDataDeleteCallback pDeleteCallback);
 
 /**
  * Append the data to the end of the linked list.
@@ -58,7 +58,7 @@ struct MEEDLinkedList* meedLinkedListCreate(MEEDNodeDataDeleteCallback pDeleteCa
  * @param pList Pointer to the MEEDLinkedList. If NULL, raises an assertion.
  * @param pData Pointer to the data to be added to the list.
  */
-void meedLinkedListPush(struct MEEDLinkedList* pList, void* pData);
+void mdLinkedListPush(struct MEEDLinkedList* pList, void* pData);
 
 /**
  * @brief Inserts data at a specific index in the linked list.
@@ -72,7 +72,7 @@ void meedLinkedListPush(struct MEEDLinkedList* pList, void* pData);
  * @param index The zero-based index where the data should be inserted. If out of bounds, raises an assertion.
  * @param pData Pointer to the data to be inserted into the list.
  */
-void meedLinkedListInsert(struct MEEDLinkedList* pList, u32 index, void* pData);
+void mdLinkedListInsert(struct MEEDLinkedList* pList, u32 index, void* pData);
 
 /**
  * @brief Erases the node at a specific index in the linked list.
@@ -86,7 +86,7 @@ void meedLinkedListInsert(struct MEEDLinkedList* pList, u32 index, void* pData);
  * @param pList Pointer to the MEEDLinkedList. If NULL, raises an assertion.
  * @param index The zero-based index of the node to be erased. If out of bounds, raises an assertion.
  */
-void meedLinkedListErase(struct MEEDLinkedList* pList, u32 index);
+void mdLinkedListErase(struct MEEDLinkedList* pList, u32 index);
 
 /**
  * @brief Gets the number of elements in the linked list.
@@ -97,7 +97,7 @@ void meedLinkedListErase(struct MEEDLinkedList* pList, u32 index);
  * @param pList Pointer to the MEEDLinkedList. If NULL, raises an assertion.
  * @return The number of elements in the linked list.
  */
-u32 meedLinkedListCount(struct MEEDLinkedList* pList);
+u32 mdLinkedListCount(struct MEEDLinkedList* pList);
 
 /**
  * @brief Checks if the linked list is empty.
@@ -107,7 +107,7 @@ u32 meedLinkedListCount(struct MEEDLinkedList* pList);
  * @param pList Pointer to the MEEDLinkedList. If NULL, raises an assertion.
  * @return MEED_TRUE if the list is empty, MEED_FALSE otherwise.
  */
-b8 meedLinkedListEmpty(struct MEEDLinkedList* pList);
+b8 mdLinkedListEmpty(struct MEEDLinkedList* pList);
 
 /**
  * @brief Retrieves the data at a specific index in the linked list.
@@ -120,7 +120,7 @@ b8 meedLinkedListEmpty(struct MEEDLinkedList* pList);
  * @param index The zero-based index of the element to retrieve. If out of bounds, raises an assertion.
  * @return Pointer to the data at the specified index.
  */
-void* meedLinkedListAt(struct MEEDLinkedList* pList, u32 index);
+void* mdLinkedListAt(struct MEEDLinkedList* pList, u32 index);
 
 /**
  * @brief Clears all elements from the linked list.
@@ -131,7 +131,7 @@ void* meedLinkedListAt(struct MEEDLinkedList* pList, u32 index);
  *
  * @param pList Pointer to the MEEDLinkedList. If NULL, raises an assertion.
  */
-void meedLinkedListClear(struct MEEDLinkedList* pList);
+void mdLinkedListClear(struct MEEDLinkedList* pList);
 
 /**
  * @brief Destroys a linked list and frees its memory.
@@ -142,7 +142,7 @@ void meedLinkedListClear(struct MEEDLinkedList* pList);
  *
  * @param pList Pointer to the MEEDLinkedList to be destroyed. If NULL, raises an assertion.
  */
-void meedLinkedListDestroy(struct MEEDLinkedList* pList);
+void mdLinkedListDestroy(struct MEEDLinkedList* pList);
 
 #if __cplusplus
 }

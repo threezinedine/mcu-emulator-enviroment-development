@@ -54,14 +54,14 @@ struct MEEDVertexBuffer
  * @note The data of the vertex buffer will be write later
  */
 struct MEEDVertexBuffer*
-meedVertexBufferCreate(enum MEEDVertexBufferAttributeType* layout, u32 attributesCount, u32 verticesCount);
+mdVertexBufferCreate(enum MEEDVertexBufferAttributeType* layout, u32 attributesCount, u32 verticesCount);
 
 /**
  * @brief Destroys the specified vertex buffer and releases its resources.
  *
  * @param pVertexBuffer A pointer to the MEEDVertexBuffer to destroy. if NULL raise an exception.
  */
-void meedVertexBufferDestroy(struct MEEDVertexBuffer* pVertexBuffer);
+void mdVertexBufferDestroy(struct MEEDVertexBuffer* pVertexBuffer);
 
 #if __cplusplus
 }

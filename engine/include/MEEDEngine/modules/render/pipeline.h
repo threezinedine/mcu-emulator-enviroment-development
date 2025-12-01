@@ -27,21 +27,21 @@ struct MEEDPipeline
  * @param fragmentShaderPath Path to the fragment shader file.
  * @return A pointer to the created MEEDPipeline.
  */
-struct MEEDPipeline* meedPipelineCreate(const char* vertexShaderPath, const char* fragmentShaderPath);
+struct MEEDPipeline* mdPipelineCreate(const char* vertexShaderPath, const char* fragmentShaderPath);
 
 /**
  * @brief Binds the specified render pipeline for use in rendering.
  *
  * @param pPipeline Pointer to the MEEDPipeline to use.
  */
-void meedPipelineUse(struct MEEDPipeline* pPipeline);
+void mdPipelineUse(struct MEEDPipeline* pPipeline);
 
 /**
  * @brief Destroys the specified render pipeline and releases its resources.
  *
  * @param pPipeline Pointer to the MEEDPipeline to destroy.
  */
-void meedPipelineDestroy(struct MEEDPipeline* pPipeline);
+void mdPipelineDestroy(struct MEEDPipeline* pPipeline);
 
 #if __cplusplus
 }

@@ -2,14 +2,14 @@
 
 int main(void)
 {
-	meedPlatformMemoryInitialize();
+	mdPlatformMemoryInitialize();
 
-	struct MEEDLinkedList* pList = meedLinkedListCreate(MEED_NULL);
+	struct MEEDLinkedList* pList = mdLinkedListCreate(MEED_NULL);
 
-	meedLinkedListPush(pList, (void*)1);
+	mdLinkedListPush(pList, (void*)1);
 
-	meedLinkedListDestroy(pList);
+	mdLinkedListDestroy(pList);
 
-	meedPlatformMemoryShutdown();
+	mdPlatformMemoryShutdown();
 	return 0;
 }

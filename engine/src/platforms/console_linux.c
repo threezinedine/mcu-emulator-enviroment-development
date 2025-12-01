@@ -16,12 +16,12 @@ static const char* ansi[] = {
 	[MEED_CONSOLE_COLOR_BOLD]	 = "\033[1m",
 };
 
-void meedPlatformSetConsoleConfig(struct MEEDPlatformConsoleConfig config)
+void mdPlatformSetConsoleConfig(struct MEEDPlatformConsoleConfig config)
 {
 	printf("%s", ansi[config.color]);
 }
 
-void meedPlatformBufferedPrint(char* buffer, meedSize length, char* format, ...)
+void mdPlatformBufferedPrint(char* buffer, mdSize length, char* format, ...)
 {
 	va_list args;
 	va_start(args, format);
@@ -29,7 +29,7 @@ void meedPlatformBufferedPrint(char* buffer, meedSize length, char* format, ...)
 	va_end(args);
 }
 
-void meedPlatformFPrint(const char* format, ...)
+void mdPlatformFPrint(const char* format, ...)
 {
 	va_list args;
 	va_start(args, format);
@@ -37,7 +37,7 @@ void meedPlatformFPrint(const char* format, ...)
 	va_end(args);
 }
 
-void meedPlatformPrint(const char* str)
+void mdPlatformPrint(const char* str)
 {
 	printf("%s", str);
 }

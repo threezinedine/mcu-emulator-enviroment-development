@@ -38,14 +38,14 @@ struct MEED_BINDING MEEDFileData
  * @param mode The mode in which to open the file.
  * @return Pointer to the MEEDFileData representing the opened file.
  */
-struct MEEDFileData* meedPlatformOpenFile(const char* filePath, enum MEEDFileMode mode);
+struct MEEDFileData* mdPlatformOpenFile(const char* filePath, enum MEEDFileMode mode);
 
 /**
  * Checks if the specified file is open.
  * @param pFileData Pointer to the MEEDFileData representing the file.
  * @return MEED_TRUE if the file is open, MEED_FALSE otherwise.
  */
-b8 meedPlatformIsOpen(struct MEEDFileData* pFileData);
+b8 mdPlatformIsOpen(struct MEEDFileData* pFileData);
 
 /**
  * Writes data to the specified file.
@@ -53,13 +53,13 @@ b8 meedPlatformIsOpen(struct MEEDFileData* pFileData);
  * @param data Pointer to the data to write.
  * @param size The size of the data to write in bytes.
  */
-void meedPlatformWrite(struct MEEDFileData* pFileData, const char* data, meedSize size);
+void mdPlatformWrite(struct MEEDFileData* pFileData, const char* data, mdSize size);
 
 /**
  * Closes the specified file.
  * @param pFileData Pointer to the MEEDFileData representing the file to close.
  */
-void meedPlatformCloseFile(struct MEEDFileData* pFileData);
+void mdPlatformCloseFile(struct MEEDFileData* pFileData);
 
 #if __cplusplus
 }

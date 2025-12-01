@@ -7,9 +7,9 @@ extern "C" {
 
 int main(int argc, char** argv)
 {
-	meedPlatformMemoryInitialize();
+	mdPlatformMemoryInitialize();
 	::testing::InitGoogleTest(&argc, argv);
 	int result = RUN_ALL_TESTS();
-	meedPlatformMemoryShutdown();
+	mdPlatformMemoryShutdown();
 	return result;
 }

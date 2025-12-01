@@ -41,7 +41,7 @@ struct MEEDReleaseStackItem
  * Initialize an instance of MEEDReleaseStack.
  * @return Pointer to the created MEEDReleaseStack instance.
  */
-struct MEEDReleaseStack* meedReleaseStackCreate();
+struct MEEDReleaseStack* mdReleaseStackCreate();
 
 /**
  * Push a release function and its associated data onto the release stack.
@@ -49,7 +49,7 @@ struct MEEDReleaseStack* meedReleaseStackCreate();
  * @param pData Pointer to the data to be passed to the release function.
  * @param pReleaseFunc Pointer to the function to be called for releasing the resource. CANNOT be NULL.
  */
-void meedReleaseStackPush(struct MEEDReleaseStack* pReleaseStack, void* pData, MEEDReleaseFunc pReleaseFunc);
+void mdReleaseStackPush(struct MEEDReleaseStack* pReleaseStack, void* pData, MEEDReleaseFunc pReleaseFunc);
 
 /**
  * Free the MEEDReleaseStack instance and release all resources in the stack.
@@ -57,7 +57,7 @@ void meedReleaseStackPush(struct MEEDReleaseStack* pReleaseStack, void* pData, M
  *
  * @note All resources and the callbacks will be released in the reverse order they were added (LIFO order).
  */
-void meedReleaseStackDestroy(struct MEEDReleaseStack* pReleaseStack);
+void mdReleaseStackDestroy(struct MEEDReleaseStack* pReleaseStack);
 
 #if __cplusplus
 }

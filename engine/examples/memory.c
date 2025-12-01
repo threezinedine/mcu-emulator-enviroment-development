@@ -2,19 +2,19 @@
 
 int main()
 {
-	meedPlatformMemoryInitialize();
+	mdPlatformMemoryInitialize();
 
-	void* ptr = meedPlatformMalloc(128);
+	void* ptr = mdPlatformMalloc(128);
 	MEED_ASSERT_MSG(ptr != MEED_NULL, "Memory allocation failed!");
 
-	meedPlatformFree(ptr, 128);
+	mdPlatformFree(ptr, 128);
 
-	void* ptr2 = meedPlatformMalloc(256);
-	void* ptr3 = meedPlatformMalloc(512);
+	void* ptr2 = mdPlatformMalloc(256);
+	void* ptr3 = mdPlatformMalloc(512);
 
-	meedPlatformFree(ptr2, 256);
-	meedPlatformFree(ptr3, 512);
+	mdPlatformFree(ptr2, 256);
+	mdPlatformFree(ptr3, 512);
 
-	meedPlatformMemoryShutdown();
+	mdPlatformMemoryShutdown();
 	return 0;
 }

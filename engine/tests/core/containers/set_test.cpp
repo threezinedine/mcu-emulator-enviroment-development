@@ -10,11 +10,11 @@ class SetTest : public Test
 protected:
 	void SetUp() override
 	{
-		s_pSet = meedSetCreate(compareIntCallback);
+		s_pSet = mdSetCreate(compareIntCallback);
 	}
 	void TearDown() override
 	{
-		meedSetDestroy(s_pSet);
+		mdSetDestroy(s_pSet);
 	}
 
 protected:
@@ -27,49 +27,49 @@ protected:
 TEST_F(SetTest, CreateAndDestroy)
 {
 	EXPECT_NE(s_pSet, MEED_NULL);
-	EXPECT_EQ(meedSetCount(s_pSet), 0u);
+	EXPECT_EQ(mdSetCount(s_pSet), 0u);
 }
 
 TEST_F(SetTest, Count)
 {
-	meedSetPush(s_pSet, &a);
-	EXPECT_EQ(meedSetCount(s_pSet), 1u);
-	EXPECT_EQ(*(int*)meedSetAt(s_pSet, 0), 10);
+	mdSetPush(s_pSet, &a);
+	EXPECT_EQ(mdSetCount(s_pSet), 1u);
+	EXPECT_EQ(*(int*)mdSetAt(s_pSet, 0), 10);
 }
 
 TEST_F(SetTest, PushAndAt)
 {
-	meedSetPush(s_pSet, &b);
-	meedSetPush(s_pSet, &a);
-	meedSetPush(s_pSet, &c);
+	mdSetPush(s_pSet, &b);
+	mdSetPush(s_pSet, &a);
+	mdSetPush(s_pSet, &c);
 
-	EXPECT_EQ(meedSetCount(s_pSet), 3u);
-	EXPECT_EQ(*(int*)meedSetAt(s_pSet, 0), 10);
-	EXPECT_EQ(*(int*)meedSetAt(s_pSet, 1), 20);
-	EXPECT_EQ(*(int*)meedSetAt(s_pSet, 2), 30);
+	EXPECT_EQ(mdSetCount(s_pSet), 3u);
+	EXPECT_EQ(*(int*)mdSetAt(s_pSet, 0), 10);
+	EXPECT_EQ(*(int*)mdSetAt(s_pSet, 1), 20);
+	EXPECT_EQ(*(int*)mdSetAt(s_pSet, 2), 30);
 }
 
 TEST_F(SetTest, PushDuplicate)
 {
-	meedSetPush(s_pSet, &b);
-	meedSetPush(s_pSet, &a);
-	meedSetPush(s_pSet, &c);
+	mdSetPush(s_pSet, &b);
+	mdSetPush(s_pSet, &a);
+	mdSetPush(s_pSet, &c);
 
-	EXPECT_EQ(meedSetCount(s_pSet), 3u);
+	EXPECT_EQ(mdSetCount(s_pSet), 3u);
 
 	// Attempt to push duplicate
-	meedSetPush(s_pSet, &b);
-	EXPECT_EQ(meedSetCount(s_pSet), 3u);
+	mdSetPush(s_pSet, &b);
+	EXPECT_EQ(mdSetCount(s_pSet), 3u);
 }
 
 TEST_F(SetTest, AtOutOfBounds)
 {
-	meedSetPush(s_pSet, &a);
-	meedSetPush(s_pSet, &b);
+	mdSetPush(s_pSet, &a);
+	mdSetPush(s_pSet, &b);
 
 	EXPECT_EXIT(
 		{
-			meedSetAt(s_pSet, 2);
+			mdSetAt(s_pSet, 2);
 			std::exit(MEED_EXCEPTION_TYPE_OUT_OF_INDEX);
 		},
 		testing::ExitedWithCode(MEED_EXCEPTION_TYPE_OUT_OF_INDEX),
@@ -80,7 +80,7 @@ TEST_F(SetTest, PushNullData)
 {
 	EXPECT_EXIT(
 		{
-			meedSetPush(s_pSet, MEED_NULL);
+			mdSetPush(s_pSet, MEED_NULL);
 			std::exit(MEED_EXCEPTION_TYPE_INVALID_OPERATION);
 		},
 		testing::ExitedWithCode(MEED_EXCEPTION_TYPE_INVALID_OPERATION),
@@ -89,26 +89,26 @@ TEST_F(SetTest, PushNullData)
 
 TEST_F(SetTest, EraseElement)
 {
-	meedSetPush(s_pSet, &a);
-	meedSetPush(s_pSet, &b);
-	meedSetPush(s_pSet, &c);
+	mdSetPush(s_pSet, &a);
+	mdSetPush(s_pSet, &b);
+	mdSetPush(s_pSet, &c);
 
-	EXPECT_EQ(meedSetCount(s_pSet), 3u);
+	EXPECT_EQ(mdSetCount(s_pSet), 3u);
 
-	meedSetErase(s_pSet, 1);
+	mdSetErase(s_pSet, 1);
 
-	EXPECT_EQ(meedSetCount(s_pSet), 2u);
-	EXPECT_EQ(*(int*)meedSetAt(s_pSet, 0), 10);
-	EXPECT_EQ(*(int*)meedSetAt(s_pSet, 1), 30);
+	EXPECT_EQ(mdSetCount(s_pSet), 2u);
+	EXPECT_EQ(*(int*)mdSetAt(s_pSet, 0), 10);
+	EXPECT_EQ(*(int*)mdSetAt(s_pSet, 1), 30);
 }
 
 TEST_F(SetTest, EraseOutOfBounds)
 {
-	meedSetPush(s_pSet, &a);
+	mdSetPush(s_pSet, &a);
 
 	EXPECT_EXIT(
 		{
-			meedSetErase(s_pSet, 1);
+			mdSetErase(s_pSet, 1);
 			std::exit(MEED_EXCEPTION_TYPE_OUT_OF_INDEX);
 		},
 		testing::ExitedWithCode(MEED_EXCEPTION_TYPE_OUT_OF_INDEX),
@@ -117,24 +117,24 @@ TEST_F(SetTest, EraseOutOfBounds)
 
 TEST_F(SetTest, EraseAllElements)
 {
-	meedSetPush(s_pSet, &a);
-	meedSetPush(s_pSet, &b);
-	meedSetPush(s_pSet, &c);
+	mdSetPush(s_pSet, &a);
+	mdSetPush(s_pSet, &b);
+	mdSetPush(s_pSet, &c);
 
-	EXPECT_EQ(meedSetCount(s_pSet), 3u);
+	EXPECT_EQ(mdSetCount(s_pSet), 3u);
 
-	meedSetClear(s_pSet);
+	mdSetClear(s_pSet);
 
-	EXPECT_EQ(meedSetCount(s_pSet), 0u);
+	EXPECT_EQ(mdSetCount(s_pSet), 0u);
 }
 
 TEST_F(SetTest, FindElement)
 {
-	meedSetPush(s_pSet, &a);
-	meedSetPush(s_pSet, &c);
+	mdSetPush(s_pSet, &a);
+	mdSetPush(s_pSet, &c);
 
-	u32 aIndex = meedSetFind(s_pSet, &a);
-	u32 bIndex = meedSetFind(s_pSet, &b);
+	u32 aIndex = mdSetFind(s_pSet, &a);
+	u32 bIndex = mdSetFind(s_pSet, &b);
 
 	EXPECT_EQ(aIndex, 0u);
 	EXPECT_EQ(bIndex, MEED_SET_NOT_FOUND_INDEX);

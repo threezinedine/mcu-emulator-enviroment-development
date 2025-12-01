@@ -15,16 +15,16 @@ extern "C" {
  *
  * @example
  * ```
- * struct MEEDWindowData* pWindowData = meedWindowCreate(800, 600, "MEED Application Window");
+ * struct MEEDWindowData* pWindowData = mdWindowCreate(800, 600, "MEED Application Window");
  *
  * // Main loop
  * while (!pWindowData->shouldClose)
  * {
- *     meedWindowPollEvents(pWindowData);
+ *     mdWindowPollEvents(pWindowData);
  *     // Rendering and other logic here...
  * }
  *
- * meedWindowDestroy(pWindowData);
+ * mdWindowDestroy(pWindowData);
  * ```
  */
 
@@ -63,7 +63,7 @@ struct MEED_BINDING MEEDWindowData
 /**
  * Initialize the windowing system. Must be called before using any window-related functions.
  */
-void meedWindowInitialize();
+void mdWindowInitialize();
 
 /**
  * Start a new window (display) for rendering.
@@ -74,7 +74,7 @@ void meedWindowInitialize();
  *
  * @return A pointer to the created window data.
  */
-struct MEEDWindowData* meedWindowCreate(u32 width, u32 height, const char* title);
+struct MEEDWindowData* mdWindowCreate(u32 width, u32 height, const char* title);
 
 #if MEED_USE_VULKAN
 /**
@@ -84,7 +84,7 @@ struct MEEDWindowData* meedWindowCreate(u32 width, u32 height, const char* title
  * @param instance The Vulkan instance.
  * @param pSurface A pointer to store the created Vulkan surface.
  */
-VkResult meedWindowCreateVulkanSurface(struct MEEDWindowData* pWindowData, VkInstance instance, VkSurfaceKHR* pSurface);
+VkResult mdWindowCreateVulkanSurface(struct MEEDWindowData* pWindowData, VkInstance instance, VkSurfaceKHR* pSurface);
 
 /**
  * Destroy the Vulkan surface associated with the specified window.
@@ -93,7 +93,7 @@ VkResult meedWindowCreateVulkanSurface(struct MEEDWindowData* pWindowData, VkIns
  * @param instance The Vulkan instance.
  * @param surface The Vulkan surface to destroy.
  */
-void meedWindowDestroyVulkanSurface(struct MEEDWindowData* pWindowData, VkInstance instance, VkSurfaceKHR surface);
+void mdWindowDestroyVulkanSurface(struct MEEDWindowData* pWindowData, VkInstance instance, VkSurfaceKHR surface);
 #endif
 
 /**
@@ -102,19 +102,19 @@ void meedWindowDestroyVulkanSurface(struct MEEDWindowData* pWindowData, VkInstan
  * @param pWindowData A pointer to the window data to poll events from.
  * @return A `MEEDWindowEvent` structure containing the polled event information.
  */
-struct MEEDWindowEvent meedWindowPollEvents(struct MEEDWindowData* pWindowData);
+struct MEEDWindowEvent mdWindowPollEvents(struct MEEDWindowData* pWindowData);
 
 /**
  * Destroy a previously created window.
  *
  * @param pWindowData A pointer to the window data to destroy.
  */
-void meedWindowDestroy(struct MEEDWindowData* pWindowData);
+void mdWindowDestroy(struct MEEDWindowData* pWindowData);
 
 /**
  * Shutdown the windowing system. Must be called after all window-related functions are done.
  */
-void meedWindowShutdown();
+void mdWindowShutdown();
 
 #if __cplusplus
 }

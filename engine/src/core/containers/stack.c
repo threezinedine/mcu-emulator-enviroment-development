@@ -1,70 +1,70 @@
 #include "MEEDEngine/core/containers/stack.h"
 
-struct MEEDStack* meedStackCreate(MEEDNodeDataDeleteCallback pDeleteCallback)
+struct MEEDStack* mdStackCreate(MEEDNodeDataDeleteCallback pDeleteCallback)
 {
 	struct MEEDStack* pStack = MEED_MALLOC(struct MEEDStack);
 	MEED_ASSERT(pStack != MEED_NULL);
 
-	pStack->pList = meedLinkedListCreate(pDeleteCallback);
+	pStack->pList = mdLinkedListCreate(pDeleteCallback);
 	MEED_ASSERT(pStack->pList != MEED_NULL);
 
 	return pStack;
 }
 
-b8 meedStackEmpty(struct MEEDStack* pStack)
+b8 mdStackEmpty(struct MEEDStack* pStack)
 {
 	MEED_ASSERT(pStack != MEED_NULL);
-	return meedLinkedListEmpty(pStack->pList);
+	return mdLinkedListEmpty(pStack->pList);
 }
 
-u32 meedStackGetCount(struct MEEDStack* pStack)
+u32 mdStackGetCount(struct MEEDStack* pStack)
 {
 	MEED_ASSERT(pStack != MEED_NULL);
-	return meedLinkedListCount(pStack->pList);
+	return mdLinkedListCount(pStack->pList);
 }
 
-void meedStackPush(struct MEEDStack* pStack, void* pData)
+void mdStackPush(struct MEEDStack* pStack, void* pData)
 {
 	MEED_ASSERT(pStack != MEED_NULL);
-	meedLinkedListPush(pStack->pList, pData);
+	mdLinkedListPush(pStack->pList, pData);
 }
 
-void* meedStackTop(struct MEEDStack* pStack)
+void* mdStackTop(struct MEEDStack* pStack)
 {
 	MEED_ASSERT(pStack != MEED_NULL);
-	MEED_ASSERT(meedStackEmpty(pStack) == MEED_FALSE);
+	MEED_ASSERT(mdStackEmpty(pStack) == MEED_FALSE);
 
-	u32 count = meedStackGetCount(pStack);
-	return meedLinkedListAt(pStack->pList, count - 1);
+	u32 count = mdStackGetCount(pStack);
+	return mdLinkedListAt(pStack->pList, count - 1);
 }
 
-void meedStackPop(struct MEEDStack* pStack)
+void mdStackPop(struct MEEDStack* pStack)
 {
 	MEED_ASSERT(pStack != MEED_NULL);
 
-	if (meedStackEmpty(pStack) == MEED_TRUE)
+	if (mdStackEmpty(pStack) == MEED_TRUE)
 	{
 		MEED_THROW(MEED_EXCEPTION_TYPE_EMPTY_CONTAINER, "Attempted to pop from an empty stack.");
 	}
 
-	u32 count = meedStackGetCount(pStack);
-	meedLinkedListErase(pStack->pList, count - 1);
+	u32 count = mdStackGetCount(pStack);
+	mdLinkedListErase(pStack->pList, count - 1);
 }
 
-void meedStackClear(struct MEEDStack* pStack)
+void mdStackClear(struct MEEDStack* pStack)
 {
 	MEED_ASSERT(pStack != MEED_NULL);
 
-	while (meedStackEmpty(pStack) == MEED_FALSE)
+	while (mdStackEmpty(pStack) == MEED_FALSE)
 	{
-		meedStackPop(pStack);
+		mdStackPop(pStack);
 	}
 }
 
-void meedStackDestroy(struct MEEDStack* pStack)
+void mdStackDestroy(struct MEEDStack* pStack)
 {
 	MEED_ASSERT(pStack != MEED_NULL);
 
-	meedLinkedListDestroy(pStack->pList);
+	mdLinkedListDestroy(pStack->pList);
 	MEED_FREE(pStack, struct MEEDStack);
 }

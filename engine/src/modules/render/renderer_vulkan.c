@@ -50,18 +50,18 @@ static void createSyncObjects();
 
 static void deleteGlobalVulkanInstance(void*);
 
-void meedRenderInitialize(struct MEEDWindowData* pWindowData)
+void mdRenderInitialize(struct MEEDWindowData* pWindowData)
 {
 	MEED_ASSERT_MSG(!s_isInitialized, "Rendering module is already initialized.");
 	MEED_ASSERT(pWindowData != MEED_NULL);
 	MEED_ASSERT(g_vulkan == MEED_NULL);
 	MEED_ASSERT(s_releaseStack == MEED_NULL);
 	// Implementation of rendering module initialization
-	s_releaseStack = meedReleaseStackCreate();
+	s_releaseStack = mdReleaseStackCreate();
 
 	g_vulkan = MEED_MALLOC(struct MEEDVulkan);
-	meedPlatformMemorySet(g_vulkan, 0, sizeof(struct MEEDVulkan));
-	meedReleaseStackPush(s_releaseStack, MEED_NULL, deleteGlobalVulkanInstance);
+	mdPlatformMemorySet(g_vulkan, 0, sizeof(struct MEEDVulkan));
+	mdReleaseStackPush(s_releaseStack, MEED_NULL, deleteGlobalVulkanInstance);
 
 	// Setup initial values for Vulkan context
 	g_vulkan->pWindowData = pWindowData;
@@ -101,14 +101,14 @@ static void deleteGlobalVulkanInstance(void* pData)
 	MEED_FREE(g_vulkan, struct MEEDVulkan);
 }
 
-void meedRenderShutdown()
+void mdRenderShutdown()
 {
 	MEED_ASSERT_MSG(s_isInitialized, "Rendering module is not initialized.");
 	MEED_ASSERT(g_vulkan != MEED_NULL);
 	MEED_ASSERT(s_releaseStack != MEED_NULL);
 	// Implementation of rendering module shutdown
 
-	meedReleaseStackDestroy(s_releaseStack);
+	mdReleaseStackDestroy(s_releaseStack);
 	s_isInitialized = MEED_FALSE;
 }
 
@@ -136,7 +136,7 @@ static void createVulkanInstance()
 	instanceCreateInfo.ppEnabledLayerNames	   = layers;
 
 	VK_ASSERT(vkCreateInstance(&instanceCreateInfo, MEED_NULL, &g_vulkan->instance));
-	meedReleaseStackPush(s_releaseStack, MEED_NULL, deleteVulkanInstance);
+	mdReleaseStackPush(s_releaseStack, MEED_NULL, deleteVulkanInstance);
 }
 
 static void deleteVulkanInstance(void* pData)
@@ -161,26 +161,26 @@ VKAPI_ATTR VkBool32 VKAPI_CALL vulkanDebugCallback(VkDebugUtilsMessageSeverityFl
 	{
 	case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
 		config.color = MEED_CONSOLE_COLOR_WHITE;
-		meedPlatformBufferedPrint(severityString, sizeof(severityString), "%7s", "VERBOSE");
+		mdPlatformBufferedPrint(severityString, sizeof(severityString), "%7s", "VERBOSE");
 		break;
 	case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
 		config.color = MEED_CONSOLE_COLOR_GREEN;
-		meedPlatformBufferedPrint(severityString, sizeof(severityString), "%7s", "INFO");
+		mdPlatformBufferedPrint(severityString, sizeof(severityString), "%7s", "INFO");
 		break;
 	case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
 		config.color = MEED_CONSOLE_COLOR_YELLOW;
-		meedPlatformBufferedPrint(severityString, sizeof(severityString), "%7s", "WARNING");
+		mdPlatformBufferedPrint(severityString, sizeof(severityString), "%7s", "WARNING");
 		break;
 	case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
 		config.color = MEED_CONSOLE_COLOR_RED;
-		meedPlatformBufferedPrint(severityString, sizeof(severityString), "%7s", "ERROR");
+		mdPlatformBufferedPrint(severityString, sizeof(severityString), "%7s", "ERROR");
 		break;
 	default:
 		config.color = MEED_CONSOLE_COLOR_RESET;
 	}
 
-	meedPlatformSetConsoleConfig(config);
-	meedPlatformFPrint("[%7s] - [%s] - %s\n", "VULKAN", severityString, pCallbackData->pMessage);
+	mdPlatformSetConsoleConfig(config);
+	mdPlatformFPrint("[%7s] - [%s] - %s\n", "VULKAN", severityString, pCallbackData->pMessage);
 
 	return VK_FALSE;
 }
@@ -211,7 +211,7 @@ static void createValidationLayers()
 	MEED_ASSERT(createDebugUtilsMessengerEXT != MEED_NULL);
 	VK_ASSERT(
 		createDebugUtilsMessengerEXT(g_vulkan->instance, &messengerCreateInfo, MEED_NULL, &g_vulkan->debugMessenger));
-	meedReleaseStackPush(s_releaseStack, MEED_NULL, deleteDebugMessenger);
+	mdReleaseStackPush(s_releaseStack, MEED_NULL, deleteDebugMessenger);
 }
 
 static void deleteDebugMessenger(void* pData)
@@ -291,8 +291,8 @@ static b8 checkDeviceExtensionsSupport(VkPhysicalDevice device)
 		b8 extensionFound = MEED_FALSE;
 		for (u32 availableEXTIndex = 0u; availableEXTIndex < deviceExtensionsCount; ++availableEXTIndex)
 		{
-			if (meedPlatformStringCompare(deviceExtensions[requiredEXTIndex],
-										  pAvailableExtensions[availableEXTIndex].extensionName) == 0)
+			if (mdPlatformStringCompare(deviceExtensions[requiredEXTIndex],
+										pAvailableExtensions[availableEXTIndex].extensionName) == 0)
 			{
 				extensionFound = MEED_TRUE;
 				break;
@@ -349,8 +349,8 @@ static void createSurface()
 	MEED_ASSERT(g_vulkan->surface == MEED_NULL);
 	MEED_ASSERT(s_releaseStack != MEED_NULL);
 
-	VK_ASSERT(meedWindowCreateVulkanSurface(g_vulkan->pWindowData, g_vulkan->instance, &g_vulkan->surface));
-	meedReleaseStackPush(s_releaseStack, MEED_NULL, deleteSurface);
+	VK_ASSERT(mdWindowCreateVulkanSurface(g_vulkan->pWindowData, g_vulkan->instance, &g_vulkan->surface));
+	mdReleaseStackPush(s_releaseStack, MEED_NULL, deleteSurface);
 };
 
 static void deleteSurface(void* pData)
@@ -362,7 +362,7 @@ static void deleteSurface(void* pData)
 	MEED_ASSERT(g_vulkan->instance != MEED_NULL);
 	MEED_ASSERT(g_vulkan->surface != MEED_NULL);
 
-	meedWindowDestroyVulkanSurface(g_vulkan->pWindowData, g_vulkan->instance, g_vulkan->surface);
+	mdWindowDestroyVulkanSurface(g_vulkan->pWindowData, g_vulkan->instance, g_vulkan->surface);
 }
 
 static void getQueueFamilyIndices()
@@ -441,20 +441,20 @@ static void createDevice()
 		g_vulkan->queueFamilies.presentFamily,
 	};
 
-	struct MEEDSet* pSet			   = meedSetCreate(queueFamilyCompare);
+	struct MEEDSet* pSet			   = mdSetCreate(queueFamilyCompare);
 	u32				familyIndicesCount = MEED_ARRAY_SIZE(familyIndices);
 	for (u32 i = 0u; i < familyIndicesCount; ++i)
 	{
-		meedSetPush(pSet, &familyIndices[i]);
+		mdSetPush(pSet, &familyIndices[i]);
 	}
 
-	u32 uniqueQueueFamiliesCount = meedSetCount(pSet);
+	u32 uniqueQueueFamiliesCount = mdSetCount(pSet);
 
 	VkDeviceQueueCreateInfo* pQueueCreateInfos = MEED_MALLOC_ARRAY(VkDeviceQueueCreateInfo, uniqueQueueFamiliesCount);
 
 	for (u32 i = 0u; i < uniqueQueueFamiliesCount; ++i)
 	{
-		u32*					pFamilyIndex	= (u32*)meedSetAt(pSet, i);
+		u32*					pFamilyIndex	= (u32*)mdSetAt(pSet, i);
 		VkDeviceQueueCreateInfo queueCreateInfo = {};
 		queueCreateInfo.sType					= VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 		queueCreateInfo.queueFamilyIndex		= *pFamilyIndex;
@@ -482,10 +482,10 @@ static void createDevice()
 	deviceCreateInfo.pQueueCreateInfos		 = pQueueCreateInfos;
 
 	VK_ASSERT(vkCreateDevice(g_vulkan->physicalDevice, &deviceCreateInfo, MEED_NULL, &g_vulkan->device));
-	meedReleaseStackPush(s_releaseStack, MEED_NULL, deleteDevice);
+	mdReleaseStackPush(s_releaseStack, MEED_NULL, deleteDevice);
 
 	MEED_FREE_ARRAY(pQueueCreateInfos, VkDeviceQueueCreateInfo, uniqueQueueFamiliesCount);
-	meedSetDestroy(pSet);
+	mdSetDestroy(pSet);
 }
 
 static void deleteDevice(void* pData)
@@ -556,7 +556,7 @@ static void chooseExtent()
 		clamp(&width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
 		clamp(&height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
 
-		meedPlatformMemorySet(&g_vulkan->extent, 0, sizeof(VkExtent2D));
+		mdPlatformMemorySet(&g_vulkan->extent, 0, sizeof(VkExtent2D));
 		g_vulkan->extent.width	= width;
 		g_vulkan->extent.height = height;
 	}
@@ -696,7 +696,7 @@ static void createSwapchain()
 	}
 
 	VK_ASSERT(vkCreateSwapchainKHR(g_vulkan->device, &swapchainCreateInfo, MEED_NULL, &g_vulkan->swapchain));
-	meedReleaseStackPush(s_releaseStack, MEED_NULL, deleteSwapchain);
+	mdReleaseStackPush(s_releaseStack, MEED_NULL, deleteSwapchain);
 }
 
 static void deleteSwapchain(void* pData)
@@ -719,7 +719,7 @@ static void getSwapchainImages()
 	MEED_ASSERT(g_vulkan->pSwapchainImages == MEED_NULL);
 
 	g_vulkan->pSwapchainImages = MEED_MALLOC_ARRAY(VkImage, g_vulkan->imagesCount);
-	meedReleaseStackPush(s_releaseStack, MEED_NULL, freeSwapchainImages);
+	mdReleaseStackPush(s_releaseStack, MEED_NULL, freeSwapchainImages);
 
 	VK_ASSERT(vkGetSwapchainImagesKHR(
 		g_vulkan->device, g_vulkan->swapchain, &g_vulkan->imagesCount, g_vulkan->pSwapchainImages));
@@ -744,7 +744,7 @@ static void createSwapchainImageViews()
 	MEED_ASSERT(g_vulkan->pSwapchainImageViews == MEED_NULL);
 
 	g_vulkan->pSwapchainImageViews = MEED_MALLOC_ARRAY(VkImageView, g_vulkan->imagesCount);
-	meedReleaseStackPush(s_releaseStack, MEED_NULL, freeSwapchainImageViews);
+	mdReleaseStackPush(s_releaseStack, MEED_NULL, freeSwapchainImageViews);
 
 	for (u32 imageIndex = 0u; imageIndex < g_vulkan->imagesCount; ++imageIndex)
 	{
@@ -766,7 +766,7 @@ static void createSwapchainImageViews()
 		VK_ASSERT(vkCreateImageView(
 			g_vulkan->device, &imageViewCreateInfo, MEED_NULL, &g_vulkan->pSwapchainImageViews[imageIndex]));
 	}
-	meedReleaseStackPush(s_releaseStack, MEED_NULL, deleteSwapchainImageViews);
+	mdReleaseStackPush(s_releaseStack, MEED_NULL, deleteSwapchainImageViews);
 }
 
 static void freeSwapchainImageViews(void* pData)
@@ -856,7 +856,7 @@ static void createRenderPass()
 	renderPassCreateInfo.pDependencies			= &dependency;
 
 	VK_ASSERT(vkCreateRenderPass(g_vulkan->device, &renderPassCreateInfo, MEED_NULL, &g_vulkan->renderPass));
-	meedReleaseStackPush(s_releaseStack, MEED_NULL, deleteRenderPass);
+	mdReleaseStackPush(s_releaseStack, MEED_NULL, deleteRenderPass);
 }
 
 static void deleteRenderPass(void* pData)
@@ -883,7 +883,7 @@ static void createCommandPools()
 	commandPoolCreateInfo.flags					  = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 	commandPoolCreateInfo.queueFamilyIndex		  = g_vulkan->queueFamilies.graphicsFamily;
 	VK_ASSERT(vkCreateCommandPool(g_vulkan->device, &commandPoolCreateInfo, MEED_NULL, &g_vulkan->graphicsCommandPool));
-	meedReleaseStackPush(s_releaseStack, MEED_NULL, deleteCommandPool);
+	mdReleaseStackPush(s_releaseStack, MEED_NULL, deleteCommandPool);
 
 	if (g_vulkan->queueFamilies.presentFamily != g_vulkan->queueFamilies.graphicsFamily)
 	{
@@ -893,7 +893,7 @@ static void createCommandPools()
 		presentCommandPoolCreateInfo.queueFamilyIndex		 = g_vulkan->queueFamilies.presentFamily;
 		VK_ASSERT(vkCreateCommandPool(
 			g_vulkan->device, &presentCommandPoolCreateInfo, MEED_NULL, &g_vulkan->presentCommandPool));
-		meedReleaseStackPush(s_releaseStack, MEED_NULL, deleteCommandPool);
+		mdReleaseStackPush(s_releaseStack, MEED_NULL, deleteCommandPool);
 	}
 	else
 	{
@@ -933,7 +933,7 @@ static void allocateCommandBuffers()
 	graphicsCommandBufferAllocateInfo.commandBufferCount		  = FRAME_IN_FLIGHT_COUNT;
 	VK_ASSERT(vkAllocateCommandBuffers(
 		g_vulkan->device, &graphicsCommandBufferAllocateInfo, g_vulkan->graphicsCommandBuffers));
-	meedReleaseStackPush(s_releaseStack, MEED_NULL, freeCommandBuffers);
+	mdReleaseStackPush(s_releaseStack, MEED_NULL, freeCommandBuffers);
 }
 
 static void freeCommandBuffers(void* pData)
@@ -975,7 +975,7 @@ static void createSyncObjects()
 			g_vulkan->device, &inFlightFenceCreateInfo, MEED_NULL, &g_vulkan->inFlightFences[frameIndex]));
 	}
 
-	meedReleaseStackPush(s_releaseStack, MEED_NULL, deleteSyncObjects);
+	mdReleaseStackPush(s_releaseStack, MEED_NULL, deleteSyncObjects);
 }
 
 static void deleteSyncObjects(void* pData)
@@ -1004,7 +1004,7 @@ static void transitionImageLayout(VkImage			   image,
 								  VkPipelineStageFlags srcStage,
 								  VkPipelineStageFlags dstStage);
 
-void meedRenderStartFrame()
+void mdRenderStartFrame()
 {
 	MEED_ASSERT(g_vulkan != MEED_NULL);
 	MEED_ASSERT(g_vulkan->graphicsCommandBuffers != MEED_NULL);
@@ -1060,7 +1060,7 @@ void meedRenderStartFrame()
 	vkCmdSetScissor(g_vulkan->graphicsCommandBuffers[g_vulkan->currentFrame], 0, 1, &scissor);
 }
 
-void meedRenderClearScreen(struct MEEDColor color)
+void mdRenderClearScreen(struct MEEDColor color)
 {
 	MEED_ASSERT(g_vulkan != MEED_NULL);
 
@@ -1079,7 +1079,7 @@ void meedRenderClearScreen(struct MEEDColor color)
 	attachmentInfo->imageLayout				  = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 }
 
-void meedRenderDraw(u32 vertexCount, u32 instanceCount, u32 firstVertex, u32 firstInstance)
+void mdRenderDraw(u32 vertexCount, u32 instanceCount, u32 firstVertex, u32 firstInstance)
 {
 	MEED_ASSERT(g_vulkan != MEED_NULL);
 	MEED_ASSERT(g_vulkan->graphicsCommandBuffers != MEED_NULL);
@@ -1091,7 +1091,7 @@ void meedRenderDraw(u32 vertexCount, u32 instanceCount, u32 firstVertex, u32 fir
 			  firstInstance);
 }
 
-void meedRenderEndFrame()
+void mdRenderEndFrame()
 {
 	MEED_ASSERT(g_vulkan != MEED_NULL);
 	MEED_ASSERT(g_vulkan->graphicsCommandBuffers != MEED_NULL);
@@ -1135,7 +1135,7 @@ void meedRenderEndFrame()
 	VK_ASSERT(vkQueueSubmit(g_vulkan->graphicsQueue, 1, &submitInfo, g_vulkan->inFlightFences[g_vulkan->currentFrame]));
 }
 
-void meedRenderPresent()
+void mdRenderPresent()
 {
 	MEED_ASSERT(g_vulkan != MEED_NULL);
 	MEED_ASSERT(g_vulkan->presentQueue != MEED_NULL);
@@ -1188,7 +1188,7 @@ static void transitionImageLayout(VkImage			   image,
 	vkCmdPipelineBarrier(commandBuffer, srcStage, dstStage, 0, 0, MEED_NULL, 0, MEED_NULL, 1, &barrier);
 }
 
-void meedRenderWaitIdle()
+void mdRenderWaitIdle()
 {
 	MEED_ASSERT(g_vulkan != MEED_NULL);
 	MEED_ASSERT(g_vulkan->device != MEED_NULL);

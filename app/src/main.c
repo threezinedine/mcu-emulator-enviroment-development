@@ -7,24 +7,24 @@ void mainLoop();
 
 int main(void)
 {
-	meedPlatformMemoryInitialize();
-	meedWindowInitialize();
+	mdPlatformMemoryInitialize();
+	mdWindowInitialize();
 
 	struct MEEDPlatformConsoleConfig config;
 	config.color = MEED_CONSOLE_COLOR_GREEN;
-	meedPlatformSetConsoleConfig(config);
+	mdPlatformSetConsoleConfig(config);
 
-	pWindowData = meedWindowCreate(800, 600, "MEED Application Window");
-	meedRenderInitialize(pWindowData);
+	pWindowData = mdWindowCreate(800, 600, "MEED Application Window");
+	mdRenderInitialize(pWindowData);
 
 #if PLATFORM_IS_WEB
-	pPipeline = meedPipelineCreate("shaders/triangle.vert", "shaders/triangle.frag");
+	pPipeline = mdPipelineCreate("shaders/triangle.vert", "shaders/triangle.frag");
 #elif MEED_USE_VULKAN
-	pPipeline = meedPipelineCreate(MEED_STRINGIFY(PROJECT_BASE_DIR) "/app/build/debug/shaders/triangle.vert.spv",
-								   MEED_STRINGIFY(PROJECT_BASE_DIR) "/app/build/debug/shaders/triangle.frag.spv");
+	pPipeline = mdPipelineCreate(MEED_STRINGIFY(PROJECT_BASE_DIR) "/app/build/debug/shaders/triangle.vert.spv",
+								 MEED_STRINGIFY(PROJECT_BASE_DIR) "/app/build/debug/shaders/triangle.frag.spv");
 #elif MEED_USE_OPENGL
-	pPipeline = meedPipelineCreate(MEED_STRINGIFY(PROJECT_BASE_DIR) "/engine/assets/shaders/opengl/triangle.vert",
-								   MEED_STRINGIFY(PROJECT_BASE_DIR) "/engine/assets/shaders/opengl/triangle.frag");
+	pPipeline = mdPipelineCreate(MEED_STRINGIFY(PROJECT_BASE_DIR) "/engine/assets/shaders/opengl/triangle.vert",
+								 MEED_STRINGIFY(PROJECT_BASE_DIR) "/engine/assets/shaders/opengl/triangle.frag");
 #else
 #error "No rendering backend selected."
 #endif
@@ -38,34 +38,34 @@ int main(void)
 	}
 #endif
 
-	meedRenderWaitIdle();
+	mdRenderWaitIdle();
 
-	meedPipelineDestroy(pPipeline);
-	meedRenderShutdown();
-	meedWindowDestroy(pWindowData);
+	mdPipelineDestroy(pPipeline);
+	mdRenderShutdown();
+	mdWindowDestroy(pWindowData);
 
-	meedWindowShutdown();
-	meedPlatformMemoryShutdown();
+	mdWindowShutdown();
+	mdPlatformMemoryShutdown();
 	return 0;
 }
 
 void mainLoop()
 {
-	struct MEEDWindowEvent windowEvent = meedWindowPollEvents(pWindowData);
+	struct MEEDWindowEvent windowEvent = mdWindowPollEvents(pWindowData);
 
 	if (windowEvent.type == MEED_WINDOW_EVENT_TYPE_CLOSE)
 	{
 		pWindowData->shouldClose = MEED_TRUE;
 	}
 
-	meedRenderClearScreen((struct MEEDColor){0.2f, 0.3f, 0.3f, 1.0f});
+	mdRenderClearScreen((struct MEEDColor){0.2f, 0.3f, 0.3f, 1.0f});
 
-	meedRenderStartFrame();
+	mdRenderStartFrame();
 
-	meedPipelineUse(pPipeline);
-	meedRenderDraw(3, 1, 0, 0);
+	mdPipelineUse(pPipeline);
+	mdRenderDraw(3, 1, 0, 0);
 
-	meedRenderEndFrame();
+	mdRenderEndFrame();
 
-	meedRenderPresent();
+	mdRenderPresent();
 }

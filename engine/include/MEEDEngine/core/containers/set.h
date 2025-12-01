@@ -46,7 +46,7 @@ struct MEEDSet
  * @param pCompareCallback Callback function to compare two elements. Must not be NULL.
  * @return Pointer to the newly created MEEDSet.
  */
-struct MEEDSet* meedSetCreate(MEEDSetCompareCallback pCompareCallback);
+struct MEEDSet* mdSetCreate(MEEDSetCompareCallback pCompareCallback);
 
 /**
  * @brief Retrieves the current number of elements in the set.
@@ -57,7 +57,7 @@ struct MEEDSet* meedSetCreate(MEEDSetCompareCallback pCompareCallback);
  * @param pSet Pointer to the MEEDSet. If NULL, raises an assertion.
  * @return The number of elements in the set.
  */
-u32 meedSetCount(struct MEEDSet* pSet);
+u32 mdSetCount(struct MEEDSet* pSet);
 
 /**
  * @brief Inserts data into the set.
@@ -73,7 +73,7 @@ u32 meedSetCount(struct MEEDSet* pSet);
  * managing the memory of the elements stored in the set. And the element will be
  * sorted based on the comparison callback provided during set creation.
  */
-void meedSetPush(struct MEEDSet* pSet, void* pData);
+void mdSetPush(struct MEEDSet* pSet, void* pData);
 
 /**
  * @brief Retrieves the data at a specific index in the set.
@@ -86,7 +86,7 @@ void meedSetPush(struct MEEDSet* pSet, void* pData);
  * @param index The zero-based index of the element to retrieve. If out of bounds, raises an assertion.
  * @return Pointer to the data at the specified index.
  */
-void* meedSetAt(struct MEEDSet* pSet, u32 index);
+void* mdSetAt(struct MEEDSet* pSet, u32 index);
 
 /**
  * @brief Erases the element at a specific index in the set.
@@ -100,7 +100,7 @@ void* meedSetAt(struct MEEDSet* pSet, u32 index);
  * @param pSet Pointer to the MEEDSet. If NULL, raises an assertion.
  * @param index The zero-based index of the element to be erased. If out of bounds, raises an assertion.
  */
-void meedSetErase(struct MEEDSet* pSet, u32 index);
+void mdSetErase(struct MEEDSet* pSet, u32 index);
 
 /**
  * @brief Clears all elements from the set.
@@ -112,7 +112,7 @@ void meedSetErase(struct MEEDSet* pSet, u32 index);
  *
  * @param pSet Pointer to the MEEDSet to be cleared. If NULL, raises an assertion.
  */
-void meedSetClear(struct MEEDSet* pSet);
+void mdSetClear(struct MEEDSet* pSet);
 
 /**
  * @brief Finds the index of a specific element in the set.
@@ -125,7 +125,7 @@ void meedSetClear(struct MEEDSet* pSet);
  * @param pData Pointer to the data to find in the set.
  * @return The zero-based index of the element if found; otherwise, returns `MEED_SET_NOT_FOUND_INDEX`.
  */
-u32 meedSetFind(struct MEEDSet* pSet, void* pData);
+u32 mdSetFind(struct MEEDSet* pSet, void* pData);
 
 /**
  * @brief Destroys a set and frees its memory.
@@ -137,7 +137,7 @@ u32 meedSetFind(struct MEEDSet* pSet, void* pData);
  *
  * @param pSet Pointer to the MEEDSet to be destroyed. If NULL, raises an assertion.
  */
-void meedSetDestroy(struct MEEDSet* pSet);
+void mdSetDestroy(struct MEEDSet* pSet);
 
 #if __cplusplus
 }

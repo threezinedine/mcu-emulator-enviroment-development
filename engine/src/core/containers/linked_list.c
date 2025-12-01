@@ -1,6 +1,6 @@
 #include "MEEDEngine/core/containers/linked_list.h"
 
-struct MEEDLinkedList* meedLinkedListCreate(MEEDNodeDataDeleteCallback pDeleteCallback)
+struct MEEDLinkedList* mdLinkedListCreate(MEEDNodeDataDeleteCallback pDeleteCallback)
 {
 	struct MEEDLinkedList* pList = MEED_MALLOC(struct MEEDLinkedList);
 	MEED_ASSERT(pList != MEED_NULL);
@@ -13,7 +13,7 @@ struct MEEDLinkedList* meedLinkedListCreate(MEEDNodeDataDeleteCallback pDeleteCa
 	return pList;
 }
 
-void meedLinkedListPush(struct MEEDLinkedList* pList, void* pData)
+void mdLinkedListPush(struct MEEDLinkedList* pList, void* pData)
 {
 	MEED_ASSERT(pList != MEED_NULL);
 
@@ -36,7 +36,7 @@ void meedLinkedListPush(struct MEEDLinkedList* pList, void* pData)
 	pList->size++;
 }
 
-void meedLinkedListInsert(struct MEEDLinkedList* pList, u32 index, void* pData)
+void mdLinkedListInsert(struct MEEDLinkedList* pList, u32 index, void* pData)
 {
 	MEED_ASSERT(pList != MEED_NULL);
 
@@ -92,7 +92,7 @@ void meedLinkedListInsert(struct MEEDLinkedList* pList, u32 index, void* pData)
 	pList->size++;
 }
 
-void meedLinkedListErase(struct MEEDLinkedList* pList, u32 index)
+void mdLinkedListErase(struct MEEDLinkedList* pList, u32 index)
 {
 	MEED_ASSERT(pList != MEED_NULL);
 
@@ -138,19 +138,19 @@ void meedLinkedListErase(struct MEEDLinkedList* pList, u32 index)
 	pList->size--;
 }
 
-u32 meedLinkedListCount(struct MEEDLinkedList* pList)
+u32 mdLinkedListCount(struct MEEDLinkedList* pList)
 {
 	MEED_ASSERT(pList != MEED_NULL);
 	return (u32)(pList->size);
 }
 
-b8 meedLinkedListEmpty(struct MEEDLinkedList* pList)
+b8 mdLinkedListEmpty(struct MEEDLinkedList* pList)
 {
 	MEED_ASSERT(pList != MEED_NULL);
 	return (pList->size == 0) ? MEED_TRUE : MEED_FALSE;
 }
 
-void* meedLinkedListAt(struct MEEDLinkedList* pList, u32 index)
+void* mdLinkedListAt(struct MEEDLinkedList* pList, u32 index)
 {
 	MEED_ASSERT(pList != MEED_NULL);
 
@@ -172,7 +172,7 @@ void* meedLinkedListAt(struct MEEDLinkedList* pList, u32 index)
 	return pCurrent->pData;
 }
 
-void meedLinkedListClear(struct MEEDLinkedList* pList)
+void mdLinkedListClear(struct MEEDLinkedList* pList)
 {
 	MEED_ASSERT(pList != MEED_NULL);
 
@@ -198,11 +198,11 @@ void meedLinkedListClear(struct MEEDLinkedList* pList)
 	pList->size	 = 0;
 }
 
-void meedLinkedListDestroy(struct MEEDLinkedList* pList)
+void mdLinkedListDestroy(struct MEEDLinkedList* pList)
 {
 	MEED_ASSERT(pList != MEED_NULL);
 
-	meedLinkedListClear(pList);
+	mdLinkedListClear(pList);
 
 	MEED_FREE(pList, struct MEEDLinkedList);
 }

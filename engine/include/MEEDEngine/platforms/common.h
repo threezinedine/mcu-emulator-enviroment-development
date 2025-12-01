@@ -25,10 +25,10 @@
 		{                                                                                                              \
 			struct MEEDPlatformConsoleConfig config;                                                                   \
 			config.color = MEED_CONSOLE_COLOR_RED;                                                                     \
-			meedPlatformSetConsoleConfig(config);                                                                      \
-			meedPlatformFPrint("Assertion failed: %s at %s:%d\n", #expr, __FILE__, __LINE__);                          \
+			mdPlatformSetConsoleConfig(config);                                                                        \
+			mdPlatformFPrint("Assertion failed: %s at %s:%d\n", #expr, __FILE__, __LINE__);                            \
 			config.color = MEED_CONSOLE_COLOR_RESET;                                                                   \
-			meedPlatformSetConsoleConfig(config);                                                                      \
+			mdPlatformSetConsoleConfig(config);                                                                        \
 			debugBreak();                                                                                              \
 		}                                                                                                              \
 	} while (0)
@@ -40,12 +40,12 @@
 		{                                                                                                              \
 			struct MEEDPlatformConsoleConfig config;                                                                   \
 			config.color = MEED_CONSOLE_COLOR_RED;                                                                     \
-			meedPlatformSetConsoleConfig(config);                                                                      \
+			mdPlatformSetConsoleConfig(config);                                                                        \
 			char buffer[512];                                                                                          \
-			meedPlatformBufferedPrint(buffer, sizeof(buffer), msg, ##__VA_ARGS__);                                     \
-			meedPlatformFPrint("Assertion failed: %s at %s:%d\n", buffer, __FILE__, __LINE__);                         \
+			mdPlatformBufferedPrint(buffer, sizeof(buffer), msg, ##__VA_ARGS__);                                       \
+			mdPlatformFPrint("Assertion failed: %s at %s:%d\n", buffer, __FILE__, __LINE__);                           \
 			config.color = MEED_CONSOLE_COLOR_RESET;                                                                   \
-			meedPlatformSetConsoleConfig(config);                                                                      \
+			mdPlatformSetConsoleConfig(config);                                                                        \
 			debugBreak();                                                                                              \
 		}                                                                                                              \
 	} while (0)
@@ -123,7 +123,7 @@ static_assert(sizeof(b8) == 1, "b8 size is not 1 byte");
 static_assert(sizeof(b32) == 4, "b32 size is not 4 bytes");
 #endif
 
-typedef MEED_BINDING size_t meedSize;
+typedef MEED_BINDING size_t mdSize;
 
 #define MEED_NULL ((void*)0)
 

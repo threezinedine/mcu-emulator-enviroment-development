@@ -14,16 +14,16 @@ static void releaseStackItemDestroy(void* pData)
 	MEED_FREE(pItem, struct MEEDReleaseStackItem);
 }
 
-struct MEEDReleaseStack* meedReleaseStackCreate()
+struct MEEDReleaseStack* mdReleaseStackCreate()
 {
 	struct MEEDReleaseStack* pReleaseStack = MEED_MALLOC(struct MEEDReleaseStack);
 	MEED_ASSERT(pReleaseStack != MEED_NULL);
 
-	pReleaseStack->pStack = meedStackCreate(releaseStackItemDestroy);
+	pReleaseStack->pStack = mdStackCreate(releaseStackItemDestroy);
 	return pReleaseStack;
 }
 
-void meedReleaseStackPush(struct MEEDReleaseStack* pReleaseStack, void* pData, MEEDReleaseFunc pReleaseFunc)
+void mdReleaseStackPush(struct MEEDReleaseStack* pReleaseStack, void* pData, MEEDReleaseFunc pReleaseFunc)
 {
 	MEED_ASSERT(pReleaseStack != MEED_NULL);
 	MEED_ASSERT(pReleaseStack->pStack != MEED_NULL);
@@ -35,18 +35,18 @@ void meedReleaseStackPush(struct MEEDReleaseStack* pReleaseStack, void* pData, M
 	pItem->pData		= pData;
 	pItem->pReleaseFunc = pReleaseFunc;
 
-	meedStackPush(pReleaseStack->pStack, pItem);
+	mdStackPush(pReleaseStack->pStack, pItem);
 }
 
-void meedReleaseStackDestroy(struct MEEDReleaseStack* pReleaseStack)
+void mdReleaseStackDestroy(struct MEEDReleaseStack* pReleaseStack)
 {
 	MEED_ASSERT(pReleaseStack != MEED_NULL);
 
-	while (meedStackEmpty(pReleaseStack->pStack) == MEED_FALSE)
+	while (mdStackEmpty(pReleaseStack->pStack) == MEED_FALSE)
 	{
-		meedStackPop(pReleaseStack->pStack);
+		mdStackPop(pReleaseStack->pStack);
 	}
 
-	meedStackDestroy(pReleaseStack->pStack);
+	mdStackDestroy(pReleaseStack->pStack);
 	MEED_FREE(pReleaseStack, struct MEEDReleaseStack);
 }

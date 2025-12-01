@@ -22,27 +22,27 @@ static void deleteProgram(void* pData)
 	GL_ASSERT(glDeleteProgram(pOpenGLPipeline->shaderProgram));
 }
 
-struct MEEDPipeline* meedPipelineCreate(const char* vertexShaderPath, const char* fragmentShaderPath)
+struct MEEDPipeline* mdPipelineCreate(const char* vertexShaderPath, const char* fragmentShaderPath)
 {
 	struct MEEDPipeline* pPipeline = MEED_MALLOC(struct MEEDPipeline);
 	MEED_ASSERT(pPipeline != MEED_NULL);
-	meedPlatformMemorySet(pPipeline, 0, sizeof(struct MEEDPipeline));
+	mdPlatformMemorySet(pPipeline, 0, sizeof(struct MEEDPipeline));
 
-	pPipeline->pReleaseStack	  = meedReleaseStackCreate();
+	pPipeline->pReleaseStack	  = mdReleaseStackCreate();
 	pPipeline->vertexShaderPath	  = vertexShaderPath;
 	pPipeline->fragmentShaderPath = fragmentShaderPath;
 
 	pPipeline->pInternal = MEED_MALLOC(struct OpenGLPipeline);
 	MEED_ASSERT(pPipeline->pInternal != MEED_NULL);
-	meedPlatformMemorySet(pPipeline->pInternal, 0, sizeof(struct OpenGLPipeline));
-	meedReleaseStackPush(pPipeline->pReleaseStack, pPipeline, freeInternalOpenGLPipeline);
+	mdPlatformMemorySet(pPipeline->pInternal, 0, sizeof(struct OpenGLPipeline));
+	mdReleaseStackPush(pPipeline->pReleaseStack, pPipeline, freeInternalOpenGLPipeline);
 
 	struct OpenGLPipeline* pOpenGLPipeline = (struct OpenGLPipeline*)pPipeline->pInternal;
 
 	GL_ASSERT(pOpenGLPipeline->shaderProgram = glCreateProgram());
 
-	struct MEEDShader* pVertexShader   = meedShaderCreate(MEED_SHADER_TYPE_VERTEX, vertexShaderPath);
-	struct MEEDShader* pFragmentShader = meedShaderCreate(MEED_SHADER_TYPE_FRAGMENT, fragmentShaderPath);
+	struct MEEDShader* pVertexShader   = mdShaderCreate(MEED_SHADER_TYPE_VERTEX, vertexShaderPath);
+	struct MEEDShader* pFragmentShader = mdShaderCreate(MEED_SHADER_TYPE_FRAGMENT, fragmentShaderPath);
 
 	struct OpenGLShader* pOpenGLVertexShader   = (struct OpenGLShader*)pVertexShader->pInternal;
 	struct OpenGLShader* pOpenGLFragmentShader = (struct OpenGLShader*)pFragmentShader->pInternal;
@@ -60,26 +60,26 @@ struct MEEDPipeline* meedPipelineCreate(const char* vertexShaderPath, const char
 		MEED_ASSERT_MSG(MEED_FALSE, "Shader program linking failed: %s", infoLog);
 	}
 
-	meedShaderDestroy(pFragmentShader);
-	meedShaderDestroy(pVertexShader);
+	mdShaderDestroy(pFragmentShader);
+	mdShaderDestroy(pVertexShader);
 
-	meedReleaseStackPush(pPipeline->pReleaseStack, pPipeline, deleteProgram);
+	mdReleaseStackPush(pPipeline->pReleaseStack, pPipeline, deleteProgram);
 
 	return pPipeline;
 }
 
-void meedPipelineUse(struct MEEDPipeline* pPipeline)
+void mdPipelineUse(struct MEEDPipeline* pPipeline)
 {
 	MEED_ASSERT(pPipeline != MEED_NULL);
 	struct OpenGLPipeline* pOpenGLPipeline = (struct OpenGLPipeline*)pPipeline->pInternal;
 	GL_ASSERT(glUseProgram(pOpenGLPipeline->shaderProgram));
 }
 
-void meedPipelineDestroy(struct MEEDPipeline* pPipeline)
+void mdPipelineDestroy(struct MEEDPipeline* pPipeline)
 {
 	MEED_ASSERT(pPipeline != MEED_NULL);
 
-	meedReleaseStackDestroy(pPipeline->pReleaseStack);
+	mdReleaseStackDestroy(pPipeline->pReleaseStack);
 	MEED_FREE(pPipeline, struct MEEDPipeline);
 	pPipeline = MEED_NULL;
 }

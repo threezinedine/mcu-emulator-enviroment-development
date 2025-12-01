@@ -24,7 +24,7 @@ enum MEEDExceptionType
  * @param file The file where the exception occurred.
  * @param line The line number where the exception occurred.
  */
-void meedRaiseException(enum MEEDExceptionType type, const char* message, const char* file, u32 line);
+void mdRaiseException(enum MEEDExceptionType type, const char* message, const char* file, u32 line);
 
 /**
  * Macro to raise an exception with automatic file and line number information.
@@ -35,8 +35,8 @@ void meedRaiseException(enum MEEDExceptionType type, const char* message, const 
 	do                                                                                                                 \
 	{                                                                                                                  \
 		char formattedMessage[512];                                                                                    \
-		meedPlatformBufferedPrint(formattedMessage, sizeof(formattedMessage), message, ##__VA_ARGS__);                 \
-		meedRaiseException(type, formattedMessage, __FILE__, __LINE__);                                                \
+		mdPlatformBufferedPrint(formattedMessage, sizeof(formattedMessage), message, ##__VA_ARGS__);                   \
+		mdRaiseException(type, formattedMessage, __FILE__, __LINE__);                                                  \
 	} while (MEED_FALSE);
 
 #if __cplusplus

@@ -20,7 +20,7 @@ struct OpenGLWindowData
 
 static b8 s_isInitialized = MEED_FALSE; ///< Track if the windowing system is initialized
 
-void meedWindowInitialize()
+void mdWindowInitialize()
 {
 	MEED_ASSERT(s_isInitialized == MEED_FALSE);
 
@@ -30,12 +30,12 @@ void meedWindowInitialize()
 	s_isInitialized = MEED_TRUE;
 }
 
-struct MEEDWindowData* meedWindowCreate(u32 width, u32 height, const char* title)
+struct MEEDWindowData* mdWindowCreate(u32 width, u32 height, const char* title)
 {
 	MEED_ASSERT(s_isInitialized == MEED_TRUE);
 	struct MEEDWindowData* pWindowData = MEED_MALLOC(struct MEEDWindowData);
 	MEED_ASSERT(pWindowData != MEED_NULL);
-	meedPlatformMemorySet(pWindowData, 0, sizeof(struct MEEDWindowData));
+	mdPlatformMemorySet(pWindowData, 0, sizeof(struct MEEDWindowData));
 
 	pWindowData->width	= width;
 	pWindowData->height = height;
@@ -43,7 +43,7 @@ struct MEEDWindowData* meedWindowCreate(u32 width, u32 height, const char* title
 
 	pWindowData->pInternal = MEED_MALLOC(struct OpenGLWindowData);
 	MEED_ASSERT(pWindowData->pInternal != MEED_NULL);
-	meedPlatformMemorySet(pWindowData->pInternal, 0, sizeof(struct OpenGLWindowData));
+	mdPlatformMemorySet(pWindowData->pInternal, 0, sizeof(struct OpenGLWindowData));
 	struct OpenGLWindowData* pOpenGLData = (struct OpenGLWindowData*)pWindowData->pInternal;
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -64,11 +64,11 @@ struct MEEDWindowData* meedWindowCreate(u32 width, u32 height, const char* title
 
 	struct MEEDPlatformConsoleConfig config = {};
 	config.color							= MEED_CONSOLE_COLOR_GREEN;
-	meedPlatformSetConsoleConfig(config);
-	meedPlatformFPrint("OpenGL Version: %s\n", glGetString(GL_VERSION));
-	meedPlatformFPrint("Renderer: %s\n", glGetString(GL_RENDERER));
+	mdPlatformSetConsoleConfig(config);
+	mdPlatformFPrint("OpenGL Version: %s\n", glGetString(GL_VERSION));
+	mdPlatformFPrint("Renderer: %s\n", glGetString(GL_RENDERER));
 	config.color = MEED_CONSOLE_COLOR_RESET;
-	meedPlatformSetConsoleConfig(config);
+	mdPlatformSetConsoleConfig(config);
 
 	glfwSwapInterval(1); // Enable V-Sync
 
@@ -79,7 +79,7 @@ struct MEEDWindowData* meedWindowCreate(u32 width, u32 height, const char* title
 	return pWindowData;
 }
 
-struct MEEDWindowEvent meedWindowPollEvents(struct MEEDWindowData* pWindowData)
+struct MEEDWindowEvent mdWindowPollEvents(struct MEEDWindowData* pWindowData)
 {
 	MEED_ASSERT(s_isInitialized == MEED_TRUE);
 	MEED_ASSERT(pWindowData != MEED_NULL);
@@ -92,7 +92,7 @@ struct MEEDWindowEvent meedWindowPollEvents(struct MEEDWindowData* pWindowData)
 	return (struct MEEDWindowEvent){MEED_WINDOW_EVENT_TYPE_NONE};
 }
 
-void meedWindowDestroy(struct MEEDWindowData* pWindowData)
+void mdWindowDestroy(struct MEEDWindowData* pWindowData)
 {
 	MEED_ASSERT(s_isInitialized == MEED_TRUE);
 	MEED_ASSERT(pWindowData != MEED_NULL);
@@ -105,7 +105,7 @@ void meedWindowDestroy(struct MEEDWindowData* pWindowData)
 	MEED_FREE(pWindowData, struct MEEDWindowData);
 }
 
-void meedWindowShutdown()
+void mdWindowShutdown()
 {
 	MEED_ASSERT(s_isInitialized == MEED_TRUE);
 

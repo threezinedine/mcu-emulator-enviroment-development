@@ -3,21 +3,21 @@
 #include "MEEDEngine/modules/render/shader.h"
 #include "opengl_common.h"
 
-struct MEEDShader* meedShaderCreate(enum MEEDShaderType type, const char* shaderSource)
+struct MEEDShader* mdShaderCreate(enum MEEDShaderType type, const char* shaderSource)
 {
 	struct MEEDShader* pShader = MEED_MALLOC(struct MEEDShader);
 	MEED_ASSERT(pShader != MEED_NULL);
-	meedPlatformMemorySet(pShader, 0, sizeof(struct MEEDShader));
+	mdPlatformMemorySet(pShader, 0, sizeof(struct MEEDShader));
 
 	pShader->type = type;
 
 	pShader->pInternal = MEED_MALLOC(struct OpenGLShader);
 	MEED_ASSERT(pShader->pInternal != MEED_NULL);
-	meedPlatformMemorySet(pShader->pInternal, 0, sizeof(struct OpenGLShader));
+	mdPlatformMemorySet(pShader->pInternal, 0, sizeof(struct OpenGLShader));
 
 	struct OpenGLShader* pOpenGLShader = (struct OpenGLShader*)pShader->pInternal;
 
-	struct MEEDFileData* pFile = meedPlatformOpenFile(shaderSource, MEED_FILE_MODE_READ);
+	struct MEEDFileData* pFile = mdPlatformOpenFile(shaderSource, MEED_FILE_MODE_READ);
 	MEED_ASSERT_MSG(pFile != MEED_NULL && pFile->isOpen, "Failed to open shader file \"%s\".", shaderSource);
 
 	GLenum shaderType;
@@ -55,12 +55,12 @@ struct MEEDShader* meedShaderCreate(enum MEEDShaderType type, const char* shader
 		MEED_ASSERT_MSG(MEED_FALSE, "Shader \"%s\" compilation failed: %s", shaderSource, infoLog);
 	}
 
-	meedPlatformCloseFile(pFile);
+	mdPlatformCloseFile(pFile);
 
 	return pShader;
 }
 
-void meedShaderDestroy(struct MEEDShader* pShader)
+void mdShaderDestroy(struct MEEDShader* pShader)
 {
 	MEED_ASSERT(pShader != MEED_NULL);
 

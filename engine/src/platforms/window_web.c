@@ -3,12 +3,12 @@
 #include "MEEDEngine/platforms/common.h"
 #include "MEEDEngine/platforms/window.h"
 
-void meedWindowInitialize(void)
+void mdWindowInitialize(void)
 {
 	// No window initialization needed for web builds.
 }
 
-struct MEEDWindowData* meedWindowCreate(u32 width, u32 height, const char* title)
+struct MEEDWindowData* mdWindowCreate(u32 width, u32 height, const char* title)
 {
 	MEED_UNUSED(width);	 // Unused parameter in web builds.
 	MEED_UNUSED(height); // Unused parameter in web builds.
@@ -18,7 +18,7 @@ struct MEEDWindowData* meedWindowCreate(u32 width, u32 height, const char* title
 	return MEED_NULL;
 }
 
-struct MEEDWindowEvent meedWindowPollEvents(struct MEEDWindowData* pWindowData)
+struct MEEDWindowEvent mdWindowPollEvents(struct MEEDWindowData* pWindowData)
 {
 	MEED_UNUSED(pWindowData); // Unused parameter in web builds.
 
@@ -27,13 +27,13 @@ struct MEEDWindowEvent meedWindowPollEvents(struct MEEDWindowData* pWindowData)
 	return event;
 }
 
-void meedWindowDestroy(struct MEEDWindowData* pWindowData)
+void mdWindowDestroy(struct MEEDWindowData* pWindowData)
 {
 	MEED_UNUSED(pWindowData); // Unused parameter in web builds.
 							  // No window destruction needed for web builds.
 }
 
-void meedWindowShutdown(void)
+void mdWindowShutdown(void)
 {
 	// No window shutdown needed for web builds.
 }

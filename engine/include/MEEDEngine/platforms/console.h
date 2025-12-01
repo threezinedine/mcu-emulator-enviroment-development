@@ -7,7 +7,7 @@ extern "C" {
 
 /**
  * All possible color which the console can display, using
- * `meedPlatformSetColor` for modifying the color.
+ * `mdPlatformSetColor` for modifying the color.
  */
 enum MEED_BINDING MEEDConsoleColor : u8
 {
@@ -31,10 +31,10 @@ struct MEED_BINDING MEEDPlatformConsoleConfig
 };
 
 /**
- * Modify the following content's color which is used by `meedPlatformPrint`.
+ * Modify the following content's color which is used by `mdPlatformPrint`.
  * @param color The color to set the console to.
  */
-void meedPlatformSetConsoleConfig(struct MEEDPlatformConsoleConfig config) MEED_BINDING;
+void mdPlatformSetConsoleConfig(struct MEEDPlatformConsoleConfig config) MEED_BINDING;
 
 /**
  * Print formatted content to a buffer.
@@ -43,20 +43,20 @@ void meedPlatformSetConsoleConfig(struct MEEDPlatformConsoleConfig config) MEED_
  * @param format The format string.
  * @param ... The format arguments.
  */
-void meedPlatformBufferedPrint(char* buffer, meedSize length, char* format, ...);
+void mdPlatformBufferedPrint(char* buffer, mdSize length, char* format, ...);
 
 /**
  * Print formatted content to the console.
  * @param format The format string.
  * @param ... The format arguments.
  */
-void meedPlatformFPrint(const char* format, ...);
+void mdPlatformFPrint(const char* format, ...);
 
 /**
  * Print a string to the console.
  * @param str The string to print.
  */
-void meedPlatformPrint(const char* str) MEED_BINDING;
+void mdPlatformPrint(const char* str) MEED_BINDING;
 
 #if __cplusplus
 }
