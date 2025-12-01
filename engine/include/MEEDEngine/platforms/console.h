@@ -43,7 +43,7 @@ void mdSetConsoleConfig(struct MdConsoleConfig config) MD_BINDING;
  * @param format The format string.
  * @param ... The format arguments.
  */
-void mdFormatString(char* buffer, mdSize length, char* format, ...);
+void mdFormatString(char* buffer, mdSize length, const char* format, ...);
 
 /**
  * Print formatted content to the console.

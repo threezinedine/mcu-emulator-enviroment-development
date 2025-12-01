@@ -21,7 +21,7 @@ void mdSetConsoleConfig(struct MdConsoleConfig config)
 	printf("%s", ansi[config.color]);
 }
 
-void mdFormatString(char* buffer, mdSize length, char* format, ...)
+void mdFormatString(char* buffer, mdSize length, const char* format, ...)
 {
 	va_list args;
 	va_start(args, format);
