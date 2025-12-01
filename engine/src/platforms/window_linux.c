@@ -33,7 +33,7 @@ static b8 s_isInitialized = MEED_FALSE; ///< Track if the windowing system is in
 		MEED_ASSERT_MSG(                                                                                               \
 			s_isInitialized == MEED_TRUE,                                                                              \
 			"Windowing system is not initialized. Call mdWindowInitialize() before using window functions.");          \
-		MEED_ASSERT_MSG(pWindowData != MEED_NULL, "Provided MEEDWindowData pointer is NULL.");                         \
+		MEED_ASSERT_MSG(pWindowData != MEED_NULL, "Provided MdWindowData pointer is NULL.");                           \
 		MEED_ASSERT_MSG(pWindowData->pInternal != MEED_NULL, "Internal window data pointer is NULL.");                 \
 	} while (0)
 
@@ -48,11 +48,11 @@ void mdWindowInitialize()
 	s_isInitialized = MEED_TRUE;
 }
 
-struct MEEDWindowData* mdWindowCreate(u32 width, u32 height, const char* title)
+struct MdWindowData* mdWindowCreate(u32 width, u32 height, const char* title)
 {
 	MEED_ASSERT(s_isInitialized == MEED_TRUE);
 
-	struct MEEDWindowData* pWindowData = MEED_MALLOC(struct MEEDWindowData);
+	struct MdWindowData* pWindowData = MEED_MALLOC(struct MdWindowData);
 	MEED_ASSERT(pWindowData != MEED_NULL);
 	pWindowData->width	= width;
 	pWindowData->height = height;
@@ -81,7 +81,7 @@ struct MEEDWindowData* mdWindowCreate(u32 width, u32 height, const char* title)
 	XStoreName(pLinuxData->pDisplay, pLinuxData->window, title);
 
 	XSizeHints sizeHints;
-	mdPlatformMemorySet(&sizeHints, 0, sizeof(XSizeHints));
+	mdMemorySet(&sizeHints, 0, sizeof(XSizeHints));
 	sizeHints.flags		 = PMinSize | PMaxSize;
 	sizeHints.min_width	 = width;
 	sizeHints.min_height = height;
@@ -95,23 +95,23 @@ struct MEEDWindowData* mdWindowCreate(u32 width, u32 height, const char* title)
 	return pWindowData;
 }
 
-struct MEEDWindowEvent mdWindowPollEvents(struct MEEDWindowData* pWindowData)
+struct MdWindowEvent mdWindowPollEvents(struct MdWindowData* pWindowData)
 {
 	MEED_WINDOW_UTILS_ASSERTION();
 
 	struct LinuxWindowData* pLinuxData = (struct LinuxWindowData*)pWindowData->pInternal;
 
 	XNextEvent(pLinuxData->pDisplay, &event);
-	struct MEEDWindowEvent windowEvent;
-	mdPlatformMemorySet(&windowEvent, 0, sizeof(struct MEEDWindowEvent));
-	windowEvent.type = MEED_WINDOW_EVENT_TYPE_NONE;
+	struct MdWindowEvent windowEvent;
+	mdMemorySet(&windowEvent, 0, sizeof(struct MdWindowEvent));
+	windowEvent.type = MD_WINDOW_EVENT_TYPE_NONE;
 
 	if (event.type == ClientMessage)
 	{
 		if (event.xclient.data.l[0] == XInternAtom(pLinuxData->pDisplay, "WM_DELETE_WINDOW", False))
 		{
 			pWindowData->shouldClose = MEED_TRUE;
-			windowEvent.type		 = MEED_WINDOW_EVENT_TYPE_CLOSE;
+			windowEvent.type		 = MD_WINDOW_EVENT_TYPE_CLOSE;
 		}
 	}
 
@@ -119,7 +119,7 @@ struct MEEDWindowEvent mdWindowPollEvents(struct MEEDWindowData* pWindowData)
 }
 
 #if MEED_USE_VULKAN
-VkResult mdWindowCreateVulkanSurface(struct MEEDWindowData* pWindowData, VkInstance instance, VkSurfaceKHR* pSurface)
+VkResult mdWindowCreateVulkanSurface(struct MdWindowData* pWindowData, VkInstance instance, VkSurfaceKHR* pSurface)
 {
 	MEED_WINDOW_UTILS_ASSERTION();
 
@@ -134,7 +134,7 @@ VkResult mdWindowCreateVulkanSurface(struct MEEDWindowData* pWindowData, VkInsta
 	return vkCreateXlibSurfaceKHR(instance, &createInfo, MEED_NULL, pSurface);
 }
 
-void mdWindowDestroyVulkanSurface(struct MEEDWindowData* pWindowData, VkInstance instance, VkSurfaceKHR surface)
+void mdWindowDestroyVulkanSurface(struct MdWindowData* pWindowData, VkInstance instance, VkSurfaceKHR surface)
 {
 	MEED_WINDOW_UTILS_ASSERTION();
 
@@ -143,7 +143,7 @@ void mdWindowDestroyVulkanSurface(struct MEEDWindowData* pWindowData, VkInstance
 
 #endif
 
-void mdWindowDestroy(struct MEEDWindowData* pWindowData)
+void mdWindowDestroy(struct MdWindowData* pWindowData)
 {
 	MEED_WINDOW_UTILS_ASSERTION();
 
@@ -154,7 +154,7 @@ void mdWindowDestroy(struct MEEDWindowData* pWindowData)
 	XCloseDisplay(pLinuxData->pDisplay);
 
 	MEED_FREE(pWindowData->pInternal, struct LinuxWindowData);
-	MEED_FREE(pWindowData, struct MEEDWindowData);
+	MEED_FREE(pWindowData, struct MdWindowData);
 }
 
 void mdWindowShutdown()

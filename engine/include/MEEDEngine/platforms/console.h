@@ -9,32 +9,32 @@ extern "C" {
  * All possible color which the console can display, using
  * `mdPlatformSetColor` for modifying the color.
  */
-enum MEED_BINDING MEEDConsoleColor : u8
+enum MEED_BINDING MdConsoleColor : u8
 {
-	MEED_CONSOLE_COLOR_RESET,
-	MEED_CONSOLE_COLOR_RED,
-	MEED_CONSOLE_COLOR_GREEN,
-	MEED_CONSOLE_COLOR_YELLOW,
-	MEED_CONSOLE_COLOR_BLUE,
-	MEED_CONSOLE_COLOR_MAGENTA,
-	MEED_CONSOLE_COLOR_CYAN,
-	MEED_CONSOLE_COLOR_WHITE,
-	MEED_CONSOLE_COLOR_BOLD,
+	MD_CONSOLE_COLOR_RESET,
+	MD_CONSOLE_COLOR_RED,
+	MD_CONSOLE_COLOR_GREEN,
+	MD_CONSOLE_COLOR_YELLOW,
+	MD_CONSOLE_COLOR_BLUE,
+	MD_CONSOLE_COLOR_MAGENTA,
+	MD_CONSOLE_COLOR_CYAN,
+	MD_CONSOLE_COLOR_WHITE,
+	MD_CONSOLE_COLOR_BOLD,
 };
 
 /**
  * Configuration structure for the console platform.
  */
-struct MEED_BINDING MEEDPlatformConsoleConfig
+struct MEED_BINDING MdConsoleConfig
 {
-	enum MEEDConsoleColor color; ///< The color to set the console to.
+	enum MdConsoleColor color; ///< The color to set the console to.
 };
 
 /**
- * Modify the following content's color which is used by `mdPlatformPrint`.
+ * Modify the following content's color which is used by `mdPrint`.
  * @param color The color to set the console to.
  */
-void mdPlatformSetConsoleConfig(struct MEEDPlatformConsoleConfig config) MEED_BINDING;
+void mdSetConsoleConfig(struct MdConsoleConfig config) MEED_BINDING;
 
 /**
  * Print formatted content to a buffer.
@@ -43,20 +43,20 @@ void mdPlatformSetConsoleConfig(struct MEEDPlatformConsoleConfig config) MEED_BI
  * @param format The format string.
  * @param ... The format arguments.
  */
-void mdPlatformBufferedPrint(char* buffer, mdSize length, char* format, ...);
+void mdFormatString(char* buffer, mdSize length, char* format, ...);
 
 /**
  * Print formatted content to the console.
  * @param format The format string.
  * @param ... The format arguments.
  */
-void mdPlatformFPrint(const char* format, ...);
+void mdFormatPrint(const char* format, ...);
 
 /**
  * Print a string to the console.
  * @param str The string to print.
  */
-void mdPlatformPrint(const char* str) MEED_BINDING;
+void mdPrint(const char* str) MEED_BINDING;
 
 #if __cplusplus
 }

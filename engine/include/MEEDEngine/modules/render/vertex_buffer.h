@@ -11,22 +11,22 @@ extern "C" {
  * List of all vertex buffer attribute types. The `layout` will use these types to
  * define the structure of each vertex in the buffer.
  */
-enum MEEDVertexBufferAttributeType
+enum MdVertexBufferAttributeType
 {
-	MEED_VERTEX_BUFFER_ATTRIBUTE_TYPE_FLOAT,
-	MEED_VERTEX_BUFFER_ATTRIBUTE_TYPE_UNSIGNED_INT,
-	MEED_VERTEX_BUFFER_ATTRIBUTE_TYPE_FLOAT2,
-	MEED_VERTEX_BUFFER_ATTRIBUTE_TYPE_UNSIGNED_INT2,
-	MEED_VERTEX_BUFFER_ATTRIBUTE_TYPE_FLOAT3,
-	MEED_VERTEX_BUFFER_ATTRIBUTE_TYPE_UNSIGNED_INT3,
-	MEED_VERTEX_BUFFER_ATTRIBUTE_TYPE_FLOAT4,
-	MEED_VERTEX_BUFFER_ATTRIBUTE_TYPE_UNSIGNED_INT4,
+	MD_VERTEX_BUFFER_ATTRIBUTE_TYPE_FLOAT,
+	MD_VERTEX_BUFFER_ATTRIBUTE_TYPE_UNSIGNED_INT,
+	MD_VERTEX_BUFFER_ATTRIBUTE_TYPE_FLOAT2,
+	MD_VERTEX_BUFFER_ATTRIBUTE_TYPE_UNSIGNED_INT2,
+	MD_VERTEX_BUFFER_ATTRIBUTE_TYPE_FLOAT3,
+	MD_VERTEX_BUFFER_ATTRIBUTE_TYPE_UNSIGNED_INT3,
+	MD_VERTEX_BUFFER_ATTRIBUTE_TYPE_FLOAT4,
+	MD_VERTEX_BUFFER_ATTRIBUTE_TYPE_UNSIGNED_INT4,
 };
 
 /**
  * @brief Structure representing a vertex buffer.
  */
-struct MEEDVertexBuffer
+struct MdVertexBuffer
 {
 	void* pInternal; ///< Pointer to internal implementation-specific data (Vulkan, WebGL, etc.).
 
@@ -35,7 +35,7 @@ struct MEEDVertexBuffer
 	/**
 	 * Array defining the layout of vertex attributes. Each entry corresponds to a type from the
 	 */
-	enum MEEDVertexBufferAttributeType layout[MEED_VERTEX_BUFFER_MAX_ATTRIBUTES];
+	enum MdVertexBufferAttributeType layout[MEED_VERTEX_BUFFER_MAX_ATTRIBUTES];
 
 	/**
 	 * The stride (in bytes) between consecutive vertices in the buffer.
@@ -49,19 +49,19 @@ struct MEEDVertexBuffer
  * @param layout An array defining the types of each attribute in the vertex.
  * @param attributesCount The number of attributes in the vertex.
  * @param verticesCount The number of vertices the buffer will hold.
- * @return A pointer to the created MEEDVertexBuffer.
+ * @return A pointer to the created MdVertexBuffer.
  *
  * @note The data of the vertex buffer will be write later
  */
-struct MEEDVertexBuffer*
-mdVertexBufferCreate(enum MEEDVertexBufferAttributeType* layout, u32 attributesCount, u32 verticesCount);
+struct MdVertexBuffer*
+mdVertexBufferCreate(enum MdVertexBufferAttributeType* layout, u32 attributesCount, u32 verticesCount);
 
 /**
  * @brief Destroys the specified vertex buffer and releases its resources.
  *
- * @param pVertexBuffer A pointer to the MEEDVertexBuffer to destroy. if NULL raise an exception.
+ * @param pVertexBuffer A pointer to the MdVertexBuffer to destroy. if NULL raise an exception.
  */
-void mdVertexBufferDestroy(struct MEEDVertexBuffer* pVertexBuffer);
+void mdVertexBufferDestroy(struct MdVertexBuffer* pVertexBuffer);
 
 #if __cplusplus
 }

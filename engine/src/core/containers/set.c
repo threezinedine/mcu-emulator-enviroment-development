@@ -1,10 +1,10 @@
 #include "MEEDEngine/core/containers/set.h"
 
-struct MEEDSet* mdSetCreate(MEEDSetCompareCallback pCompareCallback)
+struct MdSet* mdSetCreate(MdSetCompareCallback pCompareCallback)
 {
 	MEED_ASSERT(pCompareCallback != MEED_NULL);
 
-	struct MEEDSet* pSet = MEED_MALLOC(struct MEEDSet);
+	struct MdSet* pSet = MEED_MALLOC(struct MdSet);
 	MEED_ASSERT(pSet != MEED_NULL);
 
 	pSet->pList = mdLinkedListCreate(MEED_NULL);
@@ -15,13 +15,13 @@ struct MEEDSet* mdSetCreate(MEEDSetCompareCallback pCompareCallback)
 	return pSet;
 }
 
-u32 mdSetCount(struct MEEDSet* pSet)
+u32 mdSetCount(struct MdSet* pSet)
 {
 	MEED_ASSERT(pSet != MEED_NULL);
 	return mdLinkedListCount(pSet->pList);
 }
 
-void mdSetPush(struct MEEDSet* pSet, void* pData)
+void mdSetPush(struct MdSet* pSet, void* pData)
 {
 	MEED_ASSERT(pSet != MEED_NULL);
 	MEED_ASSERT(pSet->pCompareCallback != MEED_NULL);
@@ -29,16 +29,16 @@ void mdSetPush(struct MEEDSet* pSet, void* pData)
 
 	if (pData == MEED_NULL)
 	{
-		MEED_THROW(MEED_EXCEPTION_TYPE_INVALID_OPERATION, "Cannot insert NULL data into the set.");
+		MEED_THROW(MD_EXCEPTION_TYPE_INVALID_OPERATION, "Cannot insert NULL data into the set.");
 	}
 
-	struct MEEDLinkedListNode* pCurrent = pSet->pList->pHead;
-	u32						   index	= 0;
+	struct MdLinkedListNode* pCurrent = pSet->pList->pHead;
+	u32						 index	  = 0;
 
 	while (pCurrent != MEED_NULL)
 	{
-		i32						   cmpResult = pSet->pCompareCallback(pCurrent->pData, pData);
-		struct MEEDLinkedListNode* pNextNode = pCurrent->pNext;
+		i32						 cmpResult = pSet->pCompareCallback(pCurrent->pData, pData);
+		struct MdLinkedListNode* pNextNode = pCurrent->pNext;
 
 		if (cmpResult == 0)
 		{
@@ -59,7 +59,7 @@ void mdSetPush(struct MEEDSet* pSet, void* pData)
 	mdLinkedListPush(pSet->pList, pData);
 }
 
-void* mdSetAt(struct MEEDSet* pSet, u32 index)
+void* mdSetAt(struct MdSet* pSet, u32 index)
 {
 	MEED_ASSERT(pSet != MEED_NULL);
 	MEED_ASSERT(pSet->pList != MEED_NULL);
@@ -67,7 +67,7 @@ void* mdSetAt(struct MEEDSet* pSet, u32 index)
 	return mdLinkedListAt(pSet->pList, index);
 }
 
-void mdSetErase(struct MEEDSet* pSet, u32 index)
+void mdSetErase(struct MdSet* pSet, u32 index)
 {
 	MEED_ASSERT(pSet != MEED_NULL);
 	MEED_ASSERT(pSet->pList != MEED_NULL);
@@ -75,7 +75,7 @@ void mdSetErase(struct MEEDSet* pSet, u32 index)
 	mdLinkedListErase(pSet->pList, index);
 }
 
-void mdSetClear(struct MEEDSet* pSet)
+void mdSetClear(struct MdSet* pSet)
 {
 	MEED_ASSERT(pSet != MEED_NULL);
 	MEED_ASSERT(pSet->pList != MEED_NULL);
@@ -83,19 +83,19 @@ void mdSetClear(struct MEEDSet* pSet)
 	mdLinkedListClear(pSet->pList);
 }
 
-u32 mdSetFind(struct MEEDSet* pSet, void* pData)
+u32 mdSetFind(struct MdSet* pSet, void* pData)
 {
 	MEED_ASSERT(pSet != MEED_NULL);
 	MEED_ASSERT(pSet->pCompareCallback != MEED_NULL);
 	MEED_ASSERT(pSet->pList != MEED_NULL);
 
-	struct MEEDLinkedListNode* pCurrent = pSet->pList->pHead;
-	u32						   index	= 0;
+	struct MdLinkedListNode* pCurrent = pSet->pList->pHead;
+	u32						 index	  = 0;
 
 	while (pCurrent != MEED_NULL)
 	{
-		i32						   cmpResult = pSet->pCompareCallback(pCurrent->pData, pData);
-		struct MEEDLinkedListNode* pNextNode = pCurrent->pNext;
+		i32						 cmpResult = pSet->pCompareCallback(pCurrent->pData, pData);
+		struct MdLinkedListNode* pNextNode = pCurrent->pNext;
 
 		if (cmpResult == 0)
 		{
@@ -115,10 +115,10 @@ u32 mdSetFind(struct MEEDSet* pSet, void* pData)
 	return MEED_SET_NOT_FOUND_INDEX;
 }
 
-void mdSetDestroy(struct MEEDSet* pSet)
+void mdSetDestroy(struct MdSet* pSet)
 {
 	MEED_ASSERT(pSet != MEED_NULL);
 
 	mdLinkedListDestroy(pSet->pList);
-	MEED_FREE(pSet, struct MEEDSet);
+	MEED_FREE(pSet, struct MdSet);
 }

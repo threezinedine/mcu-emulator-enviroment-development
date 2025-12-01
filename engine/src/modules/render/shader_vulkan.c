@@ -3,9 +3,9 @@
 #include "MEEDEngine/modules/render/shader.h"
 #include "vulkan_common.h"
 
-struct MEEDShader* mdShaderCreate(enum MEEDShaderType type, const char* filePath)
+struct MdShader* mdShaderCreate(enum MdShaderType type, const char* filePath)
 {
-	struct MEEDShader* pShader = MEED_MALLOC(struct MEEDShader);
+	struct MdShader* pShader = MEED_MALLOC(struct MdShader);
 	MEED_ASSERT(pShader != MEED_NULL);
 	pShader->type = type;
 
@@ -13,10 +13,10 @@ struct MEEDShader* mdShaderCreate(enum MEEDShaderType type, const char* filePath
 	MEED_ASSERT(pShader->pInternal != MEED_NULL);
 
 	struct VulkanShader* pVulkanShader = (struct VulkanShader*)pShader->pInternal;
-	mdPlatformMemorySet(pVulkanShader, 0, sizeof(struct VulkanShader));
+	mdMemorySet(pVulkanShader, 0, sizeof(struct VulkanShader));
 
 	// Load SPIR-V binary from file
-	struct MEEDFileData* pFile = mdPlatformOpenFile(filePath, MEED_FILE_MODE_READ);
+	struct MdFileData* pFile = mdFileOpen(filePath, MD_FILE_MODE_READ);
 	MEED_ASSERT_MSG(pFile != MEED_NULL && pFile->isOpen, "Failed to open shader file \"%s\".", filePath);
 
 	MEED_ASSERT(g_vulkan != MEED_NULL);
@@ -28,12 +28,12 @@ struct MEEDShader* mdShaderCreate(enum MEEDShaderType type, const char* filePath
 	createInfo.pCode					= (const u32*)pFile->content;
 	VK_ASSERT(vkCreateShaderModule(g_vulkan->device, &createInfo, MEED_NULL, &pVulkanShader->module));
 
-	mdPlatformCloseFile(pFile);
+	mdFileClose(pFile);
 
 	return pShader;
 }
 
-void mdShaderDestroy(struct MEEDShader* pShader)
+void mdShaderDestroy(struct MdShader* pShader)
 {
 	MEED_ASSERT(pShader != MEED_NULL);
 	MEED_ASSERT(g_vulkan != MEED_NULL);
@@ -43,7 +43,7 @@ void mdShaderDestroy(struct MEEDShader* pShader)
 	vkDestroyShaderModule(g_vulkan->device, pVulkanShader->module, MEED_NULL);
 
 	MEED_FREE(pShader->pInternal, struct VulkanShader);
-	MEED_FREE(pShader, struct MEEDShader);
+	MEED_FREE(pShader, struct MdShader);
 }
 
 #endif // MEED_USE_VULKAN

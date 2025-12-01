@@ -10,14 +10,14 @@ extern "C" {
 /**
  * @brief Structure representing a render pipeline.
  */
-struct MEEDPipeline
+struct MdPipeline
 {
 	void* pInternal; ///< Pointer to internal implementation-specific data (Vulkan, WebGL, etc.).
 
 	const char* vertexShaderPath;	///< Path to the vertex shader file.
 	const char* fragmentShaderPath; ///< Path to the fragment shader file.
 
-	struct MEEDReleaseStack* pReleaseStack; ///< Release stack for managing resources.
+	struct MdReleaseStack* pReleaseStack; ///< Release stack for managing resources.
 };
 
 /**
@@ -25,23 +25,23 @@ struct MEEDPipeline
  *
  * @param vertexShaderPath Path to the vertex shader file.
  * @param fragmentShaderPath Path to the fragment shader file.
- * @return A pointer to the created MEEDPipeline.
+ * @return A pointer to the created MdPipeline.
  */
-struct MEEDPipeline* mdPipelineCreate(const char* vertexShaderPath, const char* fragmentShaderPath);
+struct MdPipeline* mdPipelineCreate(const char* vertexShaderPath, const char* fragmentShaderPath);
 
 /**
  * @brief Binds the specified render pipeline for use in rendering.
  *
- * @param pPipeline Pointer to the MEEDPipeline to use.
+ * @param pPipeline Pointer to the MdPipeline to use.
  */
-void mdPipelineUse(struct MEEDPipeline* pPipeline);
+void mdPipelineUse(struct MdPipeline* pPipeline);
 
 /**
  * @brief Destroys the specified render pipeline and releases its resources.
  *
- * @param pPipeline Pointer to the MEEDPipeline to destroy.
+ * @param pPipeline Pointer to the MdPipeline to destroy.
  */
-void mdPipelineDestroy(struct MEEDPipeline* pPipeline);
+void mdPipelineDestroy(struct MdPipeline* pPipeline);
 
 #if __cplusplus
 }

@@ -15,10 +15,10 @@ protected:
 	}
 
 protected:
-	struct MEEDStack* s_pStack;
-	int				  a = 10;
-	int				  b = 20;
-	int				  c = 30;
+	struct MdStack* s_pStack;
+	int				a = 10;
+	int				b = 20;
+	int				c = 30;
 };
 
 TEST_F(StackTest, PushAndTop)
@@ -51,9 +51,9 @@ TEST_F(StackTest, PopWithEmptyStack)
 	EXPECT_EXIT(
 		{
 			mdStackPop(s_pStack);
-			std::exit(MEED_EXCEPTION_TYPE_EMPTY_CONTAINER);
+			std::exit(MD_EXCEPTION_TYPE_EMPTY_CONTAINER);
 		},
-		testing::ExitedWithCode(MEED_EXCEPTION_TYPE_EMPTY_CONTAINER),
+		testing::ExitedWithCode(MD_EXCEPTION_TYPE_EMPTY_CONTAINER),
 		"");
 }
 
@@ -106,7 +106,7 @@ TEST_F(StackTest, Clear)
 
 TEST_F(StackTest, TestWithCallback)
 {
-	struct MEEDStack* pStackWithCallback = mdStackCreate(deleteTestNode);
+	struct MdStack* pStackWithCallback = mdStackCreate(deleteTestNode);
 
 	TestNode* pNode1 = MEED_MALLOC(TestNode);
 	pNode1->value	 = 100;

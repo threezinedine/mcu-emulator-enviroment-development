@@ -15,10 +15,10 @@ protected:
 	}
 
 protected:
-	struct MEEDDynamicArray* s_pArray;
-	int						 a = 10;
-	int						 b = 20;
-	int						 c = 30;
+	struct MdDynamicArray* s_pArray;
+	int					   a = 10;
+	int					   b = 20;
+	int					   c = 30;
 };
 
 TEST_F(DynamicArrayTest, CreateAndDestroy)
@@ -63,9 +63,9 @@ TEST_F(DynamicArrayTest, AccessOutOfBounds)
 	EXPECT_EXIT(
 		{
 			mdDynamicArrayAt(s_pArray, 2);
-			std::exit(MEED_EXCEPTION_TYPE_OUT_OF_INDEX);
+			std::exit(MD_EXCEPTION_TYPE_OUT_OF_INDEX);
 		},
-		testing::ExitedWithCode(MEED_EXCEPTION_TYPE_OUT_OF_INDEX),
+		testing::ExitedWithCode(MD_EXCEPTION_TYPE_OUT_OF_INDEX),
 		"");
 }
 
@@ -90,9 +90,9 @@ TEST_F(DynamicArrayTest, ResizeInvalidOperation)
 	EXPECT_EXIT(
 		{
 			mdDynamicArrayResize(s_pArray, 1);
-			std::exit(MEED_EXCEPTION_TYPE_INVALID_OPERATION);
+			std::exit(MD_EXCEPTION_TYPE_INVALID_OPERATION);
 		},
-		testing::ExitedWithCode(MEED_EXCEPTION_TYPE_INVALID_OPERATION),
+		testing::ExitedWithCode(MD_EXCEPTION_TYPE_INVALID_OPERATION),
 		"");
 }
 
@@ -160,9 +160,9 @@ TEST_F(DynamicArrayTest, InsertOutOfBounds)
 	EXPECT_EXIT(
 		{
 			mdDynamicArrayInsert(s_pArray, 2, &b);
-			std::exit(MEED_EXCEPTION_TYPE_OUT_OF_INDEX);
+			std::exit(MD_EXCEPTION_TYPE_OUT_OF_INDEX);
 		},
-		testing::ExitedWithCode(MEED_EXCEPTION_TYPE_OUT_OF_INDEX),
+		testing::ExitedWithCode(MD_EXCEPTION_TYPE_OUT_OF_INDEX),
 		"");
 }
 
@@ -212,15 +212,15 @@ TEST_F(DynamicArrayTest, EraseOutOfBounds)
 	EXPECT_EXIT(
 		{
 			mdDynamicArrayErase(s_pArray, 1);
-			std::exit(MEED_EXCEPTION_TYPE_OUT_OF_INDEX);
+			std::exit(MD_EXCEPTION_TYPE_OUT_OF_INDEX);
 		},
-		testing::ExitedWithCode(MEED_EXCEPTION_TYPE_OUT_OF_INDEX),
+		testing::ExitedWithCode(MD_EXCEPTION_TYPE_OUT_OF_INDEX),
 		"");
 }
 
 TEST_F(DynamicArrayTest, WithDeleteCallback)
 {
-	struct MEEDDynamicArray* pArrayWithCallback = mdDynamicArrayCreate(0, deleteTestNode);
+	struct MdDynamicArray* pArrayWithCallback = mdDynamicArrayCreate(0, deleteTestNode);
 
 	TestNode* pNode1 = MEED_MALLOC(TestNode);
 	pNode1->value	 = 100;
@@ -240,7 +240,7 @@ TEST_F(DynamicArrayTest, WithDeleteCallback)
 
 TEST_F(DynamicArrayTest, ClearWithDeleteCallback)
 {
-	struct MEEDDynamicArray* pArrayWithCallback = mdDynamicArrayCreate(0, deleteTestNode);
+	struct MdDynamicArray* pArrayWithCallback = mdDynamicArrayCreate(0, deleteTestNode);
 
 	TestNode* pNode1 = MEED_MALLOC(TestNode);
 	pNode1->value	 = 100;
@@ -263,7 +263,7 @@ TEST_F(DynamicArrayTest, ClearWithDeleteCallback)
 
 TEST_F(DynamicArrayTest, DeleteWithDeleteCallback)
 {
-	struct MEEDDynamicArray* pArrayWithCallback = mdDynamicArrayCreate(0, deleteTestNode);
+	struct MdDynamicArray* pArrayWithCallback = mdDynamicArrayCreate(0, deleteTestNode);
 
 	TestNode* pNode1 = MEED_MALLOC(TestNode);
 	pNode1->value	 = 100;

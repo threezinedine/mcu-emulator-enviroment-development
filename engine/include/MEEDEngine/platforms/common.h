@@ -23,12 +23,12 @@
 	{                                                                                                                  \
 		if (!(expr))                                                                                                   \
 		{                                                                                                              \
-			struct MEEDPlatformConsoleConfig config;                                                                   \
-			config.color = MEED_CONSOLE_COLOR_RED;                                                                     \
-			mdPlatformSetConsoleConfig(config);                                                                        \
-			mdPlatformFPrint("Assertion failed: %s at %s:%d\n", #expr, __FILE__, __LINE__);                            \
-			config.color = MEED_CONSOLE_COLOR_RESET;                                                                   \
-			mdPlatformSetConsoleConfig(config);                                                                        \
+			struct MdConsoleConfig config;                                                                             \
+			config.color = MD_CONSOLE_COLOR_RED;                                                                       \
+			mdSetConsoleConfig(config);                                                                                \
+			mdFormatPrint("Assertion failed: %s at %s:%d\n", #expr, __FILE__, __LINE__);                               \
+			config.color = MD_CONSOLE_COLOR_RESET;                                                                     \
+			mdSetConsoleConfig(config);                                                                                \
 			debugBreak();                                                                                              \
 		}                                                                                                              \
 	} while (0)
@@ -38,14 +38,14 @@
 	{                                                                                                                  \
 		if (!(expr))                                                                                                   \
 		{                                                                                                              \
-			struct MEEDPlatformConsoleConfig config;                                                                   \
-			config.color = MEED_CONSOLE_COLOR_RED;                                                                     \
-			mdPlatformSetConsoleConfig(config);                                                                        \
+			struct MdConsoleConfig config;                                                                             \
+			config.color = MD_CONSOLE_COLOR_RED;                                                                       \
+			mdSetConsoleConfig(config);                                                                                \
 			char buffer[512];                                                                                          \
-			mdPlatformBufferedPrint(buffer, sizeof(buffer), msg, ##__VA_ARGS__);                                       \
-			mdPlatformFPrint("Assertion failed: %s at %s:%d\n", buffer, __FILE__, __LINE__);                           \
-			config.color = MEED_CONSOLE_COLOR_RESET;                                                                   \
-			mdPlatformSetConsoleConfig(config);                                                                        \
+			mdFormatString(buffer, sizeof(buffer), msg, ##__VA_ARGS__);                                                \
+			mdFormatPrint("Assertion failed: %s at %s:%d\n", buffer, __FILE__, __LINE__);                              \
+			config.color = MD_CONSOLE_COLOR_RESET;                                                                     \
+			mdSetConsoleConfig(config);                                                                                \
 			debugBreak();                                                                                              \
 		}                                                                                                              \
 	} while (0)

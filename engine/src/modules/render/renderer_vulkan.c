@@ -28,7 +28,7 @@ static const char* layers[] = {
 
 struct MEEDVulkan* g_vulkan = MEED_NULL; // Global Vulkan instance
 
-static struct MEEDReleaseStack* s_releaseStack = MEED_NULL; // Global release stack instance
+static struct MdReleaseStack* s_releaseStack = MEED_NULL; // Global release stack instance
 
 static void createVulkanInstance();
 #if MEED_DEBUG
@@ -50,7 +50,7 @@ static void createSyncObjects();
 
 static void deleteGlobalVulkanInstance(void*);
 
-void mdRenderInitialize(struct MEEDWindowData* pWindowData)
+void mdRenderInitialize(struct MdWindowData* pWindowData)
 {
 	MEED_ASSERT_MSG(!s_isInitialized, "Rendering module is already initialized.");
 	MEED_ASSERT(pWindowData != MEED_NULL);
@@ -60,7 +60,7 @@ void mdRenderInitialize(struct MEEDWindowData* pWindowData)
 	s_releaseStack = mdReleaseStackCreate();
 
 	g_vulkan = MEED_MALLOC(struct MEEDVulkan);
-	mdPlatformMemorySet(g_vulkan, 0, sizeof(struct MEEDVulkan));
+	mdMemorySet(g_vulkan, 0, sizeof(struct MEEDVulkan));
 	mdReleaseStackPush(s_releaseStack, MEED_NULL, deleteGlobalVulkanInstance);
 
 	// Setup initial values for Vulkan context
@@ -154,33 +154,33 @@ VKAPI_ATTR VkBool32 VKAPI_CALL vulkanDebugCallback(VkDebugUtilsMessageSeverityFl
 												   const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
 												   void*									   pUserData)
 {
-	struct MEEDPlatformConsoleConfig config;
-	char							 severityString[10];
+	struct MdConsoleConfig config;
+	char				   severityString[10];
 
 	switch (messageSeverity)
 	{
 	case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
-		config.color = MEED_CONSOLE_COLOR_WHITE;
-		mdPlatformBufferedPrint(severityString, sizeof(severityString), "%7s", "VERBOSE");
+		config.color = MD_CONSOLE_COLOR_WHITE;
+		mdFormatString(severityString, sizeof(severityString), "%7s", "VERBOSE");
 		break;
 	case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
-		config.color = MEED_CONSOLE_COLOR_GREEN;
-		mdPlatformBufferedPrint(severityString, sizeof(severityString), "%7s", "INFO");
+		config.color = MD_CONSOLE_COLOR_GREEN;
+		mdFormatString(severityString, sizeof(severityString), "%7s", "INFO");
 		break;
 	case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
-		config.color = MEED_CONSOLE_COLOR_YELLOW;
-		mdPlatformBufferedPrint(severityString, sizeof(severityString), "%7s", "WARNING");
+		config.color = MD_CONSOLE_COLOR_YELLOW;
+		mdFormatString(severityString, sizeof(severityString), "%7s", "WARNING");
 		break;
 	case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
-		config.color = MEED_CONSOLE_COLOR_RED;
-		mdPlatformBufferedPrint(severityString, sizeof(severityString), "%7s", "ERROR");
+		config.color = MD_CONSOLE_COLOR_RED;
+		mdFormatString(severityString, sizeof(severityString), "%7s", "ERROR");
 		break;
 	default:
-		config.color = MEED_CONSOLE_COLOR_RESET;
+		config.color = MD_CONSOLE_COLOR_RESET;
 	}
 
-	mdPlatformSetConsoleConfig(config);
-	mdPlatformFPrint("[%7s] - [%s] - %s\n", "VULKAN", severityString, pCallbackData->pMessage);
+	mdSetConsoleConfig(config);
+	mdFormatPrint("[%7s] - [%s] - %s\n", "VULKAN", severityString, pCallbackData->pMessage);
 
 	return VK_FALSE;
 }
@@ -291,8 +291,8 @@ static b8 checkDeviceExtensionsSupport(VkPhysicalDevice device)
 		b8 extensionFound = MEED_FALSE;
 		for (u32 availableEXTIndex = 0u; availableEXTIndex < deviceExtensionsCount; ++availableEXTIndex)
 		{
-			if (mdPlatformStringCompare(deviceExtensions[requiredEXTIndex],
-										pAvailableExtensions[availableEXTIndex].extensionName) == 0)
+			if (mdStringCompare(deviceExtensions[requiredEXTIndex],
+								pAvailableExtensions[availableEXTIndex].extensionName) == 0)
 			{
 				extensionFound = MEED_TRUE;
 				break;
@@ -441,8 +441,8 @@ static void createDevice()
 		g_vulkan->queueFamilies.presentFamily,
 	};
 
-	struct MEEDSet* pSet			   = mdSetCreate(queueFamilyCompare);
-	u32				familyIndicesCount = MEED_ARRAY_SIZE(familyIndices);
+	struct MdSet* pSet				 = mdSetCreate(queueFamilyCompare);
+	u32			  familyIndicesCount = MEED_ARRAY_SIZE(familyIndices);
 	for (u32 i = 0u; i < familyIndicesCount; ++i)
 	{
 		mdSetPush(pSet, &familyIndices[i]);
@@ -556,7 +556,7 @@ static void chooseExtent()
 		clamp(&width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
 		clamp(&height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
 
-		mdPlatformMemorySet(&g_vulkan->extent, 0, sizeof(VkExtent2D));
+		mdMemorySet(&g_vulkan->extent, 0, sizeof(VkExtent2D));
 		g_vulkan->extent.width	= width;
 		g_vulkan->extent.height = height;
 	}
@@ -1060,7 +1060,7 @@ void mdRenderStartFrame()
 	vkCmdSetScissor(g_vulkan->graphicsCommandBuffers[g_vulkan->currentFrame], 0, 1, &scissor);
 }
 
-void mdRenderClearScreen(struct MEEDColor color)
+void mdRenderClearScreen(struct MdColor color)
 {
 	MEED_ASSERT(g_vulkan != MEED_NULL);
 

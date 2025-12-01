@@ -11,7 +11,7 @@ extern "C" {
  *
  * Commonly used callback function types.
  */
-typedef void (*MEEDNodeDataDeleteCallback)(void* pData);
+typedef void (*MdNodeDataDeleteCallback)(void* pData);
 
 #if __cplusplus
 }

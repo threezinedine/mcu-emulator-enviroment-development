@@ -6,7 +6,7 @@ extern "C" {
 
 #include "MEEDEngine/platforms/platforms.h"
 
-struct MEEDColor
+struct MdColor
 {
 	f32 r;
 	f32 g;

@@ -2,15 +2,15 @@
 
 int main(void)
 {
-	mdPlatformMemoryInitialize();
+	mdMemoryInitialize();
 	mdWindowInitialize();
 
-	struct MEEDWindowData* pWindowData = mdWindowCreate(800, 600, "MEED Application Window");
+	struct MdWindowData* pWindowData = mdWindowCreate(800, 600, "MEED Application Window");
 
 	while (pWindowData->shouldClose == MEED_FALSE)
 	{
-		struct MEEDWindowEvent windowEvent = mdWindowPollEvents(pWindowData);
-		if (windowEvent.type == MEED_WINDOW_EVENT_TYPE_CLOSE)
+		struct MdWindowEvent windowEvent = mdWindowPollEvents(pWindowData);
+		if (windowEvent.type == MD_WINDOW_EVENT_TYPE_CLOSE)
 		{
 			pWindowData->shouldClose = MEED_TRUE;
 		}
@@ -19,6 +19,6 @@ int main(void)
 	mdWindowDestroy(pWindowData);
 
 	mdWindowShutdown();
-	mdPlatformMemoryShutdown();
+	mdMemoryShutdown();
 	return 0;
 }

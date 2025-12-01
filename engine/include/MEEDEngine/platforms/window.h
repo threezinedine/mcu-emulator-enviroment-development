@@ -15,7 +15,7 @@ extern "C" {
  *
  * @example
  * ```
- * struct MEEDWindowData* pWindowData = mdWindowCreate(800, 600, "MEED Application Window");
+ * struct MdWindowData* pWindowData = mdWindowCreate(800, 600, "MEED Application Window");
  *
  * // Main loop
  * while (!pWindowData->shouldClose)
@@ -31,26 +31,26 @@ extern "C" {
 /**
  * Enumeration of possible window event types.
  */
-enum MEEDWindowEventType
+enum MdWindowEventType
 {
-	MEED_WINDOW_EVENT_TYPE_NONE,  ///< No event, but the polling always returns this when there are no events.
-	MEED_WINDOW_EVENT_TYPE_CLOSE, ///< The window close event.
-	MEED_WINDOW_EVENT_TYPE_COUNT,
+	MD_WINDOW_EVENT_TYPE_NONE,	///< No event, but the polling always returns this when there are no events.
+	MD_WINDOW_EVENT_TYPE_CLOSE, ///< The window close event.
+	MD_WINDOW_EVENT_TYPE_COUNT,
 };
 
 /**
  * Represents a window event.
  * (Currently empty, can be expanded in the future for event handling.)
  */
-struct MEEDWindowEvent
+struct MdWindowEvent
 {
-	enum MEEDWindowEventType type; ///< The type of the window event.
+	enum MdWindowEventType type; ///< The type of the window event.
 };
 
 /**
  * Needed information for working with the windowing system.
  */
-struct MEED_BINDING MEEDWindowData
+struct MEED_BINDING MdWindowData
 {
 	void* pInternal; ///< Used for storing custom windowing system data (e.g Windows, Linux, MacOS, SDL, GLFW, etc.)
 
@@ -74,7 +74,7 @@ void mdWindowInitialize();
  *
  * @return A pointer to the created window data.
  */
-struct MEEDWindowData* mdWindowCreate(u32 width, u32 height, const char* title);
+struct MdWindowData* mdWindowCreate(u32 width, u32 height, const char* title);
 
 #if MEED_USE_VULKAN
 /**
@@ -84,7 +84,7 @@ struct MEEDWindowData* mdWindowCreate(u32 width, u32 height, const char* title);
  * @param instance The Vulkan instance.
  * @param pSurface A pointer to store the created Vulkan surface.
  */
-VkResult mdWindowCreateVulkanSurface(struct MEEDWindowData* pWindowData, VkInstance instance, VkSurfaceKHR* pSurface);
+VkResult mdWindowCreateVulkanSurface(struct MdWindowData* pWindowData, VkInstance instance, VkSurfaceKHR* pSurface);
 
 /**
  * Destroy the Vulkan surface associated with the specified window.
@@ -93,23 +93,23 @@ VkResult mdWindowCreateVulkanSurface(struct MEEDWindowData* pWindowData, VkInsta
  * @param instance The Vulkan instance.
  * @param surface The Vulkan surface to destroy.
  */
-void mdWindowDestroyVulkanSurface(struct MEEDWindowData* pWindowData, VkInstance instance, VkSurfaceKHR surface);
+void mdWindowDestroyVulkanSurface(struct MdWindowData* pWindowData, VkInstance instance, VkSurfaceKHR surface);
 #endif
 
 /**
  * Poll for window events (e.g., input, close events).
  *
  * @param pWindowData A pointer to the window data to poll events from.
- * @return A `MEEDWindowEvent` structure containing the polled event information.
+ * @return A `MdWindowEvent` structure containing the polled event information.
  */
-struct MEEDWindowEvent mdWindowPollEvents(struct MEEDWindowData* pWindowData);
+struct MdWindowEvent mdWindowPollEvents(struct MdWindowData* pWindowData);
 
 /**
  * Destroy a previously created window.
  *
  * @param pWindowData A pointer to the window data to destroy.
  */
-void mdWindowDestroy(struct MEEDWindowData* pWindowData);
+void mdWindowDestroy(struct MdWindowData* pWindowData);
 
 /**
  * Shutdown the windowing system. Must be called after all window-related functions are done.

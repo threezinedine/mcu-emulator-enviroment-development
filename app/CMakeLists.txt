@@ -4,7 +4,7 @@ project(MEEDApp)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../cmake)
 include(MEEDConfigure)
 
-MEEDSetup()
+MdSetup()
 
 file(
     GLOB 

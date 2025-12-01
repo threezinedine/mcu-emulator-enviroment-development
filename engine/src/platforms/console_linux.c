@@ -5,23 +5,23 @@
 #include "MEEDEngine/platforms/console.h"
 
 static const char* ansi[] = {
-	[MEED_CONSOLE_COLOR_RESET]	 = "\033[0m",
-	[MEED_CONSOLE_COLOR_RED]	 = "\033[91m",
-	[MEED_CONSOLE_COLOR_GREEN]	 = "\033[92m",
-	[MEED_CONSOLE_COLOR_YELLOW]	 = "\033[93m",
-	[MEED_CONSOLE_COLOR_BLUE]	 = "\033[94m",
-	[MEED_CONSOLE_COLOR_MAGENTA] = "\033[95m",
-	[MEED_CONSOLE_COLOR_CYAN]	 = "\033[96m",
-	[MEED_CONSOLE_COLOR_WHITE]	 = "\033[97m",
-	[MEED_CONSOLE_COLOR_BOLD]	 = "\033[1m",
+	[MD_CONSOLE_COLOR_RESET]   = "\033[0m",
+	[MD_CONSOLE_COLOR_RED]	   = "\033[91m",
+	[MD_CONSOLE_COLOR_GREEN]   = "\033[92m",
+	[MD_CONSOLE_COLOR_YELLOW]  = "\033[93m",
+	[MD_CONSOLE_COLOR_BLUE]	   = "\033[94m",
+	[MD_CONSOLE_COLOR_MAGENTA] = "\033[95m",
+	[MD_CONSOLE_COLOR_CYAN]	   = "\033[96m",
+	[MD_CONSOLE_COLOR_WHITE]   = "\033[97m",
+	[MD_CONSOLE_COLOR_BOLD]	   = "\033[1m",
 };
 
-void mdPlatformSetConsoleConfig(struct MEEDPlatformConsoleConfig config)
+void mdSetConsoleConfig(struct MdConsoleConfig config)
 {
 	printf("%s", ansi[config.color]);
 }
 
-void mdPlatformBufferedPrint(char* buffer, mdSize length, char* format, ...)
+void mdFormatString(char* buffer, mdSize length, char* format, ...)
 {
 	va_list args;
 	va_start(args, format);
@@ -29,7 +29,7 @@ void mdPlatformBufferedPrint(char* buffer, mdSize length, char* format, ...)
 	va_end(args);
 }
 
-void mdPlatformFPrint(const char* format, ...)
+void mdFormatPrint(const char* format, ...)
 {
 	va_list args;
 	va_start(args, format);
@@ -37,7 +37,7 @@ void mdPlatformFPrint(const char* format, ...)
 	va_end(args);
 }
 
-void mdPlatformPrint(const char* str)
+void mdPrint(const char* str)
 {
 	printf("%s", str);
 }

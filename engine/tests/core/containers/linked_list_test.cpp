@@ -15,7 +15,7 @@ protected:
 	}
 
 protected:
-	struct MEEDLinkedList* s_pList;
+	struct MdLinkedList* s_pList;
 
 	int a = 10;
 	int b = 20;
@@ -50,9 +50,9 @@ TEST_F(LinkedListTest, OutOfBoundsAccess)
 	EXPECT_EXIT(
 		{
 			mdLinkedListAt(s_pList, 2);
-			std::exit(MEED_EXCEPTION_TYPE_OUT_OF_INDEX);
+			std::exit(MD_EXCEPTION_TYPE_OUT_OF_INDEX);
 		},
-		testing::ExitedWithCode(MEED_EXCEPTION_TYPE_OUT_OF_INDEX),
+		testing::ExitedWithCode(MD_EXCEPTION_TYPE_OUT_OF_INDEX),
 		"");
 }
 
@@ -97,9 +97,9 @@ TEST_F(LinkedListTest, InsertOutOfBounds)
 	EXPECT_EXIT(
 		{
 			mdLinkedListInsert(s_pList, 2, &b);
-			std::exit(MEED_EXCEPTION_TYPE_OUT_OF_INDEX);
+			std::exit(MD_EXCEPTION_TYPE_OUT_OF_INDEX);
 		},
-		testing::ExitedWithCode(MEED_EXCEPTION_TYPE_OUT_OF_INDEX),
+		testing::ExitedWithCode(MD_EXCEPTION_TYPE_OUT_OF_INDEX),
 		"");
 }
 
@@ -149,15 +149,15 @@ TEST_F(LinkedListTest, EraseOutOfBounds)
 	EXPECT_EXIT(
 		{
 			mdLinkedListErase(s_pList, 1);
-			std::exit(MEED_EXCEPTION_TYPE_OUT_OF_INDEX);
+			std::exit(MD_EXCEPTION_TYPE_OUT_OF_INDEX);
 		},
-		testing::ExitedWithCode(MEED_EXCEPTION_TYPE_OUT_OF_INDEX),
+		testing::ExitedWithCode(MD_EXCEPTION_TYPE_OUT_OF_INDEX),
 		"");
 }
 
 TEST_F(LinkedListTest, EraseWithCallback)
 {
-	struct MEEDLinkedList* pListWithCallback = mdLinkedListCreate(deleteTestNode);
+	struct MdLinkedList* pListWithCallback = mdLinkedListCreate(deleteTestNode);
 
 	TestNode* pNode1 = MEED_MALLOC(TestNode);
 	pNode1->value	 = 100;
@@ -188,7 +188,7 @@ TEST_F(LinkedListTest, EmptyListSize)
 
 TEST_F(LinkedListTest, ListWithDeleteCallback)
 {
-	struct MEEDLinkedList* pListWithCallback = mdLinkedListCreate(deleteTestNode);
+	struct MdLinkedList* pListWithCallback = mdLinkedListCreate(deleteTestNode);
 
 	TestNode* pNode1 = MEED_MALLOC(TestNode);
 	pNode1->value	 = 100;
@@ -208,7 +208,7 @@ TEST_F(LinkedListTest, ListWithDeleteCallback)
 
 TEST_F(LinkedListTest, ClearWithDeleteCallback)
 {
-	struct MEEDLinkedList* pListWithCallback = mdLinkedListCreate(deleteTestNode);
+	struct MdLinkedList* pListWithCallback = mdLinkedListCreate(deleteTestNode);
 
 	TestNode* pNode1 = MEED_MALLOC(TestNode);
 	pNode1->value	 = 100;

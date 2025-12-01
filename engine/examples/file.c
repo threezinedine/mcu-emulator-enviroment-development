@@ -2,19 +2,19 @@
 
 int main(void)
 {
-	mdPlatformMemoryInitialize();
+	mdMemoryInitialize();
 
-	struct MEEDFileData* pFile = mdPlatformOpenFile("./example.txt", MEED_FILE_MODE_WRITE);
+	struct MdFileData* pFile = mdFileOpen("./example.txt", MD_FILE_MODE_WRITE);
 
 	const char* content = "Hello, MEED Engine File!\n";
-	mdPlatformWrite(pFile, content, mdPlatformGetStringLength(content));
-	mdPlatformCloseFile(pFile);
+	mdFileWrite(pFile, content, mdGetStringLength(content));
+	mdFileClose(pFile);
 
-	struct MEEDFileData* pReadFile = mdPlatformOpenFile("./example.txt", MEED_FILE_MODE_READ);
-	mdPlatformPrint("File Content:\n");
-	mdPlatformPrint(pReadFile->content);
-	mdPlatformCloseFile(pReadFile);
+	struct MdFileData* pReadFile = mdFileOpen("./example.txt", MD_FILE_MODE_READ);
+	mdPrint("File Content:\n");
+	mdPrint(pReadFile->content);
+	mdFileClose(pReadFile);
 
-	mdPlatformMemoryShutdown();
+	mdMemoryShutdown();
 	return 0;
 }

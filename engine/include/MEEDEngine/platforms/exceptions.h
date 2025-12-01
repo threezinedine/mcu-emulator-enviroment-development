@@ -9,12 +9,12 @@ extern "C" {
  * @file exceptions.h
  * The utilities for managing exceptions inside the `MEEDEngine`.
  */
-enum MEEDExceptionType
+enum MdExceptionType
 {
-	MEED_EXCEPTION_TYPE_SUCCESS = 0,
-	MEED_EXCEPTION_TYPE_OUT_OF_INDEX,	   ///< Raised when an index is out of bounds of a container.
-	MEED_EXCEPTION_TYPE_EMPTY_CONTAINER,   ///< Raised when performing an operation on an empty container.
-	MEED_EXCEPTION_TYPE_INVALID_OPERATION, ///< Raised when an invalid operation is performed.
+	MD_EXCEPTION_TYPE_SUCCESS = 0,
+	MD_EXCEPTION_TYPE_OUT_OF_INDEX,		 ///< Raised when an index is out of bounds of a container.
+	MD_EXCEPTION_TYPE_EMPTY_CONTAINER,	 ///< Raised when performing an operation on an empty container.
+	MD_EXCEPTION_TYPE_INVALID_OPERATION, ///< Raised when an invalid operation is performed.
 };
 
 /**
@@ -24,7 +24,7 @@ enum MEEDExceptionType
  * @param file The file where the exception occurred.
  * @param line The line number where the exception occurred.
  */
-void mdRaiseException(enum MEEDExceptionType type, const char* message, const char* file, u32 line);
+void mdRaiseException(enum MdExceptionType type, const char* message, const char* file, u32 line);
 
 /**
  * Macro to raise an exception with automatic file and line number information.
@@ -35,7 +35,7 @@ void mdRaiseException(enum MEEDExceptionType type, const char* message, const ch
 	do                                                                                                                 \
 	{                                                                                                                  \
 		char formattedMessage[512];                                                                                    \
-		mdPlatformBufferedPrint(formattedMessage, sizeof(formattedMessage), message, ##__VA_ARGS__);                   \
+		mdFormatString(formattedMessage, sizeof(formattedMessage), message, ##__VA_ARGS__);                            \
 		mdRaiseException(type, formattedMessage, __FILE__, __LINE__);                                                  \
 	} while (MEED_FALSE);
 

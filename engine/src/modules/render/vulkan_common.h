@@ -31,16 +31,16 @@ struct QueueFamilyIndices
 /// @brief The Vulkan-specific implementation of the render pipeline.
 struct VulkanPipeline
 {
-	struct MEEDShader* pVertexShader;
-	struct MEEDShader* pFragmentShader;
-	VkPipelineLayout   layout;
-	VkPipeline		   pipeline;
+	struct MdShader* pVertexShader;
+	struct MdShader* pFragmentShader;
+	VkPipelineLayout layout;
+	VkPipeline		 pipeline;
 };
 
 /// @brief The context of the Vulkan renderer.
 struct MEEDVulkan
 {
-	struct MEEDWindowData* pWindowData;
+	struct MdWindowData* pWindowData;
 
 	VkInstance instance;
 #if MEED_DEBUG

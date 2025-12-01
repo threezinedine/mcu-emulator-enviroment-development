@@ -1,8 +1,8 @@
 #include "MEEDEngine/core/containers/linked_list.h"
 
-struct MEEDLinkedList* mdLinkedListCreate(MEEDNodeDataDeleteCallback pDeleteCallback)
+struct MdLinkedList* mdLinkedListCreate(MdNodeDataDeleteCallback pDeleteCallback)
 {
-	struct MEEDLinkedList* pList = MEED_MALLOC(struct MEEDLinkedList);
+	struct MdLinkedList* pList = MEED_MALLOC(struct MdLinkedList);
 	MEED_ASSERT(pList != MEED_NULL);
 
 	pList->size			   = 0;
@@ -13,11 +13,11 @@ struct MEEDLinkedList* mdLinkedListCreate(MEEDNodeDataDeleteCallback pDeleteCall
 	return pList;
 }
 
-void mdLinkedListPush(struct MEEDLinkedList* pList, void* pData)
+void mdLinkedListPush(struct MdLinkedList* pList, void* pData)
 {
 	MEED_ASSERT(pList != MEED_NULL);
 
-	struct MEEDLinkedListNode* pNewNode = MEED_MALLOC(struct MEEDLinkedListNode);
+	struct MdLinkedListNode* pNewNode = MEED_MALLOC(struct MdLinkedListNode);
 	MEED_ASSERT(pNewNode != MEED_NULL);
 
 	pNewNode->pData = pData;
@@ -36,19 +36,19 @@ void mdLinkedListPush(struct MEEDLinkedList* pList, void* pData)
 	pList->size++;
 }
 
-void mdLinkedListInsert(struct MEEDLinkedList* pList, u32 index, void* pData)
+void mdLinkedListInsert(struct MdLinkedList* pList, u32 index, void* pData)
 {
 	MEED_ASSERT(pList != MEED_NULL);
 
 	if (index > pList->size)
 	{
-		MEED_THROW(MEED_EXCEPTION_TYPE_OUT_OF_INDEX,
+		MEED_THROW(MD_EXCEPTION_TYPE_OUT_OF_INDEX,
 				   "Index out of bounds: Attempted to insert at index %u in a linked list of size %u.",
 				   index,
 				   pList->size);
 	}
 
-	struct MEEDLinkedListNode* pNewNode = MEED_MALLOC(struct MEEDLinkedListNode);
+	struct MdLinkedListNode* pNewNode = MEED_MALLOC(struct MdLinkedListNode);
 	MEED_ASSERT(pNewNode != MEED_NULL);
 
 	pNewNode->pData = pData;
@@ -80,7 +80,7 @@ void mdLinkedListInsert(struct MEEDLinkedList* pList, u32 index, void* pData)
 	else
 	{
 		// Insert in the middle
-		struct MEEDLinkedListNode* pCurrent = pList->pHead;
+		struct MdLinkedListNode* pCurrent = pList->pHead;
 		for (u32 i = 0; i < index - 1; i++)
 		{
 			pCurrent = pCurrent->pNext;
@@ -92,20 +92,20 @@ void mdLinkedListInsert(struct MEEDLinkedList* pList, u32 index, void* pData)
 	pList->size++;
 }
 
-void mdLinkedListErase(struct MEEDLinkedList* pList, u32 index)
+void mdLinkedListErase(struct MdLinkedList* pList, u32 index)
 {
 	MEED_ASSERT(pList != MEED_NULL);
 
 	if (index >= pList->size)
 	{
-		MEED_THROW(MEED_EXCEPTION_TYPE_OUT_OF_INDEX,
+		MEED_THROW(MD_EXCEPTION_TYPE_OUT_OF_INDEX,
 				   "Index out of bounds: Attempted to erase index %u in a linked list of size %u.",
 				   index,
 				   pList->size);
 	}
 
-	struct MEEDLinkedListNode* pCurrent = pList->pHead;
-	struct MEEDLinkedListNode* pPrev	= MEED_NULL;
+	struct MdLinkedListNode* pCurrent = pList->pHead;
+	struct MdLinkedListNode* pPrev	  = MEED_NULL;
 
 	for (u32 i = 0; i < index; i++)
 	{
@@ -134,35 +134,35 @@ void mdLinkedListErase(struct MEEDLinkedList* pList, u32 index)
 		pList->pDeleteCallback(pCurrent->pData);
 	}
 
-	MEED_FREE(pCurrent, struct MEEDLinkedListNode);
+	MEED_FREE(pCurrent, struct MdLinkedListNode);
 	pList->size--;
 }
 
-u32 mdLinkedListCount(struct MEEDLinkedList* pList)
+u32 mdLinkedListCount(struct MdLinkedList* pList)
 {
 	MEED_ASSERT(pList != MEED_NULL);
 	return (u32)(pList->size);
 }
 
-b8 mdLinkedListEmpty(struct MEEDLinkedList* pList)
+b8 mdLinkedListEmpty(struct MdLinkedList* pList)
 {
 	MEED_ASSERT(pList != MEED_NULL);
 	return (pList->size == 0) ? MEED_TRUE : MEED_FALSE;
 }
 
-void* mdLinkedListAt(struct MEEDLinkedList* pList, u32 index)
+void* mdLinkedListAt(struct MdLinkedList* pList, u32 index)
 {
 	MEED_ASSERT(pList != MEED_NULL);
 
 	if (index >= pList->size)
 	{
-		MEED_THROW(MEED_EXCEPTION_TYPE_OUT_OF_INDEX,
+		MEED_THROW(MD_EXCEPTION_TYPE_OUT_OF_INDEX,
 				   "Index out of bounds: Attempted to access index %u in a linked list of size %u.",
 				   index,
 				   pList->size);
 	}
 
-	struct MEEDLinkedListNode* pCurrent = pList->pHead;
+	struct MdLinkedListNode* pCurrent = pList->pHead;
 	for (u32 i = 0; i < index; i++)
 	{
 		pCurrent = pCurrent->pNext;
@@ -172,15 +172,15 @@ void* mdLinkedListAt(struct MEEDLinkedList* pList, u32 index)
 	return pCurrent->pData;
 }
 
-void mdLinkedListClear(struct MEEDLinkedList* pList)
+void mdLinkedListClear(struct MdLinkedList* pList)
 {
 	MEED_ASSERT(pList != MEED_NULL);
 
-	struct MEEDLinkedListNode* pCurrent = pList->pHead;
+	struct MdLinkedListNode* pCurrent = pList->pHead;
 
 	while (pCurrent != MEED_NULL)
 	{
-		struct MEEDLinkedListNode* pNext = pCurrent->pNext;
+		struct MdLinkedListNode* pNext = pCurrent->pNext;
 
 		MEED_ASSERT(pCurrent != MEED_NULL);
 
@@ -189,7 +189,7 @@ void mdLinkedListClear(struct MEEDLinkedList* pList)
 			pList->pDeleteCallback(pCurrent->pData);
 		}
 
-		MEED_FREE(pCurrent, struct MEEDLinkedListNode);
+		MEED_FREE(pCurrent, struct MdLinkedListNode);
 		pCurrent = pNext;
 	}
 
@@ -198,11 +198,11 @@ void mdLinkedListClear(struct MEEDLinkedList* pList)
 	pList->size	 = 0;
 }
 
-void mdLinkedListDestroy(struct MEEDLinkedList* pList)
+void mdLinkedListDestroy(struct MdLinkedList* pList)
 {
 	MEED_ASSERT(pList != MEED_NULL);
 
 	mdLinkedListClear(pList);
 
-	MEED_FREE(pList, struct MEEDLinkedList);
+	MEED_FREE(pList, struct MdLinkedList);
 }

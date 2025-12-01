@@ -63,7 +63,7 @@ static void* _malloc(mdSize size);
  */
 static void _free(void* ptr, mdSize size);
 
-void mdPlatformMemoryInitialize()
+void mdMemoryInitialize()
 {
 	MEED_ASSERT(s_isInitialized == MEED_FALSE);
 	MEED_ASSERT(s_totalAllocatedMemory == 0);
@@ -77,18 +77,18 @@ void mdPlatformMemoryInitialize()
 	s_isInitialized = MEED_TRUE;
 }
 
-void* mdPlatformMalloc(mdSize size)
+void* mdMalloc(mdSize size)
 {
 	MEED_ASSERT(s_isInitialized == MEED_TRUE);
 
 	struct MemoryNode* pNode = (struct MemoryNode*)_malloc(sizeof(struct MemoryNode));
-	mdPlatformMemorySet(pNode, 0, sizeof(struct MemoryNode));
+	mdMemorySet(pNode, 0, sizeof(struct MemoryNode));
 
 	pNode->ptr	= _malloc(size);
 	pNode->size = size;
 
 #if PLATFORM_IS_LINUX
-	mdPlatformMemorySet(pNode->frames, 0, sizeof(void*) * MEMORY_MAX_TRACKED_FRAMES);
+	mdMemorySet(pNode->frames, 0, sizeof(void*) * MEMORY_MAX_TRACKED_FRAMES);
 	pNode->framesCount = backtrace(pNode->frames, MEMORY_MAX_TRACKED_FRAMES);
 	pNode->threadId	   = getpid();
 #endif
@@ -112,7 +112,7 @@ void* mdPlatformMalloc(mdSize size)
 
 static struct MemoryNode* _findNodeByPtr(void* ptr);
 
-void mdPlatformFree(void* ptr, mdSize size)
+void mdFree(void* ptr, mdSize size)
 {
 	MEED_ASSERT(s_isInitialized == MEED_TRUE);
 
@@ -149,19 +149,19 @@ void mdPlatformFree(void* ptr, mdSize size)
 	_free(pNode, sizeof(struct MemoryNode));
 }
 
-void* mdPlatformMemoryCopy(void* pDest, const void* pSrc, mdSize size)
+void* mdMemoryCopy(void* pDest, const void* pSrc, mdSize size)
 {
 	MEED_ASSERT(s_isInitialized == MEED_TRUE);
 	return memcpy(pDest, pSrc, size);
 }
 
-void* mdPlatformMemorySet(void* pDest, u8 value, mdSize size)
+void* mdMemorySet(void* pDest, u8 value, mdSize size)
 {
 	MEED_ASSERT(s_isInitialized == MEED_TRUE);
 	return memset(pDest, value, size);
 }
 
-u32 mdPlatformGetStringLength(const char* str)
+u32 mdGetStringLength(const char* str)
 {
 	MEED_ASSERT(s_isInitialized == MEED_TRUE);
 	MEED_ASSERT(str != MEED_NULL);
@@ -169,7 +169,7 @@ u32 mdPlatformGetStringLength(const char* str)
 	return strlen(str);
 }
 
-i32 mdPlatformStringCompare(const char* str1, const char* str2)
+i32 mdStringCompare(const char* str1, const char* str2)
 {
 	MEED_ASSERT(s_isInitialized == MEED_TRUE);
 	MEED_ASSERT(str1 != MEED_NULL);
@@ -178,7 +178,7 @@ i32 mdPlatformStringCompare(const char* str1, const char* str2)
 	return strcmp(str1, str2);
 }
 
-void mdPlatformMemoryShutdown()
+void mdMemoryShutdown()
 {
 	MEED_ASSERT(s_isInitialized == MEED_TRUE);
 
@@ -186,11 +186,11 @@ void mdPlatformMemoryShutdown()
 	if (s_pMemoryHead != MEED_NULL)
 	{
 #if PLATFORM_IS_LINUX
-		struct MEEDPlatformConsoleConfig config;
-		config.color = MEED_CONSOLE_COLOR_RED;
-		mdPlatformSetConsoleConfig(config);
+		struct MdConsoleConfig config;
+		config.color = MD_CONSOLE_COLOR_RED;
+		mdSetConsoleConfig(config);
 
-		mdPlatformFPrint("=== Memory Leak Stack Trace: ===\n");
+		mdFormatPrint("=== Memory Leak Stack Trace: ===\n");
 		char cmd[512];
 		snprintf(cmd, sizeof(cmd), "addr2line -e /proc/%d/exe -pif", s_pMemoryHead->threadId);
 		for (mdSize i = 0; i < s_pMemoryHead->framesCount; i++)
@@ -199,18 +199,18 @@ void mdPlatformMemoryShutdown()
 			char syscom[1024];
 			snprintf(syscom, sizeof(syscom), "%s %p", cmd, s_pMemoryHead->frames[i]);
 			char** function = backtrace_symbols(&s_pMemoryHead->frames[i], 1);
-			mdPlatformPrint(function[0]);
-			mdPlatformPrint("\n");
+			mdPrint(function[0]);
+			mdPrint("\n");
 			system(syscom);
 #else
 			char** function = backtrace_symbols(&s_pMemoryHead->frames[i], 1);
-			mdPlatformPrint(function[0]);
-			mdPlatformPrint("\n");
+			mdPrint(function[0]);
+			mdPrint("\n");
 #endif
 		}
 		exit(139); // 139 is the exit code for segmentation fault.
-		config.color = MEED_CONSOLE_COLOR_RESET;
-		mdPlatformSetConsoleConfig(config);
+		config.color = MD_CONSOLE_COLOR_RESET;
+		mdSetConsoleConfig(config);
 #else
 		MEED_UNTOUCHABLE();
 #endif
@@ -252,33 +252,33 @@ static struct MemoryNode* _findNodeByPtr(void* ptr)
 
 #else // MEED_RELEASE
 
-void mdPlatformMemoryInitialize()
+void mdMemoryInitialize()
 {
 	// No-op in release mode.
 }
 
-void* mdPlatformMalloc(mdSize size)
+void* mdMalloc(mdSize size)
 {
 	return malloc(size);
 }
 
-void mdPlatformFree(void* ptr, mdSize size)
+void mdFree(void* ptr, mdSize size)
 {
 	(void)size; // Unused parameter in release mode.
 	free(ptr);
 }
 
-void* mdPlatformMemoryCopy(void* pDest, const void* pSrc, mdSize size)
+void* mdMemoryCopy(void* pDest, const void* pSrc, mdSize size)
 {
 	return memcpy(pDest, pSrc, size);
 }
 
-void* mdPlatformMemorySet(void* pDest, u8 value, mdSize size)
+void* mdMemorySet(void* pDest, u8 value, mdSize size)
 {
 	return memset(pDest, value, size);
 }
 
-u32 mdPlatformGetStringLength(const char* str)
+u32 mdGetStringLength(const char* str)
 {
 	MEED_ASSERT(str != MEED_NULL);
 
@@ -291,7 +291,7 @@ u32 mdPlatformGetStringLength(const char* str)
 	return length;
 }
 
-i32 mdPlatformStringCompare(const char* str1, const char* str2)
+i32 mdStringCompare(const char* str1, const char* str2)
 {
 	MEED_ASSERT(s_isInitialized == MEED_TRUE);
 	MEED_ASSERT(str1 != MEED_NULL);
@@ -300,7 +300,7 @@ i32 mdPlatformStringCompare(const char* str1, const char* str2)
 	return strcmp(str1, str2);
 }
 
-void mdPlatformMemoryShutdown()
+void mdMemoryShutdown()
 {
 	// No-op in release mode.
 }

@@ -10,7 +10,7 @@ extern "C" {
  * @brief Initializes the rendering module.
  * This function sets up all necessary resources for rendering.
  */
-void mdRenderInitialize(struct MEEDWindowData* pWindowData);
+void mdRenderInitialize(struct MdWindowData* pWindowData);
 
 /**
  * @brief Starts a new frame for rendering.
@@ -28,7 +28,7 @@ void mdRenderEndFrame();
  * @brief Clears the screen with the specified color.
  * @param color The color to clear the screen with.
  */
-void mdRenderClearScreen(struct MEEDColor color);
+void mdRenderClearScreen(struct MdColor color);
 
 /**
  * @brief Issues a draw call to render primitives.

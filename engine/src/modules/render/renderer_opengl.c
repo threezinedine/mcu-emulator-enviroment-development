@@ -8,7 +8,7 @@ struct OpenGLRenderData* s_pRenderData = MEED_NULL;
 static u32		   vbo, vao;
 static GLFWwindow* s_pWindow = MEED_NULL;
 
-void mdRenderInitialize(struct MEEDWindowData* pWindowData)
+void mdRenderInitialize(struct MdWindowData* pWindowData)
 {
 	MEED_ASSERT(s_pRenderData == MEED_NULL);
 
@@ -36,7 +36,7 @@ void mdRenderInitialize(struct MEEDWindowData* pWindowData)
 	s_pWindow = (GLFWwindow*)glfwGetCurrentContext();
 }
 
-void mdRenderClearScreen(struct MEEDColor color)
+void mdRenderClearScreen(struct MdColor color)
 {
 	MEED_ASSERT(s_pRenderData != MEED_NULL);
 

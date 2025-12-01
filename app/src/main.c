@@ -1,18 +1,18 @@
 #include "MEEDEngine/MEEDEngine.h"
 
-struct MEEDWindowData* pWindowData = MEED_NULL;
-struct MEEDPipeline*   pPipeline   = MEED_NULL;
+struct MdWindowData* pWindowData = MEED_NULL;
+struct MdPipeline*	 pPipeline	 = MEED_NULL;
 
 void mainLoop();
 
 int main(void)
 {
-	mdPlatformMemoryInitialize();
+	mdMemoryInitialize();
 	mdWindowInitialize();
 
-	struct MEEDPlatformConsoleConfig config;
-	config.color = MEED_CONSOLE_COLOR_GREEN;
-	mdPlatformSetConsoleConfig(config);
+	struct MdConsoleConfig config;
+	config.color = MD_CONSOLE_COLOR_GREEN;
+	mdSetConsoleConfig(config);
 
 	pWindowData = mdWindowCreate(800, 600, "MEED Application Window");
 	mdRenderInitialize(pWindowData);
@@ -45,20 +45,20 @@ int main(void)
 	mdWindowDestroy(pWindowData);
 
 	mdWindowShutdown();
-	mdPlatformMemoryShutdown();
+	mdMemoryShutdown();
 	return 0;
 }
 
 void mainLoop()
 {
-	struct MEEDWindowEvent windowEvent = mdWindowPollEvents(pWindowData);
+	struct MdWindowEvent windowEvent = mdWindowPollEvents(pWindowData);
 
-	if (windowEvent.type == MEED_WINDOW_EVENT_TYPE_CLOSE)
+	if (windowEvent.type == MD_WINDOW_EVENT_TYPE_CLOSE)
 	{
 		pWindowData->shouldClose = MEED_TRUE;
 	}
 
-	mdRenderClearScreen((struct MEEDColor){0.2f, 0.3f, 0.3f, 1.0f});
+	mdRenderClearScreen((struct MdColor){0.2f, 0.3f, 0.3f, 1.0f});
 
 	mdRenderStartFrame();
 

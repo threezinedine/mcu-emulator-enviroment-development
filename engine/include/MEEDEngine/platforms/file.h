@@ -11,55 +11,55 @@ extern "C" {
  * The utilities for managing file operations inside the `MEEDEngine`.
  */
 
-enum MEED_BINDING MEEDFileMode
+enum MEED_BINDING MdFileMode
 {
-	MEED_FILE_MODE_READ,  ///< Open the file in read mode.
-	MEED_FILE_MODE_WRITE, ///< Open the file in write mode.
-	MEED_FILE_MODE_APPEND ///< Open the file in append mode.
+	MD_FILE_MODE_READ,	///< Open the file in read mode.
+	MD_FILE_MODE_WRITE, ///< Open the file in write mode.
+	MD_FILE_MODE_APPEND ///< Open the file in append mode.
 };
 
 /**
  * Needed information for working with files.
  */
-struct MEED_BINDING MEEDFileData
+struct MEED_BINDING MdFileData
 {
 	void* pInternal MEED_HIDDEN; ///< Used for storing custom file system data (e.g., file handles).
 
-	b8				  isOpen;	///< Flag indicating whether the file is currently open.
-	const char*		  filePath; ///< The path of the file.
-	u32				  size;		///< The size of the file in bytes.
-	char*			  content;	///< Pointer to the file content in memory.
-	enum MEEDFileMode mode;		///< The mode in which the file was opened.
+	b8				isOpen;	  ///< Flag indicating whether the file is currently open.
+	const char*		filePath; ///< The path of the file.
+	u32				size;	  ///< The size of the file in bytes.
+	char*			content;  ///< Pointer to the file content in memory.
+	enum MdFileMode mode;	  ///< The mode in which the file was opened.
 };
 
 /**
  * Opens a file at the specified path with the given mode.
  * @param filePath The path of the file to open.
  * @param mode The mode in which to open the file.
- * @return Pointer to the MEEDFileData representing the opened file.
+ * @return Pointer to the MdFileData representing the opened file.
  */
-struct MEEDFileData* mdPlatformOpenFile(const char* filePath, enum MEEDFileMode mode);
+struct MdFileData* mdFileOpen(const char* filePath, enum MdFileMode mode);
 
 /**
  * Checks if the specified file is open.
- * @param pFileData Pointer to the MEEDFileData representing the file.
+ * @param pFileData Pointer to the MdFileData representing the file.
  * @return MEED_TRUE if the file is open, MEED_FALSE otherwise.
  */
-b8 mdPlatformIsOpen(struct MEEDFileData* pFileData);
+b8 mdFileIsOpen(struct MdFileData* pFileData);
 
 /**
  * Writes data to the specified file.
- * @param pFileData Pointer to the MEEDFileData representing the file.
+ * @param pFileData Pointer to the MdFileData representing the file.
  * @param data Pointer to the data to write.
  * @param size The size of the data to write in bytes.
  */
-void mdPlatformWrite(struct MEEDFileData* pFileData, const char* data, mdSize size);
+void mdFileWrite(struct MdFileData* pFileData, const char* data, mdSize size);
 
 /**
  * Closes the specified file.
- * @param pFileData Pointer to the MEEDFileData representing the file to close.
+ * @param pFileData Pointer to the MdFileData representing the file to close.
  */
-void mdPlatformCloseFile(struct MEEDFileData* pFileData);
+void mdFileClose(struct MdFileData* pFileData);
 
 #if __cplusplus
 }

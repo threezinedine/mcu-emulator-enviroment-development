@@ -2,22 +2,22 @@
 
 static void releaseInt(void* pData)
 {
-	mdPlatformFPrint("Releasing integer: %d\n", *(int*)pData);
+	mdFormatPrint("Releasing integer: %d\n", *(int*)pData);
 }
 
 int main(void)
 {
-	mdPlatformMemoryInitialize();
+	mdMemoryInitialize();
 
 	int a = 3;
 	int b = 4;
 
-	struct MEEDReleaseStack* pReleaseStack = mdReleaseStackCreate();
+	struct MdReleaseStack* pReleaseStack = mdReleaseStackCreate();
 
 	mdReleaseStackPush(pReleaseStack, &a, releaseInt);
 	mdReleaseStackPush(pReleaseStack, &b, releaseInt);
 
 	mdReleaseStackDestroy(pReleaseStack);
-	mdPlatformMemoryShutdown();
+	mdMemoryShutdown();
 	return 0;
 }

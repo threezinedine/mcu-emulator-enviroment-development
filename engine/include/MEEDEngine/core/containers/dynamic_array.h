@@ -15,13 +15,13 @@ extern "C" {
  * Self implemented general dynamic array container.
  */
 
-struct MEEDDynamicArray
+struct MdDynamicArray
 {
 	u32 count;	  ///< The actual number of elements in the dynamic array.
 	u32 capacity; ///< The total capacity of the dynamic array. It will be doubled when the count exceeds the capacity.
 
-	void**					   pData;			///< Pointer to the array of data pointers.
-	MEEDNodeDataDeleteCallback pDeleteCallback; ///< Callback function to delete element data.
+	void**					 pData;			  ///< Pointer to the array of data pointers.
+	MdNodeDataDeleteCallback pDeleteCallback; ///< Callback function to delete element data.
 };
 
 /**
@@ -34,9 +34,9 @@ struct MEEDDynamicArray
  * @param initialCapacity The initial capacity of the dynamic array.
  * If zero, a default capacity will be used.
  * @param pDeleteCallback Optional callback function to delete element data when the array is destroyed. Can be NULL.
- * @return Pointer to the newly created MEEDDynamicArray.
+ * @return Pointer to the newly created MdDynamicArray.
  */
-struct MEEDDynamicArray* mdDynamicArrayCreate(u32 initialCapacity, MEEDNodeDataDeleteCallback pDeleteCallback);
+struct MdDynamicArray* mdDynamicArrayCreate(u32 initialCapacity, MdNodeDataDeleteCallback pDeleteCallback);
 
 /**
  * @brief Appends data to the end of the dynamic array.
@@ -45,10 +45,10 @@ struct MEEDDynamicArray* mdDynamicArrayCreate(u32 initialCapacity, MEEDNodeDataD
  * If the current count exceeds the capacity, the array's capacity
  * will be doubled to accommodate the new element.
  *
- * @param pArray Pointer to the MEEDDynamicArray. If NULL, raises an assertion.
+ * @param pArray Pointer to the MdDynamicArray. If NULL, raises an assertion.
  * @param pData Pointer to the data to be added to the array.
  */
-void mdDynamicArrayPush(struct MEEDDynamicArray* pArray, void* pData);
+void mdDynamicArrayPush(struct MdDynamicArray* pArray, void* pData);
 
 /**
  * @brief Retrieves the current number of elements in the dynamic array.
@@ -56,10 +56,10 @@ void mdDynamicArrayPush(struct MEEDDynamicArray* pArray, void* pData);
  * This function returns the number of elements currently stored
  * in the dynamic array.
  *
- * @param pArray Pointer to the MEEDDynamicArray. If NULL, raises an assertion.
+ * @param pArray Pointer to the MdDynamicArray. If NULL, raises an assertion.
  * @return The number of elements in the dynamic array.
  */
-u32 mdDynamicArrayCount(struct MEEDDynamicArray* pArray);
+u32 mdDynamicArrayCount(struct MdDynamicArray* pArray);
 
 /**
  * @brief Retrieves the data at a specific index in the dynamic array.
@@ -68,11 +68,11 @@ u32 mdDynamicArrayCount(struct MEEDDynamicArray* pArray);
  * index in the dynamic array. If the index is out of bounds, an
  * assertion is raised.
  *
- * @param pArray Pointer to the MEEDDynamicArray. If NULL, raises an assertion.
+ * @param pArray Pointer to the MdDynamicArray. If NULL, raises an assertion.
  * @param index The zero-based index of the element to retrieve. If out of bounds, raises an assertion.
  * @return Pointer to the data at the specified index.
  */
-void* mdDynamicArrayAt(struct MEEDDynamicArray* pArray, u32 index);
+void* mdDynamicArrayAt(struct MdDynamicArray* pArray, u32 index);
 
 /**
  * @brief Resizes the dynamic array to a new capacity.
@@ -81,11 +81,11 @@ void* mdDynamicArrayAt(struct MEEDDynamicArray* pArray, u32 index);
  * specified new capacity. If the new capacity is less than the
  * current count, the count will be adjusted accordingly.
  *
- * @param pArray Pointer to the MEEDDynamicArray. If NULL, raises an assertion.
+ * @param pArray Pointer to the MdDynamicArray. If NULL, raises an assertion.
  * @param newCapacity The new capacity for the dynamic array. Must be greater than the current capacity or
  *      raises an assertion.
  */
-void mdDynamicArrayResize(struct MEEDDynamicArray* pArray, u32 newCapacity);
+void mdDynamicArrayResize(struct MdDynamicArray* pArray, u32 newCapacity);
 
 /**
  * @brief Clears all elements from the dynamic array.
@@ -95,11 +95,11 @@ void mdDynamicArrayResize(struct MEEDDynamicArray* pArray, u32 newCapacity);
  * during array creation, it will be called for each element's
  * data before clearing the array.
  *
- * @param pArray Pointer to the MEEDDynamicArray to be cleared. If NULL, raises an assertion.
+ * @param pArray Pointer to the MdDynamicArray to be cleared. If NULL, raises an assertion.
  *
  * @note The capacity of the dynamic array remains unchanged after this operation.
  */
-void mdDynamicArrayClear(struct MEEDDynamicArray* pArray);
+void mdDynamicArrayClear(struct MdDynamicArray* pArray);
 
 /**
  * @brief Inserts data at a specific index in the dynamic array.
@@ -109,14 +109,14 @@ void mdDynamicArrayClear(struct MEEDDynamicArray* pArray);
  * to the count of the array, the data is appended to the end.
  * If the index is out of bounds, an assertion is raised.
  *
- * @param pArray Pointer to the MEEDDynamicArray. If NULL, raises an assertion.
+ * @param pArray Pointer to the MdDynamicArray. If NULL, raises an assertion.
  * @param index The zero-based index where the data should be inserted. If out of bounds, raises an assertion.
  * @param pData Pointer to the data to be inserted into the array.
  *
  * @note If the current count exceeds the capacity, the array's capacity
  * will be doubled to accommodate the new element.
  */
-void mdDynamicArrayInsert(struct MEEDDynamicArray* pArray, u32 index, void* pData);
+void mdDynamicArrayInsert(struct MdDynamicArray* pArray, u32 index, void* pData);
 
 /**
  * @brief Erases the element at a specific index in the dynamic array.
@@ -127,10 +127,10 @@ void mdDynamicArrayInsert(struct MEEDDynamicArray* pArray, u32 index, void* pDat
  * be called for the element's data before removal. If the index is
  * out of bounds, an assertion is raised.
  *
- * @param pArray Pointer to the MEEDDynamicArray. If NULL, raises an assertion.
+ * @param pArray Pointer to the MdDynamicArray. If NULL, raises an assertion.
  * @param index The zero-based index of the element to be erased. If out of bounds, raises an assertion.
  */
-void mdDynamicArrayErase(struct MEEDDynamicArray* pArray, u32 index);
+void mdDynamicArrayErase(struct MdDynamicArray* pArray, u32 index);
 
 /**
  * @brief Destroys a dynamic array and frees its memory.
@@ -139,9 +139,9 @@ void mdDynamicArrayErase(struct MEEDDynamicArray* pArray, u32 index);
  * all its elements. If a delete callback was provided during array creation,
  * it will be called for each element's data before freeing the array.
  *
- * @param pArray Pointer to the MEEDDynamicArray to be destroyed. If NULL, raises an assertion.
+ * @param pArray Pointer to the MdDynamicArray to be destroyed. If NULL, raises an assertion.
  */
-void mdDynamicArrayDestroy(struct MEEDDynamicArray* pArray);
+void mdDynamicArrayDestroy(struct MdDynamicArray* pArray);
 
 #if __cplusplus
 }

@@ -17,7 +17,7 @@ struct OpenGLPipeline
 
 struct OpenGLRenderData
 {
-	struct MEEDWindowData* pWindowData;
+	struct MdWindowData* pWindowData;
 };
 
 struct OpenGLShader

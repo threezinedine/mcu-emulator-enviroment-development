@@ -8,10 +8,10 @@ struct LinuxFileData
 	i32 fd;
 };
 
-struct MEEDFileData* mdPlatformOpenFile(const char* filePath, enum MEEDFileMode mode)
+struct MdFileData* mdFileOpen(const char* filePath, enum MdFileMode mode)
 {
-	struct MEEDFileData* pFileData = MEED_MALLOC(struct MEEDFileData);
-	mdPlatformMemorySet(pFileData, 0, sizeof(struct MEEDFileData));
+	struct MdFileData* pFileData = MEED_MALLOC(struct MdFileData);
+	mdMemorySet(pFileData, 0, sizeof(struct MdFileData));
 
 	pFileData->isOpen	= MEED_FALSE;
 	pFileData->filePath = filePath;
@@ -24,13 +24,13 @@ struct MEEDFileData* mdPlatformOpenFile(const char* filePath, enum MEEDFileMode 
 
 	switch (mode)
 	{
-	case MEED_FILE_MODE_READ:
+	case MD_FILE_MODE_READ:
 		pLinuxData->fd = open(filePath, O_RDONLY);
 		break;
-	case MEED_FILE_MODE_WRITE:
+	case MD_FILE_MODE_WRITE:
 		pLinuxData->fd = open(filePath, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		break;
-	case MEED_FILE_MODE_APPEND:
+	case MD_FILE_MODE_APPEND:
 		pLinuxData->fd = open(filePath, O_WRONLY | O_CREAT | O_APPEND, 066);
 		break;
 
@@ -42,7 +42,7 @@ struct MEEDFileData* mdPlatformOpenFile(const char* filePath, enum MEEDFileMode 
 	{
 		pFileData->isOpen = MEED_TRUE;
 
-		if (mode == MEED_FILE_MODE_READ)
+		if (mode == MD_FILE_MODE_READ)
 		{
 			// Get file size
 			off_t currentPos = lseek(pLinuxData->fd, 0, SEEK_CUR);
@@ -66,13 +66,13 @@ struct MEEDFileData* mdPlatformOpenFile(const char* filePath, enum MEEDFileMode 
 	return pFileData;
 }
 
-b8 mdPlatformIsOpen(struct MEEDFileData* pFileData)
+b8 mdFileIsOpen(struct MdFileData* pFileData)
 {
 	MEED_ASSERT(pFileData != MEED_NULL);
 	return pFileData->isOpen;
 }
 
-void mdPlatformWrite(struct MEEDFileData* pFileData, const char* data, mdSize size)
+void mdFileWrite(struct MdFileData* pFileData, const char* data, mdSize size)
 {
 	MEED_ASSERT(pFileData != MEED_NULL);
 	MEED_ASSERT(pFileData->isOpen == MEED_TRUE);
@@ -87,7 +87,7 @@ void mdPlatformWrite(struct MEEDFileData* pFileData, const char* data, mdSize si
 					bytesWritten);
 }
 
-void mdPlatformCloseFile(struct MEEDFileData* pFileData)
+void mdFileClose(struct MdFileData* pFileData)
 {
 	MEED_ASSERT(pFileData != MEED_NULL);
 
@@ -98,14 +98,14 @@ void mdPlatformCloseFile(struct MEEDFileData* pFileData)
 	{
 		close(pLinuxData->fd);
 
-		if (pFileData->mode == MEED_FILE_MODE_READ && pFileData->content != MEED_NULL)
+		if (pFileData->mode == MD_FILE_MODE_READ && pFileData->content != MEED_NULL)
 		{
 			MEED_FREE_ARRAY(pFileData->content, char, pFileData->size + 1);
 		}
 	}
 
 	MEED_FREE(pLinuxData, struct LinuxFileData);
-	MEED_FREE(pFileData, struct MEEDFileData);
+	MEED_FREE(pFileData, struct MdFileData);
 }
 
 #endif // PLATFORM_IS_LINUX

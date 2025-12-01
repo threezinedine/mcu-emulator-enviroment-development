@@ -2,18 +2,18 @@
 
 int main(void)
 {
-	mdPlatformMemoryInitialize();
+	mdMemoryInitialize();
 	mdWindowInitialize();
-	struct MEEDWindowData* pWindow = mdWindowCreate(1600, 1400, "MEEDEngine Vulkan Renderer Example");
+	struct MdWindowData* pWindow = mdWindowCreate(1600, 1400, "MEEDEngine Vulkan Renderer Example");
 
 	mdRenderInitialize(pWindow);
 
 #if MEED_USE_VULKAN
-	struct MEEDPipeline* pPipeline =
+	struct MdPipeline* pPipeline =
 		mdPipelineCreate(MEED_STRINGIFY(PROJECT_BASE_DIR) "/engine/build/debug/shaders/triangle.vert.spv",
 						 MEED_STRINGIFY(PROJECT_BASE_DIR) "/engine/build/debug/shaders/triangle.frag.spv");
 #elif MEED_USE_OPENGL
-	struct MEEDPipeline* pPipeline =
+	struct MdPipeline* pPipeline =
 		mdPipelineCreate(MEED_STRINGIFY(PROJECT_BASE_DIR) "/engine/assets/shaders/opengl/triangle.vert",
 						 MEED_STRINGIFY(PROJECT_BASE_DIR) "/engine/assets/shaders/opengl/triangle.frag");
 #else
@@ -24,7 +24,7 @@ int main(void)
 	{
 		mdWindowPollEvents(pWindow);
 
-		mdRenderClearScreen((struct MEEDColor){0.1f, 0.1f, 0.1f, 1.0f});
+		mdRenderClearScreen((struct MdColor){0.1f, 0.1f, 0.1f, 1.0f});
 
 		mdRenderStartFrame();
 
@@ -46,6 +46,6 @@ int main(void)
 
 	mdRenderShutdown();
 	mdWindowShutdown();
-	mdPlatformMemoryShutdown();
+	mdMemoryShutdown();
 	return 0;
 }

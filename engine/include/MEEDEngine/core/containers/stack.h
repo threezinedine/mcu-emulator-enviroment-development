@@ -16,9 +16,9 @@ extern "C" {
 /**
  * Needed information for working with the stack.
  */
-struct MEEDStack
+struct MdStack
 {
-	struct MEEDLinkedList* pList; ///< The underlying linked list used to implement the stack.
+	struct MdLinkedList* pList; ///< The underlying linked list used to implement the stack.
 };
 
 /**
@@ -28,55 +28,55 @@ struct MEEDStack
  * initializes its members, and returns a pointer to the newly created
  * stack.
  *
- * @return Pointer to the newly created MEEDStack.
+ * @return Pointer to the newly created MdStack.
  */
-struct MEEDStack* mdStackCreate(MEEDNodeDataDeleteCallback pDeleteCallback);
+struct MdStack* mdStackCreate(MdNodeDataDeleteCallback pDeleteCallback);
 
 /**
  * Pops data from the top of the stack.
  *
- * @param pStack Pointer to the MEEDStack. If NULL, raises an assertion.
+ * @param pStack Pointer to the MdStack. If NULL, raises an assertion.
  * @return Pointer to the data popped from the top of the stack.
  */
-b8 mdStackEmpty(struct MEEDStack* pStack);
+b8 mdStackEmpty(struct MdStack* pStack);
 
 /**
  * Gets the number of elements in the stack.
  *
- * @param pStack Pointer to the MEEDStack. If NULL, raises an assertion.
+ * @param pStack Pointer to the MdStack. If NULL, raises an assertion.
  * @return The number of elements in the stack.
  */
-u32 mdStackGetCount(struct MEEDStack* pStack);
+u32 mdStackGetCount(struct MdStack* pStack);
 
 /**
  * Pushes data onto the top of the stack.
  *
- * @param pStack Pointer to the MEEDStack. If NULL, raises an assertion.
+ * @param pStack Pointer to the MdStack. If NULL, raises an assertion.
  * @param pData Pointer to the data to be pushed onto the stack.
  */
-void mdStackPush(struct MEEDStack* pStack, void* pData);
+void mdStackPush(struct MdStack* pStack, void* pData);
 
 /**
  * Retrieves the data at the top of the stack without removing it.
  *
- * @param pStack Pointer to the MEEDStack. If NULL, raises an assertion.
+ * @param pStack Pointer to the MdStack. If NULL, raises an assertion.
  * @return Pointer to the data at the top of the stack.
  */
-void* mdStackTop(struct MEEDStack* pStack);
+void* mdStackTop(struct MdStack* pStack);
 
 /**
  * Removes the data at the top of the stack.
  *
- * @param pStack Pointer to the MEEDStack. If NULL, raises an assertion.
+ * @param pStack Pointer to the MdStack. If NULL, raises an assertion.
  */
-void mdStackPop(struct MEEDStack* pStack);
+void mdStackPop(struct MdStack* pStack);
 
 /**
  * Clears all elements from the stack.
  *
- * @param pStack Pointer to the MEEDStack. If NULL, raises an assertion.
+ * @param pStack Pointer to the MdStack. If NULL, raises an assertion.
  */
-void mdStackClear(struct MEEDStack* pStack);
+void mdStackClear(struct MdStack* pStack);
 
 /**
  * Destroys a stack and frees its memory.
@@ -86,9 +86,9 @@ void mdStackClear(struct MEEDStack* pStack);
  * during stack creation, it will be called for each element's data
  * before freeing the stack.
  *
- * @param pStack Pointer to the MEEDStack. If NULL, raises an assertion.
+ * @param pStack Pointer to the MdStack. If NULL, raises an assertion.
  */
-void mdStackDestroy(struct MEEDStack* pStack);
+void mdStackDestroy(struct MdStack* pStack);
 
 #if __cplusplus
 }

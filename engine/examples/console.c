@@ -2,18 +2,18 @@
 
 int main(void)
 {
-	struct MEEDPlatformConsoleConfig config;
-	config.color = MEED_CONSOLE_COLOR_GREEN;
+	struct MdConsoleConfig config;
+	config.color = MD_CONSOLE_COLOR_GREEN;
 
-	mdPlatformSetConsoleConfig(config);
-	mdPlatformPrint("Hello, MEED Engine Console Green!\n");
+	mdSetConsoleConfig(config);
+	mdPrint("Hello, MEED Engine Console Green!\n");
 
-	config.color = MEED_CONSOLE_COLOR_RED;
-	mdPlatformSetConsoleConfig(config);
-	mdPlatformPrint("Hello, MEED Engine Console Red!\n");
+	config.color = MD_CONSOLE_COLOR_RED;
+	mdSetConsoleConfig(config);
+	mdPrint("Hello, MEED Engine Console Red!\n");
 
-	config.color = MEED_CONSOLE_COLOR_RESET;
-	mdPlatformSetConsoleConfig(config);
-	mdPlatformPrint("Hello, MEED Engine Console Reset!\n");
+	config.color = MD_CONSOLE_COLOR_RESET;
+	mdSetConsoleConfig(config);
+	mdPrint("Hello, MEED Engine Console Reset!\n");
 	return 0;
 }

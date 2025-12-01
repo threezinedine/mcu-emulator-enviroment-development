@@ -18,10 +18,10 @@ protected:
 	}
 
 protected:
-	struct MEEDSet* s_pSet;
-	int				a = 10;
-	int				b = 20;
-	int				c = 30;
+	struct MdSet* s_pSet;
+	int			  a = 10;
+	int			  b = 20;
+	int			  c = 30;
 };
 
 TEST_F(SetTest, CreateAndDestroy)
@@ -70,9 +70,9 @@ TEST_F(SetTest, AtOutOfBounds)
 	EXPECT_EXIT(
 		{
 			mdSetAt(s_pSet, 2);
-			std::exit(MEED_EXCEPTION_TYPE_OUT_OF_INDEX);
+			std::exit(MD_EXCEPTION_TYPE_OUT_OF_INDEX);
 		},
-		testing::ExitedWithCode(MEED_EXCEPTION_TYPE_OUT_OF_INDEX),
+		testing::ExitedWithCode(MD_EXCEPTION_TYPE_OUT_OF_INDEX),
 		"");
 }
 
@@ -81,9 +81,9 @@ TEST_F(SetTest, PushNullData)
 	EXPECT_EXIT(
 		{
 			mdSetPush(s_pSet, MEED_NULL);
-			std::exit(MEED_EXCEPTION_TYPE_INVALID_OPERATION);
+			std::exit(MD_EXCEPTION_TYPE_INVALID_OPERATION);
 		},
-		testing::ExitedWithCode(MEED_EXCEPTION_TYPE_INVALID_OPERATION),
+		testing::ExitedWithCode(MD_EXCEPTION_TYPE_INVALID_OPERATION),
 		"");
 }
 
@@ -109,9 +109,9 @@ TEST_F(SetTest, EraseOutOfBounds)
 	EXPECT_EXIT(
 		{
 			mdSetErase(s_pSet, 1);
-			std::exit(MEED_EXCEPTION_TYPE_OUT_OF_INDEX);
+			std::exit(MD_EXCEPTION_TYPE_OUT_OF_INDEX);
 		},
-		testing::ExitedWithCode(MEED_EXCEPTION_TYPE_OUT_OF_INDEX),
+		testing::ExitedWithCode(MD_EXCEPTION_TYPE_OUT_OF_INDEX),
 		"");
 }
 

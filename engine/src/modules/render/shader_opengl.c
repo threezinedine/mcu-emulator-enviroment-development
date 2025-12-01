@@ -3,40 +3,40 @@
 #include "MEEDEngine/modules/render/shader.h"
 #include "opengl_common.h"
 
-struct MEEDShader* mdShaderCreate(enum MEEDShaderType type, const char* shaderSource)
+struct MdShader* mdShaderCreate(enum MdShaderType type, const char* shaderSource)
 {
-	struct MEEDShader* pShader = MEED_MALLOC(struct MEEDShader);
+	struct MdShader* pShader = MEED_MALLOC(struct MdShader);
 	MEED_ASSERT(pShader != MEED_NULL);
-	mdPlatformMemorySet(pShader, 0, sizeof(struct MEEDShader));
+	mdMemorySet(pShader, 0, sizeof(struct MdShader));
 
 	pShader->type = type;
 
 	pShader->pInternal = MEED_MALLOC(struct OpenGLShader);
 	MEED_ASSERT(pShader->pInternal != MEED_NULL);
-	mdPlatformMemorySet(pShader->pInternal, 0, sizeof(struct OpenGLShader));
+	mdMemorySet(pShader->pInternal, 0, sizeof(struct OpenGLShader));
 
 	struct OpenGLShader* pOpenGLShader = (struct OpenGLShader*)pShader->pInternal;
 
-	struct MEEDFileData* pFile = mdPlatformOpenFile(shaderSource, MEED_FILE_MODE_READ);
+	struct MdFileData* pFile = mdFileOpen(shaderSource, MD_FILE_MODE_READ);
 	MEED_ASSERT_MSG(pFile != MEED_NULL && pFile->isOpen, "Failed to open shader file \"%s\".", shaderSource);
 
 	GLenum shaderType;
 
 	switch (type)
 	{
-	case MEED_SHADER_TYPE_VERTEX:
+	case MD_SHADER_TYPE_VERTEX:
 		shaderType = GL_VERTEX_SHADER;
 		break;
-	case MEED_SHADER_TYPE_FRAGMENT:
+	case MD_SHADER_TYPE_FRAGMENT:
 		shaderType = GL_FRAGMENT_SHADER;
 		break;
-	case MEED_SHADER_TYPE_COMPUTE:
+	case MD_SHADER_TYPE_COMPUTE:
 		shaderType = GL_COMPUTE_SHADER;
 		break;
-	case MEED_SHADER_TYPE_GEOMETRY:
+	case MD_SHADER_TYPE_GEOMETRY:
 		shaderType = GL_GEOMETRY_SHADER;
 		break;
-	case MEED_SHADER_TYPE_TESSELLATION:
+	case MD_SHADER_TYPE_TESSELLATION:
 		shaderType = GL_TESS_CONTROL_SHADER; // or GL_TESS_EVALUATION_SHADER based on specific use
 		break;
 	default:
@@ -55,12 +55,12 @@ struct MEEDShader* mdShaderCreate(enum MEEDShaderType type, const char* shaderSo
 		MEED_ASSERT_MSG(MEED_FALSE, "Shader \"%s\" compilation failed: %s", shaderSource, infoLog);
 	}
 
-	mdPlatformCloseFile(pFile);
+	mdFileClose(pFile);
 
 	return pShader;
 }
 
-void mdShaderDestroy(struct MEEDShader* pShader)
+void mdShaderDestroy(struct MdShader* pShader)
 {
 	MEED_ASSERT(pShader != MEED_NULL);
 
@@ -68,7 +68,7 @@ void mdShaderDestroy(struct MEEDShader* pShader)
 	GL_ASSERT(glDeleteShader(pOpenGLShader->shaderID));
 
 	MEED_FREE(pShader->pInternal, struct OpenGLShader);
-	MEED_FREE(pShader, struct MEEDShader);
+	MEED_FREE(pShader, struct MdShader);
 	pShader = MEED_NULL;
 }
 

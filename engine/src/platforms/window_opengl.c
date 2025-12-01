@@ -30,12 +30,12 @@ void mdWindowInitialize()
 	s_isInitialized = MEED_TRUE;
 }
 
-struct MEEDWindowData* mdWindowCreate(u32 width, u32 height, const char* title)
+struct MdWindowData* mdWindowCreate(u32 width, u32 height, const char* title)
 {
 	MEED_ASSERT(s_isInitialized == MEED_TRUE);
-	struct MEEDWindowData* pWindowData = MEED_MALLOC(struct MEEDWindowData);
+	struct MdWindowData* pWindowData = MEED_MALLOC(struct MdWindowData);
 	MEED_ASSERT(pWindowData != MEED_NULL);
-	mdPlatformMemorySet(pWindowData, 0, sizeof(struct MEEDWindowData));
+	mdMemorySet(pWindowData, 0, sizeof(struct MdWindowData));
 
 	pWindowData->width	= width;
 	pWindowData->height = height;
@@ -43,7 +43,7 @@ struct MEEDWindowData* mdWindowCreate(u32 width, u32 height, const char* title)
 
 	pWindowData->pInternal = MEED_MALLOC(struct OpenGLWindowData);
 	MEED_ASSERT(pWindowData->pInternal != MEED_NULL);
-	mdPlatformMemorySet(pWindowData->pInternal, 0, sizeof(struct OpenGLWindowData));
+	mdMemorySet(pWindowData->pInternal, 0, sizeof(struct OpenGLWindowData));
 	struct OpenGLWindowData* pOpenGLData = (struct OpenGLWindowData*)pWindowData->pInternal;
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -62,13 +62,13 @@ struct MEEDWindowData* mdWindowCreate(u32 width, u32 height, const char* title)
 	MEED_ASSERT_MSG(gladLoadGLLoader((GLADloadproc)glfwGetProcAddress) == 1, "Failed to initialize GLAD");
 #endif
 
-	struct MEEDPlatformConsoleConfig config = {};
-	config.color							= MEED_CONSOLE_COLOR_GREEN;
-	mdPlatformSetConsoleConfig(config);
-	mdPlatformFPrint("OpenGL Version: %s\n", glGetString(GL_VERSION));
-	mdPlatformFPrint("Renderer: %s\n", glGetString(GL_RENDERER));
-	config.color = MEED_CONSOLE_COLOR_RESET;
-	mdPlatformSetConsoleConfig(config);
+	struct MdConsoleConfig config = {};
+	config.color				  = MD_CONSOLE_COLOR_GREEN;
+	mdSetConsoleConfig(config);
+	mdFormatPrint("OpenGL Version: %s\n", glGetString(GL_VERSION));
+	mdFormatPrint("Renderer: %s\n", glGetString(GL_RENDERER));
+	config.color = MD_CONSOLE_COLOR_RESET;
+	mdSetConsoleConfig(config);
 
 	glfwSwapInterval(1); // Enable V-Sync
 
@@ -79,7 +79,7 @@ struct MEEDWindowData* mdWindowCreate(u32 width, u32 height, const char* title)
 	return pWindowData;
 }
 
-struct MEEDWindowEvent mdWindowPollEvents(struct MEEDWindowData* pWindowData)
+struct MdWindowEvent mdWindowPollEvents(struct MdWindowData* pWindowData)
 {
 	MEED_ASSERT(s_isInitialized == MEED_TRUE);
 	MEED_ASSERT(pWindowData != MEED_NULL);
@@ -89,10 +89,10 @@ struct MEEDWindowEvent mdWindowPollEvents(struct MEEDWindowData* pWindowData)
 	glfwPollEvents();
 	pWindowData->shouldClose = glfwWindowShouldClose(pOpenGLData->pWindow) ? MEED_TRUE : MEED_FALSE;
 
-	return (struct MEEDWindowEvent){MEED_WINDOW_EVENT_TYPE_NONE};
+	return (struct MdWindowEvent){MD_WINDOW_EVENT_TYPE_NONE};
 }
 
-void mdWindowDestroy(struct MEEDWindowData* pWindowData)
+void mdWindowDestroy(struct MdWindowData* pWindowData)
 {
 	MEED_ASSERT(s_isInitialized == MEED_TRUE);
 	MEED_ASSERT(pWindowData != MEED_NULL);
@@ -102,7 +102,7 @@ void mdWindowDestroy(struct MEEDWindowData* pWindowData)
 	glfwDestroyWindow(pOpenGLData->pWindow);
 
 	MEED_FREE(pWindowData->pInternal, struct OpenGLWindowData);
-	MEED_FREE(pWindowData, struct MEEDWindowData);
+	MEED_FREE(pWindowData, struct MdWindowData);
 }
 
 void mdWindowShutdown()
