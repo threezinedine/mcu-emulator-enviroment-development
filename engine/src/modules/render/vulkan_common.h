@@ -1,6 +1,7 @@
 #pragma once
 #if MD_USE_VULKAN
 #include "MEEDEngine/platforms/platforms.h"
+#include "render_common.h"
 #include <vulkan/vulkan.h>
 
 /**
@@ -35,6 +36,18 @@ struct VulkanPipeline
 	struct MdShader* pFragmentShader;
 	VkPipelineLayout layout;
 	VkPipeline		 pipeline;
+};
+
+/**
+ * @brief The Vulkan-specific implementation of the vertex buffer.
+ */
+struct VulkanVertexBuffer
+{
+	VkBuffer	   buffer;
+	VkDeviceMemory bufferMemory;
+
+	VkVertexInputBindingDescription	  bindingDescription;
+	VkVertexInputAttributeDescription attributeDescriptions[MEED_VERTEX_BUFFER_MAX_ATTRIBUTES];
 };
 
 /// @brief The context of the Vulkan renderer.

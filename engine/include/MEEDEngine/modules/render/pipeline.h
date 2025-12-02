@@ -17,6 +17,8 @@ struct MdPipeline
 	const char* vertexShaderPath;	///< Path to the vertex shader file.
 	const char* fragmentShaderPath; ///< Path to the fragment shader file.
 
+	struct MdVertexBuffer* pBuffer; ///< Pointer to the vertex buffer defining the vertex layout.
+
 	struct MdReleaseStack* pReleaseStack; ///< Release stack for managing resources.
 };
 
@@ -25,9 +27,11 @@ struct MdPipeline
  *
  * @param vertexShaderPath Path to the vertex shader file.
  * @param fragmentShaderPath Path to the fragment shader file.
+ * @param pBuffer Pointer to the vertex buffer defining the vertex layout.
  * @return A pointer to the created MdPipeline.
  */
-struct MdPipeline* mdPipelineCreate(const char* vertexShaderPath, const char* fragmentShaderPath);
+struct MdPipeline*
+mdPipelineCreate(const char* vertexShaderPath, const char* fragmentShaderPath, struct MdVertexBuffer* pBuffer);
 
 /**
  * @brief Binds the specified render pipeline for use in rendering.

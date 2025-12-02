@@ -10,7 +10,8 @@ static void createPipeline(struct MdPipeline* pPipeline);
 static void freeInternalPipeline(void*);
 static void deleteShaderResources(void*);
 
-struct MdPipeline* mdPipelineCreate(const char* vertexShaderPath, const char* fragmentShaderPath)
+struct MdPipeline*
+mdPipelineCreate(const char* vertexShaderPath, const char* fragmentShaderPath, struct MdVertexBuffer* pBuffer)
 {
 	// Implementation of pipeline creation using Vulkan
 	struct MdPipeline* pPipeline = MD_MALLOC(struct MdPipeline);
@@ -19,6 +20,8 @@ struct MdPipeline* mdPipelineCreate(const char* vertexShaderPath, const char* fr
 	pPipeline->vertexShaderPath	  = vertexShaderPath;
 	pPipeline->fragmentShaderPath = fragmentShaderPath;
 	pPipeline->pReleaseStack	  = mdReleaseStackCreate();
+
+	pPipeline->pBuffer = pBuffer;
 
 	pPipeline->pInternal = MD_MALLOC(struct VulkanPipeline);
 	MD_ASSERT(pPipeline->pInternal != MD_NULL);
@@ -120,10 +123,23 @@ static void createPipeline(struct MdPipeline* pPipeline)
 
 	VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
 	vertexInputInfo.sType								 = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-	vertexInputInfo.vertexBindingDescriptionCount		 = 0;
-	vertexInputInfo.pVertexBindingDescriptions			 = MD_NULL;
-	vertexInputInfo.vertexAttributeDescriptionCount		 = 0;
-	vertexInputInfo.pVertexAttributeDescriptions		 = MD_NULL;
+
+	if (pPipeline->pBuffer == MD_NULL)
+	{
+		vertexInputInfo.vertexBindingDescriptionCount	= 0;
+		vertexInputInfo.pVertexBindingDescriptions		= MD_NULL;
+		vertexInputInfo.vertexAttributeDescriptionCount = 0;
+		vertexInputInfo.pVertexAttributeDescriptions	= MD_NULL;
+	}
+	else
+	{
+		struct VulkanVertexBuffer* pVulkanVertexBuffer = (struct VulkanVertexBuffer*)pPipeline->pBuffer->pInternal;
+
+		vertexInputInfo.vertexBindingDescriptionCount	= 1;
+		vertexInputInfo.pVertexBindingDescriptions		= &pVulkanVertexBuffer->bindingDescription;
+		vertexInputInfo.vertexAttributeDescriptionCount = pPipeline->pBuffer->attributesCount;
+		vertexInputInfo.pVertexAttributeDescriptions	= pVulkanVertexBuffer->attributeDescriptions;
+	}
 
 	VkPipelineInputAssemblyStateCreateInfo inputAssembly = {};
 	inputAssembly.sType									 = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;

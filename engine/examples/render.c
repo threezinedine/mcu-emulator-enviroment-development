@@ -1,5 +1,24 @@
 #include "MEEDEngine/MEEDEngine.h"
 
+struct Vertex
+{
+	float position[3];
+	float color[3];
+};
+
+static void WriteVertexData(u8*, const void*);
+
+enum MdVertexBufferAttributeType vertexLayout[] = {
+	MD_VERTEX_BUFFER_ATTRIBUTE_TYPE_FLOAT3, // position
+	MD_VERTEX_BUFFER_ATTRIBUTE_TYPE_FLOAT3	// color
+};
+
+static struct Vertex vertices[] = {
+	{{0.0f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}}, // Bottom vertex (Red)
+	{{0.5f, 0.5f, 0.0f},	 {0.0f, 1.0f, 0.0f}}, // Right vertex (Green)
+	{{-0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}}, // Left vertex (Blue)
+};
+
 int main(void)
 {
 	mdMemoryInitialize();
@@ -8,14 +27,25 @@ int main(void)
 
 	mdRenderInitialize(pWindow);
 
+	struct MdVertexBuffer* pVertexBuffer =
+		mdVertexBufferCreate(vertexLayout, MD_ARRAY_SIZE(vertexLayout), 3, WriteVertexData);
+
+	u32 verticesCount = MD_ARRAY_SIZE(vertices);
+	for (u32 vertexIndex = 0u; vertexIndex < verticesCount; ++vertexIndex)
+	{
+		mdVertexBufferWrite(pVertexBuffer, &vertices[vertexIndex]);
+	}
+
 #if MD_USE_VULKAN
 	struct MdPipeline* pPipeline =
 		mdPipelineCreate(MD_STRINGIFY(PROJECT_BASE_DIR) "/engine/build/debug/shaders/triangle.vert.spv",
-						 MD_STRINGIFY(PROJECT_BASE_DIR) "/engine/build/debug/shaders/triangle.frag.spv");
+						 MD_STRINGIFY(PROJECT_BASE_DIR) "/engine/build/debug/shaders/triangle.frag.spv",
+						 pVertexBuffer);
 #elif MD_USE_OPENGL
 	struct MdPipeline* pPipeline =
 		mdPipelineCreate(MD_STRINGIFY(PROJECT_BASE_DIR) "/engine/assets/shaders/opengl/triangle.vert",
-						 MD_STRINGIFY(PROJECT_BASE_DIR) "/engine/assets/shaders/opengl/triangle.frag");
+						 MD_STRINGIFY(PROJECT_BASE_DIR) "/engine/assets/shaders/opengl/triangle.frag",
+						 MD_NULL);
 #else
 #error "No rendering backend selected."
 #endif
@@ -30,6 +60,7 @@ int main(void)
 
 		// Rendering commands below...
 		mdPipelineUse(pPipeline);
+		mdVertexBufferBind(pVertexBuffer);
 		mdRenderDraw(3, 1, 0, 0);
 
 		// Rendering commands above...
@@ -42,10 +73,17 @@ int main(void)
 	mdRenderWaitIdle();
 
 	mdPipelineDestroy(pPipeline);
+	mdVertexBufferDestroy(pVertexBuffer);
 	mdWindowDestroy(pWindow);
 
 	mdRenderShutdown();
 	mdWindowShutdown();
 	mdMemoryShutdown();
 	return 0;
+}
+
+static void WriteVertexData(u8* pDest, const void* pData)
+{
+	struct Vertex* pVertexData = (struct Vertex*)pData;
+	mdMemoryCopy(pDest, pVertexData, sizeof(struct Vertex));
 }
