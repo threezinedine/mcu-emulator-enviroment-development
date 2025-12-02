@@ -25,3 +25,11 @@ sudo wget -qO /etc/apt/sources.list.d/lunarg-vulkan-noble.list https://packages.
 sudo apt update
 sudo apt install vulkan-sdk
 ```
+
+Todo:
+
+- [ ] Vertex buffer for OpenGL backend
+- [ ] Transfer vertex buffer Vulkan backend
+- [ ] Using multiple viewport for pyqt6 editor
+- [ ] Add file watcher to reload assets on change (Python)
+- [ ] Implement python tests for the Pyqt editor
