@@ -9,7 +9,8 @@ static GLenum getAttributeTypeOpenGLBaseType(enum MdVertexBufferAttributeType at
 struct MdVertexBuffer* mdVertexBufferCreate(enum MdVertexBufferAttributeType* layout,
 											u32								  attributesCount,
 											u32								  verticesCount,
-											MdVertexBufferWriteCallback		  writeCallback)
+											MdVertexBufferWriteCallback		  writeCallback,
+											enum MdVertexBufferType			  bufferType)
 {
 	struct MdVertexBuffer* pVertexBuffer = MD_MALLOC(struct MdVertexBuffer);
 	MD_ASSERT(pVertexBuffer != MD_NULL);
@@ -21,6 +22,7 @@ struct MdVertexBuffer* mdVertexBufferCreate(enum MdVertexBufferAttributeType* la
 	pVertexBuffer->attributesCount = attributesCount;
 	pVertexBuffer->verticesCount   = verticesCount;
 	pVertexBuffer->writeCallback   = writeCallback;
+	pVertexBuffer->bufferType	   = bufferType;
 
 	mdMemoryCopy(pVertexBuffer->layout, layout, sizeof(enum MdVertexBufferAttributeType) * attributesCount);
 
@@ -42,7 +44,9 @@ struct MdVertexBuffer* mdVertexBufferCreate(enum MdVertexBufferAttributeType* la
 	}
 	pVertexBuffer->bufferSize = pVertexBuffer->stride * verticesCount;
 
-	GL_ASSERT(glBufferData(GL_ARRAY_BUFFER, pVertexBuffer->bufferSize, NULL, GL_DYNAMIC_DRAW));
+	GLenum usage = (bufferType == MD_VERTEX_BUFFER_TYPE_DYNAMIC) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
+
+	GL_ASSERT(glBufferData(GL_ARRAY_BUFFER, pVertexBuffer->bufferSize, NULL, usage));
 
 	GL_ASSERT(glGenVertexArrays(1, &pOpenGLVertexBuffer->vaoID));
 	GL_ASSERT(glBindVertexArray(pOpenGLVertexBuffer->vaoID));
