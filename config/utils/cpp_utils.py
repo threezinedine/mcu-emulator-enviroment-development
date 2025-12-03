@@ -80,7 +80,7 @@ def BuildCProject(
     additionalOptions = ReadConfigFile(f"{type}.cfg", configDir)
 
     if SYSTEM.IsWindowsPlatform:
-        additionalOptions += " -G \"Visual Studio 17 2022\""
+        additionalOptions += ' -G "Visual Studio 17 2022"'
 
     if type.lower() == "release" or type.lower() == "web":
         additionalOptions += " -DCMAKE_BUILD_TYPE=Release"
@@ -215,9 +215,11 @@ def RunExample(
     logger.debug(f"Example directory resolved to: {exampleDir}")
 
     for example in examples:
-        exampleExecutable: str = example 
+        exampleExecutable: str = example
         if SYSTEM.IsWindowsPlatform:
             exampleExecutable += ".exe"
+        else:
+            exampleExecutable = f"./{exampleExecutable}"
 
         if not os.path.exists(os.path.join(exampleDir, exampleExecutable)):
             logger.error(
