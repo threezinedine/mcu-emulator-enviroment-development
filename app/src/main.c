@@ -37,8 +37,11 @@ int main(void)
 	pWindowData = mdWindowCreate(800, 600, "MEED Application Window");
 	mdRenderInitialize(pWindowData);
 
-	pVertexBuffer =
-		mdVertexBufferCreate(vertexLayout, MD_ARRAY_SIZE(vertexLayout), MD_ARRAY_SIZE(vertices), WriteVertexData);
+	pVertexBuffer = mdVertexBufferCreate(vertexLayout,
+										 MD_ARRAY_SIZE(vertexLayout),
+										 MD_ARRAY_SIZE(vertices),
+										 WriteVertexData,
+										 MD_VERTEX_BUFFER_TYPE_STATIC);
 
 	for (u32 i = 0; i < MD_ARRAY_SIZE(vertices); ++i)
 	{
