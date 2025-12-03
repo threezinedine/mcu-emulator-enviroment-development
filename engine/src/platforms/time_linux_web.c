@@ -26,4 +26,9 @@ struct MdTime mdGetTimeFromUNIXTimestamp(mdUNIXTime timestamp)
 	return result;
 }
 
+f64 mdGetTimeDifferenceInMicroseconds(mdUNIXTime start, mdUNIXTime end)
+{
+	return (f64)(end - start) * 1e6;
+}
+
 #endif // PLATFORM_IS_LINUX

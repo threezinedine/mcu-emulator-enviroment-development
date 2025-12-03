@@ -50,3 +50,13 @@ void mdGetTimeString(char* buffer, u32 bufferSize, struct MdTime time)
 				   time.minutes,
 				   time.seconds);
 }
+
+f64 mdGetTimeDifferenceInMilliseconds(mdUNIXTime start, mdUNIXTime end)
+{
+	return mdGetTimeDifferenceInMicroseconds(start, end) * 1e-3;
+}
+
+f64 mdGetTimeDifferenceInSeconds(mdUNIXTime start, mdUNIXTime end)
+{
+	return mdGetTimeDifferenceInMicroseconds(start, end) * 1e-6;
+}

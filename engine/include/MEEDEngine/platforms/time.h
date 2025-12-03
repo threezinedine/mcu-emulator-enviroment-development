@@ -60,6 +60,30 @@ const char* mdGetMonthName(i32 month);
  */
 void mdGetTimeString(char* buffer, u32 bufferSize, struct MdTime time);
 
+/**
+ * @brief Calculate the difference between two UNIX timestamps in seconds.
+ * @param start The starting UNIX timestamp.
+ * @param end The ending UNIX timestamp.
+ * @return The difference in seconds as a floating-point value.
+ */
+f64 mdGetTimeDifferenceInSeconds(mdUNIXTime start, mdUNIXTime end);
+
+/**
+ * @brief Calculate the difference between two UNIX timestamps in milliseconds.
+ * @param start The starting UNIX timestamp.
+ * @param end The ending UNIX timestamp.
+ * @return The difference in milliseconds as a floating-point value.
+ */
+f64 mdGetTimeDifferenceInMilliseconds(mdUNIXTime start, mdUNIXTime end);
+
+/**
+ * @brief Calculate the difference between two UNIX timestamps in microseconds.
+ * @param start The starting UNIX timestamp.
+ * @param end The ending UNIX timestamp.
+ * @return The difference in microseconds as a floating-point value.
+ */
+f64 mdGetTimeDifferenceInMicroseconds(mdUNIXTime start, mdUNIXTime end);
+
 #if __cplusplus
 }
 #endif
