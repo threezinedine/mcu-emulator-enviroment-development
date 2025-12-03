@@ -2,4 +2,5 @@
 #include "console.h"
 #include "file.h"
 #include "memory.h"
+#include "time.h"
 #include "window.h"
