@@ -8,7 +8,8 @@ static void freeVulkanVertexBuffer(void*);
 static void createBuffer(VkBuffer* pBuffer, u32 bufferSize, i32 queueFamily, VkBufferUsageFlags usages);
 static void deleteBuffer(void*);
 
-static void allocateMemory(VkDeviceMemory* pMemory, VkMemoryRequirements* pMemoryRequirements);
+static void
+allocateMemory(VkDeviceMemory* pMemory, VkMemoryRequirements* pMemoryRequirements, VkMemoryPropertyFlags properties);
 static void freeMemory(void*);
 
 static VkFormat getVulkanFormatFromAttributeType(enum MdVertexBufferAttributeType type);
@@ -75,7 +76,9 @@ struct MdVertexBuffer* mdVertexBufferCreate(enum MdVertexBufferAttributeType* la
 	VkMemoryRequirements memoryRequirements;
 	vkGetBufferMemoryRequirements(g_vulkan->device, pVulkanVertexBuffer->buffer, &memoryRequirements);
 
-	allocateMemory(&pVulkanVertexBuffer->bufferMemory, &memoryRequirements);
+	allocateMemory(&pVulkanVertexBuffer->bufferMemory,
+				   &memoryRequirements,
+				   VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 	MD_ASSERT(pVulkanVertexBuffer->bufferMemory != VK_NULL_HANDLE);
 	mdReleaseStackPush(pVertexBuffer->pReleaseStack, &pVulkanVertexBuffer->bufferMemory, freeMemory);
 
@@ -171,7 +174,8 @@ static void deleteBuffer(void* pBuffer)
 
 static i32 findMemoryTypeIndex(u32 typeFilter, VkMemoryPropertyFlags properties);
 
-static void allocateMemory(VkDeviceMemory* pMemory, VkMemoryRequirements* pMemoryRequirements)
+static void
+allocateMemory(VkDeviceMemory* pMemory, VkMemoryRequirements* pMemoryRequirements, VkMemoryPropertyFlags properties)
 {
 	MD_ASSERT(g_vulkan != MD_NULL);
 	MD_ASSERT(g_vulkan->device != MD_NULL);
@@ -180,9 +184,7 @@ static void allocateMemory(VkDeviceMemory* pMemory, VkMemoryRequirements* pMemor
 	VkMemoryAllocateInfo allocInfo = {};
 	allocInfo.sType				   = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 	allocInfo.allocationSize	   = pMemoryRequirements->size;
-	allocInfo.memoryTypeIndex =
-		findMemoryTypeIndex(pMemoryRequirements->memoryTypeBits,
-							VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+	allocInfo.memoryTypeIndex	   = findMemoryTypeIndex(pMemoryRequirements->memoryTypeBits, properties);
 
 	VK_ASSERT(vkAllocateMemory(g_vulkan->device, &allocInfo, MD_NULL, pMemory));
 }
