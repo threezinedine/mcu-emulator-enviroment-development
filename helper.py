@@ -2,18 +2,15 @@ from config import (
     Args,
     logger,
     SYSTEM,
-    RunEditor,
     RunAutogen,
     RunExample,
-    BuildEditor,
     SetupLogging,
     OpenDesigner,
     BuildCProject,
-    RunTestEngine,
     RunPythonTest,
-    RunApplication,
+    RunCProjectTest,
+    RunCApplication,
     CreateEnvironment,
-    RunEditorConvertUI,
     ValidateCommandExist,
     InstallCDependencies,
     InstallPythonDependencies,
@@ -33,16 +30,14 @@ def main():
     logger.info("System health check passed.")
 
     CreateEnvironment(dir="autogen", **args.Args)
-    CreateEnvironment(dir="editor", **args.Args)
     InstallCDependencies()
     RunAutogen(**args.Args)
-    RunEditorConvertUI(**args.Args)
 
     if args.IsBuild:
         if args.IsCProject:
             BuildCProject(**args.Args)
         elif args.IsPythonProject:
-            BuildEditor(**args.Args)
+            pass
     elif args.IsPackage:
         if args.IsPythonProject:
             InstallPythonDependencies(**args.Args)
@@ -58,7 +53,7 @@ def main():
             RunPythonTest(**args.Args)
         elif args.IsCProject:
             BuildCProject(**args.Args)
-            RunTestEngine(**args.Args)
+            RunCProjectTest(**args.Args)
         else:
             raise NotImplementedError(
                 f'Testing for project "{args.args.project}" is not implemented.'
@@ -68,9 +63,8 @@ def main():
     elif args.IsRun:
         if args.IsPythonProject:
             BuildCProject(**(args.Args | dict(project="engine")))
-            RunEditor(**args.Args)
-        else:
-            RunApplication(**args.Args)
+        elif args.IsCProject:
+            RunCApplication(**args.Args)
     elif args.IsRunExample:
         RunExample(**args.Args)
     elif args.IsRunAutogen:

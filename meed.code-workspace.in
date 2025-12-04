@@ -28,8 +28,7 @@
         },
         {
             "name": "editor",
-            "path": "editor",
-            "python.defaultInterpreterPath": "{{ BASE_DIR }}/editor/{{ PYTHON_INTERPRETER }}"
+            "path": "editor"
         },
         {
             "name": "config",

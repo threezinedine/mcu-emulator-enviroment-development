@@ -1,0 +1,17 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/../externals/**"
+            ],
+            "defines": [],
+            "compilerPath": "{{ COMPILER_PATH }}",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "{{ INTELLISENSE_MODE }}"
+        }
+    ],
+    "version": 4
+}

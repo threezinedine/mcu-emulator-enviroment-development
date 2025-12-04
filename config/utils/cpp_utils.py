@@ -7,13 +7,18 @@ from typing import Any
 from ..log import logger
 from .utils import RunCommand
 from ..system_info import SYSTEM
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass
-class Depedency:
+class Dependency:
     name: str
     url: str
+    commit: str | None = field(default=None)
+    branch: str | None = field(default=None)
+    develop: bool = field(
+        default=False
+    )  # indicates in the dev mode, fetch and pull latest each time run
 
 
 def InstallCDependencies(
@@ -23,13 +28,13 @@ def InstallCDependencies(
     Installs necessary dependencies for the C++ project which is loaded from the `dependecies.json` file. The
         code will be placed at `external/` folder.
     """
-    dependencies: list[Depedency] = []
+    dependencies: list[Dependency] = []
 
     with open("dependencies.json", "r") as depFile:
         dependenciesData = json.load(depFile)
 
         for depData in dependenciesData:
-            dependency = Depedency(**depData)
+            dependency = Dependency(**depData)
             dependencies.append(dependency)
 
     externalDir = os.path.join(os.getcwd(), "externals")
@@ -38,17 +43,56 @@ def InstallCDependencies(
         os.makedirs(externalDir)
 
     for dependency in dependencies:
+        if dependency.develop:
+            assert (
+                dependency.branch is None
+            ), f'Dependency "{dependency.name}" cannot have both "develop" and "branch" set.'
+
         dependencyDir = os.path.join(externalDir, dependency.name)
         if os.path.exists(dependencyDir):
-            logger.debug(
-                f"Dependency {dependency.name} already exists at {dependencyDir}, skipping..."
-            )
-            continue
+            if dependency.develop:
+                logger.info(
+                    f'Updating dependency "{dependency.name}" in develop mode...'
+                )
+                RunCommand("git fetch", cwd=dependencyDir)
+                RunCommand(
+                    f"git pull {"" if dependency.branch is None else dependency.branch}",
+                    cwd=dependencyDir,
+                )
+                RunCommand("git submodule update --init --recursive", cwd=dependencyDir)
+                continue
+            else:
+                logger.debug(
+                    f"Dependency {dependency.name} already exists at {dependencyDir}, skipping..."
+                )
+                continue
 
         logger.info(
             f'Cloning dependency "{dependency.name}" from "{dependency.url}"...'
         )
         RunCommand(f"git clone {dependency.url} {dependencyDir}")
+
+        if dependency.branch:
+            logger.info(
+                f'Checking out branch "{dependency.branch}" for dependency "{dependency.name}"...'
+            )
+            RunCommand(f"git checkout {dependency.branch}", cwd=dependencyDir)
+        else:
+            logger.info(
+                f'No specific branch provided for dependency "{dependency.name}", using default branch.'
+            )
+
+        if dependency.commit:
+            logger.info(
+                f'Checking out commit "{dependency.commit}" for dependency "{dependency.name}"...'
+            )
+            RunCommand(f"git checkout {dependency.commit}", cwd=dependencyDir)
+        else:
+            logger.info(
+                f'No specific commit provided for dependency "{dependency.name}", using default branch.'
+            )
+
+        RunCommand(f"git submodule update --init --recursive", cwd=dependencyDir)
 
 
 def BuildCProject(
@@ -147,7 +191,9 @@ def ReadConfigFile(name: str, folder: str) -> str:
     return additionalOptions
 
 
-def RunTestEngine(
+def RunCProjectTest(
+    project: str = "engine",
+    type: str = "debug",
     filter: str = "",
     **kwargs: Any,
 ) -> None:
@@ -158,18 +204,38 @@ def RunTestEngine(
         filter (str): Optional filter to run specific tests by name.
     """
 
-    logger.info("Running engine tests...")
+    logger.info(f'Running "{project}" tests...')
 
-    if SYSTEM.IsWindowsPlatform:
-        engineTestDir = os.path.join(
-            SYSTEM.BaseDir, "engine", "build", "debug", "tests", "Debug"
-        )
-        testCommand = "MEEDEngineTests.exe"
+    if project == "engine":
+        testExecutable = "MEEDEngineTests"
+        if SYSTEM.IsWindowsPlatform:
+            engineTestDir = os.path.join(
+                SYSTEM.BaseDir, project, "build", type, "tests", type.capitalize()
+            )
+            testCommand = f"{testExecutable}.exe"
+        else:
+            engineTestDir = os.path.join(
+                SYSTEM.BaseDir, project, "build", type, "tests"
+            )
+            testCommand = f"./{testExecutable}"
+    elif project == "editor":
+        testExecutable = "MEEDEditorTest"
+
+        if SYSTEM.IsWindowsPlatform:
+            engineTestDir = os.path.join(
+                SYSTEM.BaseDir, project, "build", type, type.capitalize()
+            )
+            testCommand = f"{testExecutable}.exe"
+        else:
+            engineTestDir = os.path.join(
+                SYSTEM.BaseDir,
+                project,
+                "build",
+                type,
+            )
+            testCommand = f"./{testExecutable}"
     else:
-        engineTestDir = os.path.join(
-            SYSTEM.BaseDir, "engine", "build", "debug", "tests"
-        )
-        testCommand = "./MEEDEngineTests"
+        raise ValueError(f'Unknown project "{project}" for running tests.')
 
     if filter:
         testCommand += f' --gtest_filter="{filter}"'
@@ -232,7 +298,8 @@ def RunExample(
         RunCommand(f"{exampleExecutable}", cwd=exampleDir)
 
 
-def RunApplication(
+def RunCApplication(
+    project: str = "app",
     type: str = "debug",
     **kwargs: Any,
 ) -> None:
@@ -242,16 +309,16 @@ def RunApplication(
     Arguments:
         type (str): The build type, either 'debug' or 'release'. Defaults to 'debug'.
     """
-    BuildCProject(**(kwargs | dict(project="app", type=type)))
+    BuildCProject(**(kwargs | dict(project=project, type=type)))
 
-    if type == "web":
+    if type == "web" and project == "app":
         RunWebApplication(**kwargs)
         return
 
     if SYSTEM.IsWindowsPlatform:
         appDir = os.path.join(
             SYSTEM.BaseDir,
-            "app",
+            project,
             "build",
             type,
             type.capitalize(),
@@ -259,7 +326,7 @@ def RunApplication(
     elif SYSTEM.IsLinuxPlatform:
         appDir = os.path.join(
             SYSTEM.BaseDir,
-            "app",
+            project,
             "build",
             type,
         )
@@ -272,10 +339,15 @@ def RunApplication(
 
     logger.info(f"Running application...")
 
+    applicationName = "MEEDApp"
+
+    if project == "editor":
+        applicationName = "MEEDEditor"
+
     if SYSTEM.IsWindowsPlatform:
-        RunCommand(f"MEEDApp.exe", cwd=appDir)
+        RunCommand(f"{applicationName}.exe", cwd=appDir)
     elif SYSTEM.IsLinuxPlatform:
-        RunCommand(f"./MEEDApp", cwd=appDir)
+        RunCommand(f"./{applicationName}", cwd=appDir)
 
 
 def RunWebApplication(

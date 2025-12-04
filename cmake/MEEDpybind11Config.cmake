@@ -3,7 +3,7 @@ if (TARGET MEEDpybind11)
 endif()
 
 set(MEEDpybind11_DIR ${EXTERNALS_DIR}/pybind11)
-add_subdirectory(${MEEDpybind11_DIR} ${CMAKE_BINARY_DIR}/externals/pybind11)
+add_subdirectory(${MEEDpybind11_DIR} ${CMAKE_BINARY_DIR}/packages/pybind11)
 
 find_package(Python3 REQUIRED)
 

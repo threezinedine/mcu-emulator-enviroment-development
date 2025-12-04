@@ -2,16 +2,6 @@
     "bindings": [
         {
             "file": "engine/include/MEEDEngine/MEEDEngine.h",
-            "template": "autogen/templates/pyi.j2",
-            "output": "editor/Engine/__init__.pyi",
-            "dependencies": [
-                "engine/include/MEEDEngine",
-                "autogen/templates/pyi"
-            ],
-            "extensions": [".h", ".j2"]
-        },
-        {
-            "file": "engine/include/MEEDEngine/MEEDEngine.h",
             "template": "autogen/templates/binding.j2",
             "output": "engine/tmp/binding.cpp",
             "dependencies": [
@@ -32,6 +22,9 @@
             "file": "app/.vscode/c_cpp_properties.json.in"
         },
         {
+            "file": "editor/.vscode/c_cpp_properties.json.in"
+        },
+        {
             "file": "cmake/MEEDConfigure.cmake.in"
         },
         {
@@ -43,11 +36,6 @@
         {
             "file": "config/conf.py.in",
             "noReload": true
-        },
-        {
-            "file": "editor/resources.qrc.in",
-            "dependencies": ["editor/assets/icons", "editor/assets/images"],
-            "extensions": [".ico", ".png"]
         }
     ]
 }

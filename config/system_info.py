@@ -48,11 +48,11 @@ class SystemInfo:
 
     @property
     def PythonProjects(self) -> list[str]:
-        return ["autogen", "editor"]
+        return ["autogen"]
 
     @property
     def CProjects(self) -> list[str]:
-        return ["engine", "app"]
+        return ["engine", "app", "editor"]
 
     @property
     def CCompiler(self) -> str:
@@ -75,14 +75,14 @@ class SystemInfo:
     def PythonIncludeDir(self) -> str:
         return self._pythonIncludeDir
 
-    def GetAllEditorResources(self) -> list[str]:
-        iconDir = os.path.join(self.BaseDir, "editor", "assets", "icons")
-        imagesDir = os.path.join(self.BaseDir, "editor", "assets", "images")
-        resources = [os.path.join("assets/icons", file) for file in os.listdir(iconDir)]
-        resources += [
-            os.path.join("assets/images", file) for file in os.listdir(imagesDir)
-        ]
-        return resources
+    # def GetAllEditorResources(self) -> list[str]:
+    #     iconDir = os.path.join(self.BaseDir, "editor", "assets", "icons")
+    #     imagesDir = os.path.join(self.BaseDir, "editor", "assets", "images")
+    #     resources = [os.path.join("assets/icons", file) for file in os.listdir(iconDir)]
+    #     resources += [
+    #         os.path.join("assets/images", file) for file in os.listdir(imagesDir)
+    #     ]
+    #     return resources
 
     def AllEngineExamples(self) -> list[str]:
         examplesDir = os.path.join(self.BaseDir, "engine", "examples")

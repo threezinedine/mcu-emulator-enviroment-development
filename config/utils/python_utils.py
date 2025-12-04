@@ -203,25 +203,6 @@ def CreateEnvironment(
     )
 
 
-def RunEditorConvertUI(
-    reload: bool = False,
-    **kwargs: Any,
-) -> None:
-    """
-    Run the UI conversion process for the editor project.
-    """
-    if reload:
-        shutil.rmtree(
-            os.path.join(SYSTEM.BaseDir, "editor", "pyui"), ignore_errors=True
-        )
-
-    logger.info("Converting .ui files to .py files...")
-    RunCommand(
-        f'{GetPythonExecutable("editor")} convert.py',
-        cwd=os.path.join(SYSTEM.BaseDir, "editor"),
-    )
-
-
 def InstallPythonDependencies(
     project: str,
     dependencies: list[str],
@@ -266,49 +247,6 @@ def RunAutogen(
         f'{GetPythonExecutable("autogen")} main.py {"--reload " if reload else ""}{"--verbose" if verbose else ""}',
         cwd="autogen",
     )
-
-
-def RunEditor(
-    **kwargs: Any,
-) -> None:
-    """
-    Launch the code editor.
-    """
-    logger.info("Launching code editor...")
-    RunCommand(
-        f'{GetPythonExecutable("editor")} main.py',
-        cwd="editor",
-    )
-
-
-def BuildEditor(
-    **kwargs: Any,
-) -> None:
-    """
-    Build the editor project.
-    """
-    logger.info("Building editor project...")
-
-    assetDir = os.path.join(SYSTEM.BaseDir, "editor", "assets")
-    iconPath = os.path.join(assetDir, "icons", "meed-log.ico")
-
-    RunCommand(
-        f'{GetPyinstallerExecutable("editor")} --onefile main.py --name Meed --icon {iconPath}',
-        cwd="editor",
-    )
-
-    if SYSTEM.IsWindowsPlatform:
-        distPath = os.path.join(SYSTEM.BaseDir, "editor", "dist", "Meed.exe")
-        outputPath = os.path.join(SYSTEM.BaseDir, "bin", "Meed.exe")
-    else:
-        distPath = os.path.join(SYSTEM.BaseDir, "editor", "dist", "Meed")
-        outputPath = os.path.join(SYSTEM.BaseDir, "bin", "Meed")
-
-    os.makedirs(os.path.join(SYSTEM.BaseDir, "bin"), exist_ok=True)
-    shutil.copyfile(distPath, outputPath)
-
-    if SYSTEM.IsLinuxPlatform:
-        os.chmod(outputPath, 0o755)
 
 
 def OpenDesigner(
