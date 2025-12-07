@@ -1,0 +1,38 @@
+{
+    "config": {
+        "windows": {
+            "cmake_tool": "Visual Studio 17 2022"
+        },
+        "linux": {
+            "cmake_tool": "Unix Makefiles"
+        },
+        "neededCommands": ["cmake", "git"]
+    },
+    "projects": [
+        {
+            "name": "engine",
+            "type": "library",
+            "language": "C",
+            "buildTypesConfig": {
+                "debug": {
+                    "options": "-DCMAKE_BUILD_TYPE=Debug"
+                },
+                "release": {
+                    "options": "-DCMAKE_BUILD_TYPE=Release"
+                }
+            },
+            "executables": [
+                {
+                    "name": "test",
+                    "linuxPath": "{{ BUILD_DIR }}/tests/MEEDEngineTests",
+                    "windowsPath": "{{ BUILD_DIR }}/tests/{{ BUILD_TYPE|capitalize }}/MEEDEngineTests.exe"
+                },
+                {
+                    "name": "console",
+                    "linuxPath": "{{ BUILD_DIR }}/examples/console",
+                    "windowsPath": "{{ BUILD_DIR }}/examples/{{ BUILD_TYPE|capitalize }}/console.exe"
+                }
+            ]
+        }
+    ]
+}
