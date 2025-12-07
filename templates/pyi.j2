@@ -1,0 +1,10 @@
+from enum import Enum # type: ignore
+from typing import TypeAlias, Any # type: ignore
+
+{% include "templates/pyi/typedef.j2" %}
+
+{% include "templates/pyi/enum.j2" %}
+
+{% include "templates/pyi/struct.j2" %}
+
+{% include "templates/pyi/function.j2" %}

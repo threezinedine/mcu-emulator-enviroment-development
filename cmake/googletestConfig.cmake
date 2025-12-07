@@ -2,8 +2,15 @@ if (TARGET googletest)
     return()
 endif()
 
-set(gtest_DIR "${EXTERNALS_DIR}/googletest")
-add_subdirectory(${gtest_DIR} ${CMAKE_BINARY_DIR}/packages/googletest)
+include(FetchContent)
+
+FetchContent_Declare(
+    googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG release-1.12.1
+)
+
+FetchContent_MakeAvailable(googletest)
 
 add_library(googletest INTERFACE)
 target_link_libraries(

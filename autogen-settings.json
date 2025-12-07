@@ -2,12 +2,9 @@
     "bindings": [
         {
             "file": "engine/include/MEEDEngine/MEEDEngine.h",
-            "template": "autogen/templates/binding.j2",
+            "template": "templates/binding.j2",
             "output": "engine/tmp/binding.cpp",
-            "dependencies": [
-                "engine/include/MEEDEngine",
-                "autogen/templates/binding"
-            ],
+            "dependencies": ["engine/include/MEEDEngine", "templates/binding"],
             "extensions": [".h", ".j2"]
         }
     ],

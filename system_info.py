@@ -11,7 +11,7 @@ class SystemInfo:
 
     def __init__(self) -> None:
         self._pythonCommand = "python3" if self.IsLinuxPlatform else "python"
-        self._baseDir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        self._baseDir = os.path.dirname(os.path.abspath(__file__))
         self._compilerPath = ""
         self._intelliSenseMode = ""
 

@@ -5,19 +5,23 @@ endif()
 add_library(MEEDGlfw INTERFACE)
 
 if (NOT PLATFORM_IS_WEB)
-    set(MEEDGLFW_DIR "${EXTERNALS_DIR}/glfw")
-    add_subdirectory("${MEEDGLFW_DIR}" "${CMAKE_BINARY_DIR}/packages/glfw")
+    include(FetchContent)
 
-    set(GLAD_DIR "${EXTERNALS_DIR}/glad")
-
-    file(
-        GLOB
-        GLAD_SOURCES
-        "${GLAD_DIR}/src/glad.c"
+    FetchContent_Declare(
+        glfw
+        GIT_REPOSITORY https://github.com/glfw/glfw.git
+        GIT_TAG latest
     )
 
-    add_library(glad STATIC ${GLAD_SOURCES})
-    target_include_directories(glad PUBLIC "${GLAD_DIR}/include")
+    FetchContent_MakeAvailable(glfw)
+
+    FetchContent_Declare(
+        glad
+        GIT_REPOSITORY https://github.com/threezinedine/glad.git
+        GIT_TAG latest
+    )
+
+    FetchContent_MakeAvailable(glad)
 
     find_package(OpenGL REQUIRED)
 

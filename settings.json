@@ -33,6 +33,26 @@
                     "windowsPath": "{{ BUILD_DIR }}/examples/{{ BUILD_TYPE|capitalize }}/console.exe"
                 }
             ]
+        },
+        {
+            "name": "app",
+            "type": "executable",
+            "language": "C",
+            "buildTypesConfig": {
+                "debug": {
+                    "options": "-DCMAKE_BUILD_TYPE=Debug"
+                },
+                "release": {
+                    "options": "-DCMAKE_BUILD_TYPE=Release"
+                }
+            },
+            "executables": [
+                {
+                    "name": "run",
+                    "linuxPath": "{{ BUILD_DIR }}/MEEDApp",
+                    "windowsPath": "{{ BUILD_DIR }}/{{ BUILD_TYPE|capitalize }}/MEEDApp.exe"
+                }
+            ]
         }
     ]
 }
